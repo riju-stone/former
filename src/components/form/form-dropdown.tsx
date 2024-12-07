@@ -11,6 +11,7 @@ import Calendar from "@/assets/icons/calendar.svg";
 import Hash from "@/assets/icons/hash.svg";
 
 import Image from "next/image";
+import { useFormStore } from "@/store/formStore";
 
 const FormTypes = [
   {
@@ -99,9 +100,14 @@ const styles = {
     "h-full w-full flex justify-start align-middle gap-2 p-2 text-[14px] font-medium break-keep rounded-lg bg-gray-00 hover:bg-gray-50 cursor-pointer",
 };
 
-function FormDropdownComponent({ open, setElementType, setMenuOpen }) {
+function FormDropdownComponent({ element, open, setMenuOpen }) {
+  const modifyElement = useFormStore((state) => state.modifyElement);
+
   const handleSelection = (e) => {
-    setElementType(e.currentTarget.getAttribute("data-item"));
+    const modifiedElement = { ...element };
+    const elType = e.currentTarget.getAttribute("data-item");
+    modifiedElement.type = elType;
+    modifyElement(modifiedElement);
     setMenuOpen(false);
   };
 

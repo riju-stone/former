@@ -9,6 +9,7 @@ import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import OptionsInputComponent from "@/components/input/option-input";
+import { FormElement } from "@/store/formStore";
 
 const getInputType = (type: string) => {
   switch (type) {
@@ -23,8 +24,7 @@ const getInputType = (type: string) => {
   }
 };
 
-function FormElementComponent({ type }: { type: string }) {
-  const [elementType, setElementType] = useState("short");
+function FormElementComponent({ el }: { el: FormElement }) {
   const [isMenuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -56,8 +56,8 @@ function FormElementComponent({ type }: { type: string }) {
               </motion.div>
             </button>
             <FormDropdownComponent
+              element={el}
               open={isMenuOpen}
-              setElementType={setElementType}
               setMenuOpen={setMenuOpen}
             />
           </div>
@@ -66,7 +66,7 @@ function FormElementComponent({ type }: { type: string }) {
           </button>
         </div>
       </div>
-      {getInputType(elementType)}
+      {getInputType(el.type)}
     </div>
   );
 }

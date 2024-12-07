@@ -1,35 +1,49 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 import Plus from "@/assets/icons/plus.svg";
 import Image from "next/image";
-import { AnimatePresence, Reorder } from "motion/react";
+import { v4 as uuid } from "uuid";
+import { Reorder } from "motion/react";
 import FormElementComponent from "./form-element";
 
-function FormBuilderComponent() {
-  const [formElements, setFormElements] = useState([]);
+import { FormElement, useFormStore } from "@/store/formStore";
 
-  const getDefaultFormElement = () => {
-    return { id: formElements.length + 1, type: "short" };
-  };
+const styles = {
+  builderWrapper:
+    "h-[calc(100vh_-_120px)] w-full flex flex-col justify-start items-center gap-10 border-l-[1px] border-r-[1px] border-gray-200 overflow-y-auto p-5",
+  reorderContainer: "w-full flex flex-col justify-start items-center gap-8",
+  addButton:
+    "flex justify-center items-center gap-1 py-[6px] px-4 bg-white border-[1px] border-gray-200 rounded-xl font-[600] text-[14px] shadow-button",
+};
+
+const getDefaultFormElement = (): FormElement => {
+  return { id: uuid(), type: "short" };
+};
+
+function FormBuilderComponent() {
+  const fElements = useFormStore((state) => state.formElements);
+  const addFormElements = useFormStore((state) => state.addElement);
 
   const handleAddFormElement = () => {
     const el = getDefaultFormElement();
-    setFormElements([...formElements, el]);
+    addFormElements([...fElements, el]);
   };
 
   return (
-    <div className="h-[calc(100vh_-_120px)] w-full flex flex-col justify-start items-center gap-10 border-l-[1px] border-r-[1px] border-gray-200 overflow-y-auto p-5">
+    <div className={styles.builderWrapper}>
       <Reorder.Group
+        as="div"
         axis="y"
-        className="w-full flex flex-col justify-start items-center gap-8"
-        values={formElements}
-        onReorder={setFormElements}
+        className={styles.reorderContainer}
+        values={fElements}
+        onReorder={addFormElements}
       >
-        {formElements.map((element) => {
+        {fElements.map((element) => {
           return (
             <Reorder.Item
+              as="div"
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 1, y: 30 }}
@@ -38,16 +52,16 @@ function FormBuilderComponent() {
               }}
               key={element.id}
               value={element}
-              className="list-none w-full"
+              className="w-full"
             >
-              <FormElementComponent type={element.type} />
+              <FormElementComponent el={element} />
             </Reorder.Item>
           );
         })}
       </Reorder.Group>
       <div className="w-full px-4 py-2 flex justify-center items-center">
         <button
-          className="flex justify-center items-center gap-1 py-[6px] px-4 bg-white border-[1px] border-gray-200 rounded-xl font-[600] text-[14px] shadow-button"
+          className={styles.addButton}
           onClick={() => handleAddFormElement()}
         >
           <Image src={Plus} alt="add question" /> Add Question
