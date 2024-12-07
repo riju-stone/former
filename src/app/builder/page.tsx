@@ -1,4 +1,4 @@
-import FormBuilderComponent from "@/components/form-builder";
+import FormBuilderComponent from "@/components/form/form-builder";
 import React from "react";
 import Image from "next/image";
 

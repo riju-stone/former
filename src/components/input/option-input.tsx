@@ -21,9 +21,7 @@ function OptionsInputComponent() {
   const [options, setOptions] = useState([]);
 
   const handleAddOption = (option) => {
-    const currentOptionsArr = options;
-    currentOptionsArr.push(option);
-    setOptions(currentOptionsArr);
+    setOptions([...options, option]);
   };
 
   return (

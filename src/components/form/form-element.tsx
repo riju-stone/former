@@ -6,9 +6,9 @@ import Drag from "@/assets/icons/drag.svg";
 import DownArrow from "@/assets/icons/downarrow.svg";
 import Image from "next/image";
 import FormDropdownComponent from "./form-dropdown";
-import DefaultInputComponent from "./input/default-input";
-import LongInputComponent from "./input/long-input";
-import OptionsInputComponent from "./input/option-input";
+import DefaultInputComponent from "@/components/input/default-input";
+import LongInputComponent from "@/components/input/long-input";
+import OptionsInputComponent from "@/components/input/option-input";
 
 const getInputType = (type: string) => {
   switch (type) {
@@ -16,7 +16,7 @@ const getInputType = (type: string) => {
       return <DefaultInputComponent />;
     case "long":
       return <LongInputComponent />;
-    case "select":
+    case "option":
       return <OptionsInputComponent />;
     default:
       return <DefaultInputComponent />;
@@ -24,6 +24,7 @@ const getInputType = (type: string) => {
 };
 
 function FormElementComponent({ type }: { type: string }) {
+  const [elementType, setElementType] = useState("short");
   const [isMenuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -54,14 +55,18 @@ function FormElementComponent({ type }: { type: string }) {
                 <Image src={DownArrow} alt="form-type" />
               </motion.div>
             </button>
-            <FormDropdownComponent open={isMenuOpen} />
+            <FormDropdownComponent
+              open={isMenuOpen}
+              setElementType={setElementType}
+              setMenuOpen={setMenuOpen}
+            />
           </div>
           <button className="opacity-50 h-[24px] w-[24px]">
             <Image src={Drag} alt="drag" />
           </button>
         </div>
       </div>
-      {getInputType(type)}
+      {getInputType(elementType)}
     </div>
   );
 }

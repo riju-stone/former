@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import ShortAnswer from "@/assets/icons/short.svg";
@@ -15,26 +15,32 @@ import Image from "next/image";
 const FormTypes = [
   {
     name: "Short answer",
+    tag: "short",
     logo: ShortAnswer,
   },
   {
     name: "Long Answer",
+    tag: "long",
     logo: LongAnswer,
   },
   {
     name: "Single select",
+    tag: "option",
     logo: Check,
   },
   {
     name: "Number",
+    tag: "number",
     logo: Hash,
   },
   {
     name: "URL",
+    tag: "url",
     logo: Url,
   },
   {
     name: "Date",
+    tag: "date",
     logo: Calendar,
   },
 ];
@@ -48,7 +54,7 @@ const listWrapperAnim = {
       delay: 0.2,
       ease: [0.85, 0, 0.15, 1],
       opacity: {
-        delay: 0.32,
+        delay: 0.25,
       },
     },
   },
@@ -84,7 +90,7 @@ const listItemsAnim = {
 
 const styles = {
   dropdownWrapper:
-    "absolute right-2 h-[274px] w-[300px] flex justify-center align-middle bg-white border-[1px] border-gray-200 rounded-xl shadow-dropdown p-1 overflow-hidden",
+    "absolute right-2 z-10 h-[274px] w-[300px] flex justify-center align-middle bg-white border-[1px] border-gray-200 rounded-xl shadow-dropdown p-1 overflow-hidden",
   dropdownListContainer:
     "h-full w-full flex flex-col justify-center align-middle",
   dropdownListHeading:
@@ -93,7 +99,26 @@ const styles = {
     "h-full w-full flex justify-start align-middle gap-2 p-2 text-[14px] font-medium break-keep rounded-lg bg-gray-00 hover:bg-gray-50 cursor-pointer",
 };
 
-function FormDropdownComponent({ open }: { open: boolean }) {
+function FormDropdownComponent({ open, setElementType, setMenuOpen }) {
+  const handleSelection = (e) => {
+    setElementType(e.currentTarget.getAttribute("data-item"));
+    setMenuOpen(false);
+  };
+
+  useEffect(() => {
+    function handleMenuClose(event) {
+      if (event.srcElement.alt !== "form-type") {
+        setMenuOpen(false);
+      }
+    }
+
+    window.addEventListener("click", handleMenuClose);
+
+    return () => {
+      window.removeEventListener("click", handleMenuClose);
+    };
+  });
+
   return (
     <AnimatePresence mode="wait">
       {open && (
@@ -112,11 +137,13 @@ function FormDropdownComponent({ open }: { open: boolean }) {
             exit="closed"
           >
             <div className={styles.dropdownListHeading}>Input Types</div>
-            {FormTypes.map((type, index) => {
+            {FormTypes.map((type) => {
               return (
                 <div
-                  key={`form-type=${index}`}
+                  key={type.tag}
+                  data-item={type.tag}
                   className={styles.dropdownListItem}
+                  onClick={(e) => handleSelection(e)}
                 >
                   <span>
                     <Image src={type.logo} alt="logo" />
