@@ -4,28 +4,27 @@ import Uncheck from "@/assets/icons/uncheck.svg";
 import Image from "next/image";
 import Plus from "@/assets/icons/plus.svg";
 import { AnimatePresence, motion } from "motion/react";
-import { useFormStore } from "@/store/formStore";
+import { FormElement, useFormStore } from "@/store/formStore";
 
-function OptionsInputComponent({ id }: { id: string }) {
-  const formElements = useFormStore((state) => state.formElements);
-  const currentElement = formElements.find((el) => el.id === id);
-  const addOption = useFormStore((state) => state.addOption);
+function OptionsInputComponent({ el }: { el: FormElement }) {
+  const formStore = useFormStore();
+  const { addOption } = formStore;
 
   const handleAddOption = () => {
     const newOption = {
-      id: `${currentElement.options.length + 1}`,
-      value: `Option ${currentElement.options.length + 1}`,
+      id: `${el.options.length + 1}`,
+      value: `Option ${el.options.length + 1}`,
     };
-    addOption(id, newOption);
+    addOption(el.id, newOption);
   };
 
   return (
     <motion.div
-      layoutId={`inputField-${id}`}
+      layoutId={`inputField-${el.id}`}
       transition={{ duration: 0.1, type: "spring" }}
       className="w-full flex flex-col gap-2"
     >
-      {currentElement.options.map((op, index) => {
+      {el.options.map((op, index) => {
         return (
           <motion.div
             key={`option-${index}`}
@@ -46,7 +45,7 @@ function OptionsInputComponent({ id }: { id: string }) {
                 />
               </motion.div>
             </AnimatePresence>
-            {index == currentElement.options.length - 1 ? (
+            {index == el.options.length - 1 ? (
               <button onClick={() => handleAddOption()}>
                 <Image src={Plus} alt="add" />
               </button>

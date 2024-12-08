@@ -9,13 +9,15 @@ import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import OptionsInputComponent from "@/components/input/option-input";
-import { FormElement, useFormStore } from "@/store/formStore";
+import { FormElement } from "@/store/formStore";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import FormTypes from "@/lib/formTypes";
+import DateInputComponent from "../input/date-input";
 
 const styles = {
   formElementWrapper:
-    "w-full flex flex-col justify-center items-center gap-2 bg-white border-[1px] border-gray-200 rounded-xl hover:bg-gray-50 p-4",
+    "w-full flex flex-col justify-center items-center gap-2 bg-white border-[1px] border-gray-200 rounded-xl hover:bg-gray-50 p-4 touch-none",
   formElementHeaderContainer: "w-full flex justify-between items-center gap-2",
   formElementTitleContainer: "flex-1 flex-col justify-center items-start gap-1",
   formElementTitle:
@@ -27,21 +29,26 @@ const styles = {
 const getInputType = (data: FormElement) => {
   switch (data.type) {
     case "short":
-      return <DefaultInputComponent id={data.id} />;
+      return <DefaultInputComponent el={data} />;
     case "long":
-      return <LongInputComponent id={data.id} />;
+      return <LongInputComponent el={data} />;
     case "option":
-      return <OptionsInputComponent id={data.id} />;
+      return <OptionsInputComponent el={data} />;
+    case "date":
+      return <DateInputComponent el={data} />;
     default:
-      return <DefaultInputComponent id={data.id} />;
+      return <DefaultInputComponent el={data} />;
   }
 };
 
-function FormElementComponent({ id }: { id: string }) {
+function FormElementComponent({
+  id,
+  element,
+}: {
+  id: string;
+  element: FormElement;
+}) {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const formElements = useFormStore((state) => state.formElements);
-
-  const elementData = formElements.find((el) => el.id === id);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
@@ -76,6 +83,12 @@ function FormElementComponent({ id }: { id: string }) {
               />
             </div>
             <div className="flex justify-center items-center gap-2">
+              <div className="opacity-50 mr-[-10px]">
+                <Image
+                  src={FormTypes.find((type) => type.tag === element.type).logo}
+                  alt="form-type-logo"
+                />
+              </div>
               <div className="h-[24px] w-[24px] relative aspect-square">
                 <button
                   className="h-full w-full"
@@ -105,7 +118,7 @@ function FormElementComponent({ id }: { id: string }) {
               </button>
             </div>
           </div>
-          {getInputType(elementData)}
+          {getInputType(element)}
         </div>
       </motion.div>
     </AnimatePresence>

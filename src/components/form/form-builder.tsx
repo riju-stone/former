@@ -28,7 +28,7 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 const styles = {
   builderWrapper:
-    "h-[calc(100vh_-_120px)] w-full flex flex-col justify-start items-center gap-10 border-l-[1px] border-r-[1px] border-gray-200 overflow-y-auto p-5",
+    "h-[calc(100vh_-_120px)] w-full flex flex-col justify-start items-center gap-7 border-l-[1px] border-r-[1px] border-gray-200 overflow-y-auto p-5",
   reorderContainer: "w-full flex flex-col justify-start items-center gap-8",
   addQuestionContainer: "w-full px-4 py-2 flex justify-center items-center",
   addButton:
@@ -85,7 +85,13 @@ function FormBuilderComponent() {
           strategy={verticalListSortingStrategy}
         >
           {fElements.map((element) => {
-            return <FormElementComponent key={element.id} id={element.id} />;
+            return (
+              <FormElementComponent
+                key={element.id}
+                id={element.id}
+                element={element}
+              />
+            );
           })}
         </SortableContext>
       </DndContext>

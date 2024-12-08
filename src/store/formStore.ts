@@ -19,7 +19,7 @@ export type FormState = {
 export type FormActions = {
   addElement: (el: Array<FormElement>) => void;
   modifyElementType: (id: string, type: string) => void;
-  addOption: (id: string, option: Option) => void;
+  addOption: (id: string, opt: Option) => void;
 };
 
 const getUpdatedElements = (
@@ -41,11 +41,10 @@ const getUpdatedElements = (
 const addOptionToElement = (
   elList: Array<FormElement>,
   id: string,
-  option: Option,
+  newOption: Option,
 ) => {
   const idx = elList.findIndex((element) => element.id === id);
-  const currentOptions = elList[idx].options;
-  elList[idx].options = [...currentOptions, option];
+  elList[idx].options.push(newOption);
   return elList;
 };
 
@@ -62,9 +61,9 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
       formTitle: state.formTitle,
       formElements: getUpdatedElements(state.formElements, id, type),
     })),
-  addOption: (id: string, option: Option) =>
+  addOption: (id: string, opt: Option) =>
     set((state) => ({
       formTitle: state.formTitle,
-      formElements: addOptionToElement(state.formElements, id, option),
+      formElements: addOptionToElement(state.formElements, id, opt),
     })),
 }));
