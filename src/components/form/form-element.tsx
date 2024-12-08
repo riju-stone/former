@@ -10,6 +10,8 @@ import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import OptionsInputComponent from "@/components/input/option-input";
 import { FormElement } from "@/store/formStore";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const getInputType = (type: string) => {
   switch (type) {
@@ -27,8 +29,20 @@ const getInputType = (type: string) => {
 function FormElementComponent({ el }: { el: FormElement }) {
   const [isMenuOpen, setMenuOpen] = useState(false);
 
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: el.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
-    <div className="w-full flex flex-col justify-center items-center gap-2 bg-white border-[1px] border-gray-200 rounded-xl hover:bg-gray-50 p-4">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="w-full flex flex-col justify-center items-center gap-2 bg-white border-[1px] border-gray-200 rounded-xl hover:bg-gray-50 p-4"
+    >
       <div className="w-full flex justify-between items-center gap-2">
         <div className="flex-1 flex-col justify-center items-start gap-1">
           <input
@@ -61,7 +75,11 @@ function FormElementComponent({ el }: { el: FormElement }) {
               setMenuOpen={setMenuOpen}
             />
           </div>
-          <button className="opacity-50 h-[24px] w-[24px]">
+          <button
+            {...attributes}
+            {...listeners}
+            className="opacity-50 h-[24px] w-[24px]"
+          >
             <Image src={Drag} alt="drag" />
           </button>
         </div>

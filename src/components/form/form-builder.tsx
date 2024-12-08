@@ -5,15 +5,31 @@ import React from "react";
 import Plus from "@/assets/icons/plus.svg";
 import Image from "next/image";
 import { v4 as uuid } from "uuid";
-import { Reorder } from "motion/react";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import FormElementComponent from "./form-element";
 
 import { FormElement, useFormStore } from "@/store/formStore";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 const styles = {
   builderWrapper:
     "h-[calc(100vh_-_120px)] w-full flex flex-col justify-start items-center gap-10 border-l-[1px] border-r-[1px] border-gray-200 overflow-y-auto p-5",
   reorderContainer: "w-full flex flex-col justify-start items-center gap-8",
+  addQuestionContainer: "w-full px-4 py-2 flex justify-center items-center",
   addButton:
     "flex justify-center items-center gap-1 py-[6px] px-4 bg-white border-[1px] border-gray-200 rounded-xl font-[600] text-[14px] shadow-button",
 };
@@ -26,40 +42,55 @@ function FormBuilderComponent() {
   const fElements = useFormStore((state) => state.formElements);
   const addFormElements = useFormStore((state) => state.addElement);
 
+  const dragSensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+    useSensor(TouchSensor),
+  );
+
   const handleAddFormElement = () => {
     const el = getDefaultFormElement();
     addFormElements([...fElements, el]);
   };
 
+  const handleItemSwap = (active, over) => {
+    const oldIndex = fElements.findIndex((el) => el.id === active.id);
+    const newIndex = fElements.findIndex((el) => el.id === over.id);
+
+    return arrayMove(fElements, oldIndex, newIndex);
+  };
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const updatedElements = handleItemSwap(active, over);
+      addFormElements(updatedElements);
+    }
+  };
+
   return (
     <div className={styles.builderWrapper}>
-      <Reorder.Group
-        as="div"
-        axis="y"
-        className={styles.reorderContainer}
-        values={fElements}
-        onReorder={addFormElements}
+      <DndContext
+        sensors={dragSensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis]}
       >
-        {fElements.map((element) => {
-          return (
-            <Reorder.Item
-              as="div"
-              initial={{ opacity: 0, y: -30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 1, y: 30 }}
-              transition={{
-                duration: 0.4,
-              }}
-              key={element.id}
-              value={element}
-              className="w-full"
-            >
-              <FormElementComponent el={element} />
-            </Reorder.Item>
-          );
-        })}
-      </Reorder.Group>
-      <div className="w-full px-4 py-2 flex justify-center items-center">
+        <SortableContext
+          items={fElements}
+          strategy={verticalListSortingStrategy}
+        >
+          {fElements.map((element) => {
+            return <FormElementComponent key={element.id} el={element} />;
+          })}
+        </SortableContext>
+      </DndContext>
+
+      {/* </Reorder.Group> */}
+      <div className={styles.addQuestionContainer}>
         <button
           className={styles.addButton}
           onClick={() => handleAddFormElement()}
