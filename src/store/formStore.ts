@@ -1,8 +1,14 @@
 import { create } from "zustand";
 
+export type Option = {
+  id: string;
+  value: string;
+};
+
 export type FormElement = {
   id: string;
   type: string;
+  options?: Array<Option>;
 };
 
 export type FormState = {
@@ -12,29 +18,53 @@ export type FormState = {
 
 export type FormActions = {
   addElement: (el: Array<FormElement>) => void;
-  modifyElement: (el: FormElement) => void;
+  modifyElementType: (id: string, type: string) => void;
+  addOption: (id: string, option: Option) => void;
 };
 
-const getModifiedElementList = (
+const getUpdatedElements = (
   elList: Array<FormElement>,
-  el: FormElement,
+  id: string,
+  type: string,
 ) => {
-  const idx = elList.findIndex((element) => element.id === el.id);
-  elList[idx] = el;
+  const idx = elList.findIndex((element) => element.id === id);
+  elList[idx].type = type;
+
+  // Add a default option
+  if (type == "option") {
+    elList[idx].options = Array.from([{ id: "1", value: "Option 1" }]);
+  }
+
+  return elList;
+};
+
+const addOptionToElement = (
+  elList: Array<FormElement>,
+  id: string,
+  option: Option,
+) => {
+  const idx = elList.findIndex((element) => element.id === id);
+  const currentOptions = elList[idx].options;
+  elList[idx].options = [...currentOptions, option];
   return elList;
 };
 
 export const useFormStore = create<FormState & FormActions>((set) => ({
   formTitle: "Untitled form",
   formElements: [],
-  addElement: (el) =>
+  addElement: (el: Array<FormElement>) =>
     set((state) => ({
       formTitle: state.formTitle,
       formElements: el,
     })),
-  modifyElement: (el) =>
+  modifyElementType: (id: string, type: string) =>
     set((state) => ({
       formTitle: state.formTitle,
-      formElements: getModifiedElementList(state.formElements, el),
+      formElements: getUpdatedElements(state.formElements, id, type),
+    })),
+  addOption: (id: string, option: Option) =>
+    set((state) => ({
+      formTitle: state.formTitle,
+      formElements: addOptionToElement(state.formElements, id, option),
     })),
 }));

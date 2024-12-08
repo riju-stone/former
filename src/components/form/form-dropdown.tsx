@@ -100,14 +100,12 @@ const styles = {
     "h-full w-full flex justify-start align-middle gap-2 p-2 text-[14px] font-medium break-keep rounded-lg bg-gray-00 hover:bg-gray-50 cursor-pointer",
 };
 
-function FormDropdownComponent({ element, open, setMenuOpen }) {
-  const modifyElement = useFormStore((state) => state.modifyElement);
+function FormDropdownComponent({ id, open, setMenuOpen }) {
+  const modifyElement = useFormStore((state) => state.modifyElementType);
 
   const handleSelection = (e) => {
-    const modifiedElement = { ...element };
     const elType = e.currentTarget.getAttribute("data-item");
-    modifiedElement.type = elType;
-    modifyElement(modifiedElement);
+    modifyElement(id, elType);
     setMenuOpen(false);
   };
 

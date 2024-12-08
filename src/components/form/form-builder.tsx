@@ -5,6 +5,7 @@ import React from "react";
 import Plus from "@/assets/icons/plus.svg";
 import Image from "next/image";
 import { v4 as uuid } from "uuid";
+import { motion } from "motion/react";
 import {
   closestCenter,
   DndContext,
@@ -84,20 +85,22 @@ function FormBuilderComponent() {
           strategy={verticalListSortingStrategy}
         >
           {fElements.map((element) => {
-            return <FormElementComponent key={element.id} el={element} />;
+            return <FormElementComponent key={element.id} id={element.id} />;
           })}
         </SortableContext>
       </DndContext>
-
-      {/* </Reorder.Group> */}
-      <div className={styles.addQuestionContainer}>
+      <motion.div
+        layout
+        transition={{ duration: 0.1 }}
+        className={styles.addQuestionContainer}
+      >
         <button
           className={styles.addButton}
           onClick={() => handleAddFormElement()}
         >
           <Image src={Plus} alt="add question" /> Add Question
         </button>
-      </div>
+      </motion.div>
     </div>
   );
 }
