@@ -17,7 +17,7 @@ import DateInputComponent from "../input/date-input";
 
 const styles = {
   formElementWrapper:
-    "w-full flex flex-col justify-center items-center gap-2 bg-white border-[1px] border-gray-200 rounded-xl hover:bg-gray-50 p-4 touch-none",
+    "w-full flex flex-col justify-center items-center gap-2 bg-white border-[1px] border-gray-200 rounded-xl hover:bg-gray-50 p-4 touch-auto",
   formElementHeaderContainer: "w-full flex justify-between items-center gap-2",
   formElementTitleContainer: "flex-1 flex-col justify-center items-start gap-1",
   formElementTitle:
@@ -119,7 +119,7 @@ function FormElementComponent({
               <button
                 {...attributes}
                 {...listeners}
-                className="opacity-50 h-[24px] w-[24px]"
+                className="opacity-50 h-[24px] w-[24px] touch-none"
               >
                 <Image src={Drag} alt="drag" />
               </button>
