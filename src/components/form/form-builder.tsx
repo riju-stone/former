@@ -28,7 +28,7 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 const styles = {
   builderWrapper:
-    "h-[calc(100vh_-_120px)] w-full flex flex-col justify-start items-center gap-7 border-l-[1px] border-r-[1px] border-gray-200 overflow-y-auto p-5",
+    "h-[calc(100vh_-_120px)] w-full flex flex-col justify-start items-center gap-6 border-l-[1px] border-r-[1px] border-gray-200 overflow-y-auto p-5",
   reorderContainer: "w-full flex flex-col justify-start items-center gap-8",
   addQuestionContainer: "w-full px-4 py-2 flex justify-center items-center",
   addButton:
@@ -36,12 +36,12 @@ const styles = {
 };
 
 const getDefaultFormElement = (): FormElement => {
-  return { id: uuid(), type: "short" };
+  return { id: uuid(), type: "short", main_title: "", sub_title: null };
 };
 
 function FormBuilderComponent() {
-  const fElements = useFormStore((state) => state.formElements);
-  const addFormElements = useFormStore((state) => state.addElement);
+  const formStore = useFormStore();
+  const { formElements, addElement } = formStore;
 
   const dragSensors = useSensors(
     useSensor(PointerSensor),
@@ -53,14 +53,14 @@ function FormBuilderComponent() {
 
   const handleAddFormElement = () => {
     const el = getDefaultFormElement();
-    addFormElements([...fElements, el]);
+    addElement([...formElements, el]);
   };
 
   const handleItemSwap = (active, over) => {
-    const oldIndex = fElements.findIndex((el) => el.id === active.id);
-    const newIndex = fElements.findIndex((el) => el.id === over.id);
+    const oldIndex = formElements.findIndex((el) => el.id === active.id);
+    const newIndex = formElements.findIndex((el) => el.id === over.id);
 
-    return arrayMove(fElements, oldIndex, newIndex);
+    return arrayMove(formElements, oldIndex, newIndex);
   };
 
   const handleDragEnd = (event) => {
@@ -68,7 +68,7 @@ function FormBuilderComponent() {
 
     if (active.id !== over.id) {
       const updatedElements = handleItemSwap(active, over);
-      addFormElements(updatedElements);
+      addElement(updatedElements);
     }
   };
 
@@ -81,10 +81,10 @@ function FormBuilderComponent() {
         modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext
-          items={fElements}
+          items={formElements}
           strategy={verticalListSortingStrategy}
         >
-          {fElements.map((element) => {
+          {formElements.map((element) => {
             return (
               <FormElementComponent
                 key={element.id}

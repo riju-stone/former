@@ -61,7 +61,7 @@ const styles = {
 };
 
 function FormDropdownComponent({ id, open, setMenuOpen }) {
-  const modifyElement = useFormStore((state) => state.modifyElementType);
+  const modifyElement = useFormStore((state) => state.updateElementType);
 
   const handleSelection = (e) => {
     const elType = e.currentTarget.getAttribute("data-item");

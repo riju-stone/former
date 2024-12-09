@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Drag from "@/assets/icons/drag.svg";
 import DownArrow from "@/assets/icons/downarrow.svg";
 import Image from "next/image";
+import { useFormContext } from "react-hook-form";
 import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import OptionsInputComponent from "@/components/input/option-input";
-import { FormElement } from "@/store/formStore";
+import { FormElement, useFormStore } from "@/store/formStore";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import FormTypes from "@/lib/formTypes";
@@ -29,15 +30,15 @@ const styles = {
 const getInputType = (data: FormElement) => {
   switch (data.type) {
     case "short":
-      return <DefaultInputComponent el={data} />;
+      return <DefaultInputComponent el={data} disabled={true} />;
     case "long":
-      return <LongInputComponent el={data} />;
+      return <LongInputComponent el={data} disabled={true} />;
     case "option":
       return <OptionsInputComponent el={data} />;
     case "date":
-      return <DateInputComponent el={data} />;
+      return <DateInputComponent el={data} disabled={true} />;
     default:
-      return <DefaultInputComponent el={data} />;
+      return <DefaultInputComponent el={data} disabled={true} />;
   }
 };
 
@@ -48,6 +49,9 @@ function FormElementComponent({
   id: string;
   element: FormElement;
 }) {
+  const formStore = useFormStore();
+  const { updateElementTitle, updateElementSubtitle } = formStore;
+
   const [isMenuOpen, setMenuOpen] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -76,10 +80,12 @@ function FormElementComponent({
               <input
                 placeholder="Write a question"
                 className={styles.formElementTitle}
+                onChange={(e) => updateElementTitle(id, e.target.value)}
               />
               <input
                 placeholder="Write a help text or caption (leave empty if not needed)."
                 className={styles.formElementSubtitle}
+                onChange={(e) => updateElementSubtitle(id, e.target.value)}
               />
             </div>
             <div className="flex justify-center items-center gap-2">

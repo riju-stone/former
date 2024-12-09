@@ -7,7 +7,6 @@ import Image from "next/image";
 import Arrow from "@/assets/icons/arrowtopright.svg";
 import Doc from "@/assets/icons/doc.svg";
 import Tick from "@/assets/icons/tick.svg";
-import { useForm, FormProvider } from "react-hook-form";
 import { useFormStore } from "@/store/formStore";
 
 const styles = {
@@ -26,49 +25,45 @@ const styles = {
 };
 
 function FormBuilderPage() {
-  const formElements = useFormStore((state) => state.formElements);
-  const methods = useForm();
-  const onSubmit = (data) => console.log("Form Data: ", data);
+  const formStore = useFormStore();
+  const { formTitle, formElements, updateFormTitle } = formStore;
 
   return (
     <div className={styles.builderPage}>
       <div className={styles.builderWrapper}>
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <div className={styles.headerContainer}>
-              <input
-                className={styles.formTitle}
-                type="text"
-                placeholder="Untitled form"
-              />
-              <button
-                className={`${styles.whiteButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
-                disabled={formElements.length > 0 ? false : true}
-              >
-                Preview
-                <Image src={Arrow} alt="preview"></Image>
-              </button>
-            </div>
-            <FormBuilderComponent />
-            <div className={styles.footerContainer}>
-              <button
-                className={`${styles.whiteButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
-                disabled={formElements.length > 0 ? false : true}
-              >
-                <Image src={Doc} alt="draft"></Image>
-                Save as Draft
-              </button>
-              <button
-                type="submit"
-                className={`${styles.greenButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
-                disabled={formElements.length > 0 ? false : true}
-              >
-                <Image src={Tick} alt="publish"></Image>
-                Publish Form
-              </button>
-            </div>
-          </form>
-        </FormProvider>
+        <div className={styles.headerContainer}>
+          <input
+            className={styles.formTitle}
+            type="text"
+            placeholder="Untitled form"
+            onChange={(e) => updateFormTitle(e.target.value)}
+          />
+          <button
+            className={`${styles.whiteButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
+            disabled={formElements.length > 0 ? false : true}
+          >
+            Preview
+            <Image src={Arrow} alt="preview"></Image>
+          </button>
+        </div>
+        <FormBuilderComponent />
+        <div className={styles.footerContainer}>
+          <button
+            className={`${styles.whiteButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
+            disabled={formElements.length > 0 ? false : true}
+          >
+            <Image src={Doc} alt="draft"></Image>
+            Save as Draft
+          </button>
+          <button
+            onClick={() => console.log(formTitle, formElements)}
+            className={`${styles.greenButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
+            disabled={formElements.length > 0 ? false : true}
+          >
+            <Image src={Tick} alt="publish"></Image>
+            Publish Form
+          </button>
+        </div>
       </div>
     </div>
   );

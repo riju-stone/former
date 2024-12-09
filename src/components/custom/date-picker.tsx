@@ -14,16 +14,17 @@ import {
 import CalendarIcon from "@/assets/icons/calendar.svg";
 import Image from "next/image";
 
-export function DatePickerComponent() {
+export function DatePickerComponent({ disabled }: { disabled: boolean }) {
   const [date, setDate] = React.useState<Date>();
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          disabled={disabled}
           variant={"outline"}
           className={cn(
-            "w-full justify-between text-left font-normal",
+            "w-full justify-between text-left font-normal bg-transparent",
             !date && "text-muted-foreground",
           )}
         >
