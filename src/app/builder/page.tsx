@@ -38,6 +38,7 @@ function FormBuilderPage() {
   };
 
   const handleFormUpload = async () => {
+    await deleteDraft(formObject);
     await uploadBuild(formObject);
     localStorage.removeItem(`form-build-${formId}`);
   };

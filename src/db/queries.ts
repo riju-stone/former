@@ -3,6 +3,18 @@ import { db } from "./index";
 import { formBuilderTable, formDraftTable } from "./schema";
 import { eq } from "drizzle-orm";
 
+export async function fetchAllFormBuilds() {
+  return await db.select().from(formBuilderTable);
+}
+
+export async function fetchAllFormDrafts() {
+  return await db.select().from(formDraftTable);
+}
+
+export async function deleteFormDraft(formData: FormState) {
+  await db.delete(formDraftTable).where(eq(formDraftTable.id, formData.formId));
+}
+
 export async function fetchFormBuild(formId: string) {
   console.log("Querying Form Builder Table: ", formId);
   return await db
