@@ -2,17 +2,10 @@ import React from "react";
 import { FormElement } from "@/store/formStore";
 import { DatePickerComponent } from "../custom/date-picker";
 
-function DateInputComponent({
-  el,
-  disabled,
-}: {
-  el: FormElement;
-  disabled: boolean;
-}) {
+function DateInputComponent({ disabled }: { disabled: boolean }) {
   return (
     <div className="w-full">
       <DatePickerComponent
-        layoutId={`inputField-${el.id}`}
         type="date"
         disabled={disabled}
         transition={{ duration: 0.1, type: "spring" }}

@@ -29,15 +29,15 @@ const styles = {
 const getInputType = (data: FormElement) => {
   switch (data.type) {
     case "short":
-      return <DefaultInputComponent el={data} disabled={true} />;
+      return <DefaultInputComponent disabled={true} />;
     case "long":
-      return <LongInputComponent el={data} disabled={true} />;
+      return <LongInputComponent disabled={true} />;
     case "option":
       return <OptionsInputComponent el={data} />;
     case "date":
-      return <DateInputComponent el={data} disabled={true} />;
+      return <DateInputComponent disabled={true} />;
     default:
-      return <DefaultInputComponent el={data} disabled={true} />;
+      return <DefaultInputComponent disabled={true} />;
   }
 };
 
@@ -79,11 +79,13 @@ function FormElementComponent({
               <input
                 placeholder="Write a question"
                 className={styles.formElementTitle}
+                value={element.main_title}
                 onChange={(e) => updateElementTitle(id, e.target.value)}
               />
               <input
                 placeholder="Write a help text or caption (leave empty if not needed)."
                 className={styles.formElementSubtitle}
+                value={element.sub_title}
                 onChange={(e) => updateElementSubtitle(id, e.target.value)}
               />
             </div>

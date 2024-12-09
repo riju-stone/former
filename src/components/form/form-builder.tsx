@@ -36,7 +36,7 @@ const styles = {
 };
 
 const getDefaultFormElement = (): FormElement => {
-  return { id: uuid(), type: "short", main_title: "", sub_title: null };
+  return { id: uuid(), type: "short", main_title: "", sub_title: "" };
 };
 
 function FormBuilderComponent() {

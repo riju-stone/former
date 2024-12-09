@@ -7,7 +7,10 @@ import Image from "next/image";
 import Arrow from "@/assets/icons/arrowtopright.svg";
 import Doc from "@/assets/icons/doc.svg";
 import Tick from "@/assets/icons/tick.svg";
-import { useFormStore } from "@/store/formStore";
+import { FormState, useFormStore } from "@/store/formStore";
+import { uploadBuild } from "@/db/queries";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const styles = {
   builderPage: "h-full w-full flex justify-center items-center",
@@ -27,15 +30,35 @@ const styles = {
 function FormBuilderPage() {
   const formStore = useFormStore();
   const { formId, formTitle, formElements, updateFormTitle } = formStore;
+  const router = useRouter();
 
-  const handleFormUpload = () => {
-    const formObject = {
-      id: formId,
-      title: formTitle,
-      elements: formElements,
+  const handleFormUpload = async () => {
+    const formObject: FormState = {
+      formId: formId,
+      formTitle: formTitle,
+      formElements: formElements,
     };
 
-    console.log(formObject);
+    await uploadBuild(formObject);
+  };
+
+  const handleSaveDraft = (formObject) => {
+    localStorage.setItem(
+      `form-build-${formObject.formId}`,
+      JSON.stringify(formObject),
+    );
+  };
+
+  const handleFormPreview = async () => {
+    const formObject: FormState = {
+      formId: formId,
+      formTitle: formTitle,
+      formElements: formElements,
+    };
+    handleSaveDraft(formObject);
+    // await uploadBuild(formObject);
+
+    router.push(`/preview/${formId}`);
   };
 
   return (
@@ -46,11 +69,13 @@ function FormBuilderPage() {
             className={styles.formTitle}
             type="text"
             placeholder="Untitled form"
+            value={formTitle}
             onChange={(e) => updateFormTitle(e.target.value)}
           />
           <button
             className={`${styles.whiteButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
             disabled={formElements.length > 0 ? false : true}
+            onClick={() => handleFormPreview()}
           >
             Preview
             <Image src={Arrow} alt="preview"></Image>

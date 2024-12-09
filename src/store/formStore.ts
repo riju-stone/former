@@ -9,7 +9,7 @@ export type Option = {
 export type FormElement = {
   id: string;
   main_title: string;
-  sub_title?: string | null;
+  sub_title?: string;
   type: string;
   options?: Array<Option>;
 };
@@ -92,7 +92,7 @@ const getUpdatedOptions = (
 
 export const useFormStore = create<FormState & FormActions>((set) => ({
   formId: uuid(),
-  formTitle: "Untitled form",
+  formTitle: "",
   formElements: [],
   updateFormTitle: (title: string) =>
     set((state) => ({

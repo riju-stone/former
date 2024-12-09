@@ -1,22 +1,24 @@
-import {
-  integer,
-  jsonb,
-  varchar,
-  pgTable,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { json, varchar, pgTable, timestamp } from "drizzle-orm/pg-core";
 
 export const formBuilderTable = pgTable("form-builds", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: varchar().primaryKey(),
   formName: varchar({ length: 50 }).notNull(),
-  builderData: jsonb(),
-  createdAt: timestamp({ withTimezone: true }),
-  updatedAt: timestamp({ withTimezone: true }),
+  builderData: json().notNull(),
+  createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
-export const formSubmissionTable = pgTable("form-submissions", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  formName: varchar({ length: 50 }).notNull(),
-  formData: jsonb(),
-  submittedAt: timestamp({ withTimezone: true }),
-});
+// export const formDraftTable = pgTable("form-drafts", {
+//   id: varchar().primaryKey(),
+//   formName: varchar({ length: 50 }).notNull(),
+//   builderData: json(),
+//   createdAt: timestamp({ withTimezone: true }),
+//   updatedAt: timestamp({ withTimezone: true }),
+// });
+//
+// export const formSubmissionTable = pgTable("form-submissions", {
+//   id: varchar().primaryKey(),
+//   formName: varchar({ length: 50 }).notNull(),
+//   formData: json(),
+//   submittedAt: timestamp({ withTimezone: true }),
+// });
