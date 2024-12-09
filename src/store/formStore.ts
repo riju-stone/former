@@ -28,6 +28,7 @@ export type FormActions = {
   updateElementSubtitle: (id: string, subtitle: string) => void;
   addOption: (id: string, opt: Option) => void;
   updateOption: (elId: string, optId: string, optValue: string) => void;
+  resetFormStore: () => void;
 };
 
 const getElementIndex = (elList: Array<FormElement>, id) => {
@@ -94,6 +95,12 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
   formId: uuid(),
   formTitle: "",
   formElements: [],
+  resetFormStore: () =>
+    set(() => ({
+      formId: uuid(),
+      formTitle: "",
+      formElements: [],
+    })),
   updateFormTitle: (title: string) =>
     set((state) => ({
       formTitle: title,

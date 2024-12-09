@@ -17,7 +17,7 @@ function renderOptionInput(el: FormElement) {
               name={el.id}
               id={opt.value}
               value={opt.value}
-              disabled={true}
+              disabled={false}
             />
             <label htmlFor={opt.value} className="ml-2">
               {opt.value}
@@ -32,13 +32,11 @@ function renderOptionInput(el: FormElement) {
 function renderInputType(type: string) {
   switch (type) {
     case "short":
-      return <DefaultInputComponent disabled={true} />;
+      return <DefaultInputComponent disabled={false} />;
     case "long":
-      return <LongInputComponent disabled={true} />;
+      return <LongInputComponent disabled={false} />;
     case "date":
-      return <DateInputComponent disabled={true} />;
-    case "option":
-
+      return <DateInputComponent disabled={false} />;
     default:
       return <DefaultInputComponent disabled={true} />;
   }

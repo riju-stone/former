@@ -8,7 +8,7 @@ import Arrow from "@/assets/icons/arrowtopright.svg";
 import Doc from "@/assets/icons/doc.svg";
 import Tick from "@/assets/icons/tick.svg";
 import { FormState, useFormStore } from "@/store/formStore";
-import { uploadBuild, uploadDraft } from "@/db/queries";
+import { deleteFormDraft, uploadBuild, uploadDraft } from "@/db/queries";
 import { useRouter } from "next/navigation";
 
 const styles = {
@@ -38,9 +38,10 @@ function FormBuilderPage() {
   };
 
   const handleFormUpload = async () => {
-    await deleteDraft(formObject);
+    await deleteFormDraft(formObject);
     await uploadBuild(formObject);
     localStorage.removeItem(`form-build-${formId}`);
+    router.push("/");
   };
 
   const handleSaveDraftLocally = () => {
