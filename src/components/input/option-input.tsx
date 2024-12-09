@@ -8,7 +8,7 @@ import { FormElement, useFormStore } from "@/store/formStore";
 
 function OptionsInputComponent({ el }: { el: FormElement }) {
   const formStore = useFormStore();
-  const { addOption } = formStore;
+  const { addOption, updateOption } = formStore;
 
   const handleAddOption = () => {
     const newOption = {
@@ -41,6 +41,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
                 <input
                   type="text"
                   placeholder={op.value}
+                  onChange={(e) => updateOption(el.id, op.id, e.target.value)}
                   className="h-[32px] flex-1 px-2 py-[6px] border-[1px] outline-none bg-transparent hover:bg-white border-gray-200 rounded-lg text-[14px] text-gray-950 font-[400]"
                 />
               </motion.div>

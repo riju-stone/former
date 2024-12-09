@@ -4,7 +4,7 @@ import React from "react";
 
 import Plus from "@/assets/icons/plus.svg";
 import Image from "next/image";
-import { v4 as uuid } from "uuid";
+import { v7 as uuid } from "uuid";
 import { motion } from "motion/react";
 import {
   closestCenter,

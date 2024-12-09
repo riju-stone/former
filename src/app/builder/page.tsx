@@ -26,7 +26,17 @@ const styles = {
 
 function FormBuilderPage() {
   const formStore = useFormStore();
-  const { formTitle, formElements, updateFormTitle } = formStore;
+  const { formId, formTitle, formElements, updateFormTitle } = formStore;
+
+  const handleFormUpload = () => {
+    const formObject = {
+      id: formId,
+      title: formTitle,
+      elements: formElements,
+    };
+
+    console.log(formObject);
+  };
 
   return (
     <div className={styles.builderPage}>
@@ -56,7 +66,7 @@ function FormBuilderPage() {
             Save as Draft
           </button>
           <button
-            onClick={() => console.log(formTitle, formElements)}
+            onClick={() => handleFormUpload()}
             className={`${styles.greenButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
             disabled={formElements.length > 0 ? false : true}
           >

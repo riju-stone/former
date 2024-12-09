@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { v7 as uuid } from "uuid";
 
 export type Option = {
   id: string;
@@ -14,7 +15,7 @@ export type FormElement = {
 };
 
 export type FormState = {
-  formId: null | string;
+  formId: string;
   formTitle: string;
   formElements: Array<FormElement>;
 };
@@ -26,6 +27,11 @@ export type FormActions = {
   updateElementTitle: (id: string, title: string) => void;
   updateElementSubtitle: (id: string, subtitle: string) => void;
   addOption: (id: string, opt: Option) => void;
+  updateOption: (elId: string, optId: string, optValue: string) => void;
+};
+
+const getElementIndex = (elList: Array<FormElement>, id) => {
+  return elList.findIndex((element) => element.id === id);
 };
 
 const getUpdatedElementType = (
@@ -33,7 +39,7 @@ const getUpdatedElementType = (
   id: string,
   type: string,
 ) => {
-  const idx = elList.findIndex((element) => element.id === id);
+  const idx = getElementIndex(elList, id);
   elList[idx].type = type;
 
   // Add a default option
@@ -50,7 +56,7 @@ const getUpdatedElementContent = (
   content: string,
   op: string,
 ) => {
-  const idx = elList.findIndex((element) => element.id === id);
+  const idx = getElementIndex(elList, id);
 
   if (op == "main") {
     elList[idx].main_title = content;
@@ -66,13 +72,26 @@ const addOptionToElement = (
   id: string,
   newOption: Option,
 ) => {
-  const idx = elList.findIndex((element) => element.id === id);
+  const idx = getElementIndex(elList, id);
+
   elList[idx].options.push(newOption);
   return elList;
 };
 
+const getUpdatedOptions = (
+  elList: Array<FormElement>,
+  elId: string,
+  optId: string,
+  optValue: string,
+) => {
+  const idx = getElementIndex(elList, elId);
+  elList[idx].options[Number(optId) - 1].value = optValue;
+
+  return elList;
+};
+
 export const useFormStore = create<FormState & FormActions>((set) => ({
-  formId: null,
+  formId: uuid(),
   formTitle: "Untitled form",
   formElements: [],
   updateFormTitle: (title: string) =>
@@ -109,5 +128,14 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
   addOption: (id: string, opt: Option) =>
     set((state) => ({
       formElements: addOptionToElement(state.formElements, id, opt),
+    })),
+  updateOption: (elId: string, optId: string, optValue: string) =>
+    set((state) => ({
+      formElements: getUpdatedOptions(
+        state.formElements,
+        elId,
+        optId,
+        optValue,
+      ),
     })),
 }));

@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Drag from "@/assets/icons/drag.svg";
 import DownArrow from "@/assets/icons/downarrow.svg";
 import Image from "next/image";
-import { useFormContext } from "react-hook-form";
 import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
