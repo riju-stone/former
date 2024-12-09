@@ -3,13 +3,12 @@
 import FormBuilderComponent from "@/components/form/form-builder";
 import React from "react";
 import Image from "next/image";
-
+import { toast } from "sonner";
 import Arrow from "@/assets/icons/arrowtopright.svg";
 import Doc from "@/assets/icons/doc.svg";
 import Tick from "@/assets/icons/tick.svg";
 import { FormState, useFormStore } from "@/store/formStore";
-import { uploadBuild } from "@/db/queries";
-import Link from "next/link";
+import { uploadBuild, uploadDraft } from "@/db/queries";
 import { useRouter } from "next/navigation";
 
 const styles = {
@@ -32,32 +31,30 @@ function FormBuilderPage() {
   const { formId, formTitle, formElements, updateFormTitle } = formStore;
   const router = useRouter();
 
-  const handleFormUpload = async () => {
-    const formObject: FormState = {
-      formId: formId,
-      formTitle: formTitle,
-      formElements: formElements,
-    };
-
-    await uploadBuild(formObject);
+  const formObject: FormState = {
+    formId: formId,
+    formTitle: formTitle,
+    formElements: formElements,
   };
 
-  const handleSaveDraft = (formObject) => {
+  const handleFormUpload = async () => {
+    await uploadBuild(formObject);
+    localStorage.removeItem(`form-build-${formId}`);
+  };
+
+  const handleSaveDraftLocally = () => {
     localStorage.setItem(
       `form-build-${formObject.formId}`,
       JSON.stringify(formObject),
     );
   };
 
-  const handleFormPreview = async () => {
-    const formObject: FormState = {
-      formId: formId,
-      formTitle: formTitle,
-      formElements: formElements,
-    };
-    handleSaveDraft(formObject);
-    // await uploadBuild(formObject);
+  const handleSaveDraftGlobally = async () => {
+    await uploadDraft(formObject);
+  };
 
+  const handleFormPreview = async () => {
+    handleSaveDraftLocally();
     router.push(`/preview/${formId}`);
   };
 
@@ -86,12 +83,25 @@ function FormBuilderPage() {
           <button
             className={`${styles.whiteButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
             disabled={formElements.length > 0 ? false : true}
+            onClick={() =>
+              toast.promise(handleSaveDraftGlobally(), {
+                loading: "Uploading Form Draft",
+                success: "Form Draft Uploaded",
+                error: "Failed to Upload Form Draft",
+              })
+            }
           >
             <Image src={Doc} alt="draft"></Image>
             Save as Draft
           </button>
           <button
-            onClick={() => handleFormUpload()}
+            onClick={() =>
+              toast.promise(handleFormUpload(), {
+                loading: "Uploading Current Build",
+                success: "Form Build Uploaded Successfully",
+                error: "Failed to Upload Form Build",
+              })
+            }
             className={`${styles.greenButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
             disabled={formElements.length > 0 ? false : true}
           >

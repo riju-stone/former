@@ -4,12 +4,12 @@ import React, { use, useEffect, useState } from "react";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import DateInputComponent from "@/components/input/date-input";
-import { FormElement } from "@/store/formStore";
+import { FormElement, Option } from "@/store/formStore";
 
-function renderOptionInput(el) {
+function renderOptionInput(el: FormElement) {
   return (
     <>
-      {el.options.map((opt) => {
+      {el.options.map((opt: Option) => {
         return (
           <div key={opt.id}>
             <input

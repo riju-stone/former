@@ -8,13 +8,14 @@ export const formBuilderTable = pgTable("form-builds", {
   updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
 
-// export const formDraftTable = pgTable("form-drafts", {
-//   id: varchar().primaryKey(),
-//   formName: varchar({ length: 50 }).notNull(),
-//   builderData: json(),
-//   createdAt: timestamp({ withTimezone: true }),
-//   updatedAt: timestamp({ withTimezone: true }),
-// });
+export const formDraftTable = pgTable("form-drafts", {
+  id: varchar().primaryKey(),
+  formName: varchar({ length: 50 }).notNull(),
+  builderData: json().notNull(),
+  createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
+
 //
 // export const formSubmissionTable = pgTable("form-submissions", {
 //   id: varchar().primaryKey(),
