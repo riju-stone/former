@@ -45,7 +45,7 @@ const getUpdatedElementType = (
 
     // Add a default option
     if (type == "option") {
-        elList[idx].options = Array.from([{ id: "1", value: "Option 1" }]);
+        elList[idx].options = Array.from([{ id: "1", value: "" }]);
     }
 
     return elList;

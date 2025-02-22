@@ -13,7 +13,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
     const handleAddOption = () => {
         const newOption = {
             id: `${el.options.length + 1}`,
-            value: `Option ${el.options.length + 1}`,
+            value: "",
         };
         addOption(el.id, newOption);
     };
@@ -40,7 +40,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
                                 <Image src={Uncheck} alt="checkbox" />
                                 <input
                                     type="text"
-                                    placeholder={op.value}
+                                    placeholder={`Option ${index + 1}`}
                                     onChange={(e) => updateOption(el.id, op.id, e.target.value)}
                                     className="h-[32px] flex-1 px-2 py-[6px] border-[1px] outline-none bg-transparent hover:bg-white border-gray-200 rounded-lg text-[14px] text-gray-950 font-[400]"
                                 />
