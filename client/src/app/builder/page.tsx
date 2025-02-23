@@ -2,17 +2,16 @@
 
 import FormBuilderComponent from "@/components/form/form-builder";
 import React from "react";
-import Image from "next/image";
 import { toast } from "sonner";
 import { FormState, useFormStore } from "@/store/formStore";
 import { deleteFormDraft, uploadBuild, uploadDraft } from "@/db/queries";
 import { useRouter } from "next/navigation";
 
 // Icons
-import Arrow from "@/assets/icons/arrowtopright.svg";
-import Doc from "@/assets/icons/doc.svg";
-import Tick from "@/assets/icons/tick.svg";
+import { Eye, Save, BookCheck } from "lucide-react"
+
 import validateForm from "@/lib/validation";
+import { useFormErrorStore } from "@/store/errorStore";
 
 const styles = {
     builderPage: "h-full w-full flex justify-center items-center",
@@ -32,6 +31,10 @@ const styles = {
 function FormBuilderPage() {
     const formStore = useFormStore();
     const { formId, formTitle, formElements, updateFormTitle } = formStore;
+
+    const formErrorStore = useFormErrorStore()
+    const { setFormError } = formErrorStore
+
     const router = useRouter();
 
     const formObject: FormState = {
@@ -82,7 +85,7 @@ function FormBuilderPage() {
                         onClick={() => handleFormPreview()}
                     >
                         Preview
-                        <Image src={Arrow} alt="preview"></Image>
+                        <Eye size={18} />
                     </button>
                 </div>
                 <FormBuilderComponent />
@@ -99,7 +102,7 @@ function FormBuilderPage() {
                     //     })
                     // }
                     >
-                        <Image src={Doc} alt="draft"></Image>
+                        <Save size={18} />
                         Save as Draft
                     </button>
                     <button
@@ -115,7 +118,7 @@ function FormBuilderPage() {
                         className={`${styles.greenButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
                         disabled={formElements.length > 0 ? false : true}
                     >
-                        <Image src={Tick} alt="publish" />
+                        <BookCheck size={18} />
                         Publish Form
                     </button>
                 </div>

@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Drag from "@/assets/icons/drag.svg";
-import DownArrow from "@/assets/icons/downarrow.svg";
 import Image from "next/image";
 import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
@@ -12,8 +11,8 @@ import OptionsInputComponent from "@/components/input/option-input";
 import { FormElement, useFormStore } from "@/store/formStore";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import FormTypes from "@/lib/formTypes";
 import DateInputComponent from "../input/date-input";
+import { Trash2, GripVertical } from "lucide-react"
 
 const styles = {
     formElementWrapper:
@@ -23,7 +22,7 @@ const styles = {
     formElementTitle:
         "w-full bg-transparent text-[14px] text-gray-950 font-[600] leading-5 border-none outline-none",
     formElementSubtitle:
-        "w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none",
+        "w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none",
 };
 
 const getInputType = (data: FormElement) => {
@@ -50,8 +49,6 @@ function FormElementComponent({
 }) {
     const formStore = useFormStore();
     const { updateElementTitle, updateElementSubtitle } = formStore;
-
-    const [isMenuOpen, setMenuOpen] = useState(false);
 
     const { attributes, listeners, setNodeRef, transform, transition } =
         useSortable({ id: id });
@@ -88,40 +85,22 @@ function FormElementComponent({
                                 value={element.sub_title}
                                 onChange={(e) => updateElementSubtitle(id, e.target.value)}
                             />
+                            {element.type == "long" ? <input className={styles.formElementSubtitle} placeholder="Maximum characters" /> : null}
                         </div>
                         <div className="flex justify-center items-center gap-2">
-                            <div className="opacity-50 mr-[-10px]">
-                                <Image
-                                    src={FormTypes.find((type) => type.tag === element.type).logo}
-                                    alt="form-type-logo"
-                                />
-                            </div>
-                            <div className="h-[24px] w-[24px] relative aspect-square">
-                                <button
-                                    className="h-full w-full"
-                                    onClick={() => setMenuOpen(!isMenuOpen)}
-                                >
-                                    <motion.div
-                                        className="w-full h-full flex justify-center items-center opacity-50"
-                                        initial={{ rotateZ: 0 }}
-                                        animate={isMenuOpen ? { rotateZ: 180 } : { rotateZ: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <Image src={DownArrow} alt="form-type" />
-                                    </motion.div>
-                                </button>
-                                <FormDropdownComponent
-                                    id={id}
-                                    open={isMenuOpen}
-                                    setMenuOpen={setMenuOpen}
-                                />
-                            </div>
+                            <FormDropdownComponent
+                                id={id}
+                                element={element}
+                            />
+                            <button className="opacity-50 touch-none">
+                                <Trash2 size={18} />
+                            </button>
                             <button
                                 {...attributes}
                                 {...listeners}
-                                className="opacity-50 h-[24px] w-[24px] touch-none"
+                                className="opacity-50 touch-none cursor-grab"
                             >
-                                <Image src={Drag} alt="drag" />
+                                <GripVertical size={18} />
                             </button>
                         </div>
                     </div>

@@ -102,7 +102,7 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
             formElements: [],
         })),
     updateFormTitle: (title: string) =>
-        set((state) => ({
+        set((state: FormState) => ({
             formTitle: title,
             formElements: state.formElements,
         })),
@@ -111,11 +111,11 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
             formElements: el,
         })),
     updateElementType: (id: string, type: string) =>
-        set((state) => ({
+        set((state: FormState) => ({
             formElements: getUpdatedElementType(state.formElements, id, type),
         })),
     updateElementTitle: (id: string, title: string) =>
-        set((state) => ({
+        set((state: FormState) => ({
             formElements: getUpdatedElementContent(
                 state.formElements,
                 id,
@@ -124,7 +124,7 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
             ),
         })),
     updateElementSubtitle: (id: string, subtitle: string) =>
-        set((state) => ({
+        set((state: FormState) => ({
             formElements: getUpdatedElementContent(
                 state.formElements,
                 id,
@@ -133,7 +133,7 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
             ),
         })),
     addOption: (id: string, opt: Option) =>
-        set((state) => ({
+        set((state: FormState) => ({
             formElements: addOptionToElement(state.formElements, id, opt),
         })),
     updateOption: (elId: string, optId: string, optValue: string) =>

@@ -6,44 +6,43 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Calendar1 } from "lucide-react"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from "@/components/ui/popover";
-import CalendarIcon from "@/assets/icons/calendar.svg";
-import Image from "next/image";
 
 export function DatePickerComponent({ disabled }: { disabled: boolean }) {
-  const [date, setDate] = React.useState<Date>();
+    const [date, setDate] = React.useState<Date>();
 
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          disabled={disabled}
-          variant={"outline"}
-          className={cn(
-            "w-full justify-between text-left font-normal bg-transparent",
-            !date && "text-muted-foreground",
-          )}
-        >
-          {date ? (
-            format(date, "P")
-          ) : (
-            <span className="opacity-50">MM-DD-YYYY</span>
-          )}
-          <Image className="mr-2 h-4 w-4" src={CalendarIcon} alt="calendar" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-        />
-      </PopoverContent>
-    </Popover>
-  );
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button
+                    disabled={disabled}
+                    variant={"outline"}
+                    className={cn(
+                        "w-full justify-between text-left font-normal bg-transparent",
+                        !date && "text-muted-foreground",
+                    )}
+                >
+                    {date ? (
+                        format(date, "P")
+                    ) : (
+                        <span className="opacity-50">MM-DD-YYYY</span>
+                    )}
+                    <Calendar1 />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+                <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                />
+            </PopoverContent>
+        </Popover>
+    );
 }
