@@ -1,11 +1,11 @@
 import React, { use } from 'react'
 
-function FormPublishedPage({ params }: { params: Promise<{ id: string }> }) {
-    const id = use(params)
+function FormSavedBuilderPage({ params }: { params: Promise<{ id: string }> }) {
+    const id = use(params);
 
     return (
-        <div>FormPublishedPage</div>
+        <div>{id}</div>
     )
 }
 
-export default FormPublishedPage
+export default FormSavedBuilderPage

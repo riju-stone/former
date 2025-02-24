@@ -1,15 +1,15 @@
 import React from "react";
 import { motion } from "motion/react";
+import { FormElement } from "@/store/formStore";
 
-function DefaultInputComponent({ disabled }: { disabled: boolean }) {
+function DefaultInputComponent({ el, disabled }: { el: FormElement, disabled: boolean }) {
     return (
-        <div className="w-full">
+        <motion.div layoutId={`inputField-${el.id}`} className="w-full" transition={{ duration: 0.02, type: "spring" }}>
             <motion.input
                 disabled={disabled}
-                transition={{ duration: 0.1, type: "spring" }}
                 className="h-[32px] w-full bg-transparent px-2 py-[6px] text-[12px] text-gray-950 outline-none border-[1px] border-gray-200 rounded-lg"
             />
-        </div>
+        </motion.div>
     );
 }
 

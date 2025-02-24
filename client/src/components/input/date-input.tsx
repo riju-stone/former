@@ -1,15 +1,16 @@
 import React from "react";
 import { DatePickerComponent } from "../custom/date-picker";
+import { motion } from "motion/react";
+import { FormElement } from "@/store/formStore";
 
-function DateInputComponent({ disabled }: { disabled: boolean }) {
+function DateInputComponent({ el, disabled }: { el: FormElement, disabled: boolean }) {
     return (
-        <div className="w-full">
+        <motion.div className="w-full" layoutId={`inputField-${el.id}`} transition={{ duration: 0.02, type: "spring" }}>
             <DatePickerComponent
                 disabled={disabled}
-                transition={{ duration: 0.1, type: "spring" }}
                 className="h-[32px] w-full bg-transparent px-2 py-[6px] text-[12px] text-gray-950 outline-none border-[1px] border-gray-200 rounded-lg"
             />
-        </div>
+        </motion.div>
     );
 }
 

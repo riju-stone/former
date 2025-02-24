@@ -21,7 +21,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
     return (
         <motion.div
             layoutId={`inputField-${el.id}`}
-            transition={{ duration: 0.1, type: "spring" }}
+            transition={{ duration: 0.02, type: "spring" }}
             className="w-full flex flex-col gap-2"
         >
             {el.options.map((op, index) => {

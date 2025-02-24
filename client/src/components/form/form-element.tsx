@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import Drag from "@/assets/icons/drag.svg";
-import Image from "next/image";
 import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
@@ -17,10 +15,10 @@ import { Trash2, GripVertical } from "lucide-react"
 const styles = {
     formElementWrapper:
         "w-full flex flex-col justify-center items-center gap-2 bg-white border-[1px] border-gray-200 rounded-xl hover:bg-gray-50 p-4 touch-auto",
-    formElementHeaderContainer: "w-full flex justify-between items-center gap-2",
-    formElementTitleContainer: "flex-1 flex-col justify-center items-start gap-1",
+    formElementHeaderContainer: "w-full flex justify-between items-start gap-2",
+    formElementTitleContainer: "flex-1 flex-col justify-center items-center gap-1",
     formElementTitle:
-        "w-full bg-transparent text-[14px] text-gray-950 font-[600] leading-5 border-none outline-none",
+        "w-full bg-transparent text-[15px] text-gray-950 font-[600] leading-5 border-none outline-none",
     formElementSubtitle:
         "w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none",
 };
@@ -28,25 +26,19 @@ const styles = {
 const getInputType = (data: FormElement) => {
     switch (data.type) {
         case "short":
-            return <DefaultInputComponent disabled={true} />;
+            return <DefaultInputComponent el={data} disabled={true} />;
         case "long":
-            return <LongInputComponent disabled={true} />;
+            return <LongInputComponent el={data} disabled={true} />;
         case "option":
             return <OptionsInputComponent el={data} />;
         case "date":
-            return <DateInputComponent disabled={true} />;
+            return <DateInputComponent el={data} disabled={true} />;
         default:
-            return <DefaultInputComponent disabled={true} />;
+            return <DefaultInputComponent el={data} disabled={true} />;
     }
 };
 
-function FormElementComponent({
-    id,
-    element,
-}: {
-    id: string;
-    element: FormElement;
-}) {
+const FormElementComponent = ({ id, element }: { id: string, element: FormElement }) => {
     const formStore = useFormStore();
     const { updateElementTitle, updateElementSubtitle } = formStore;
 
@@ -64,7 +56,8 @@ function FormElementComponent({
                 className="w-full"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, y: 30 }}
+                transition={{ duration: 0.1 }}
             >
                 <div
                     ref={setNodeRef}
@@ -80,7 +73,7 @@ function FormElementComponent({
                                 onChange={(e) => updateElementTitle(id, e.target.value)}
                             />
                             <input
-                                placeholder="Write a help text or caption (leave empty if not needed)."
+                                placeholder="Write a help text or caption (optional)."
                                 className={styles.formElementSubtitle}
                                 value={element.sub_title}
                                 onChange={(e) => updateElementSubtitle(id, e.target.value)}
