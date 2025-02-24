@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-
-import Plus from "@/assets/icons/plus.svg";
-import Image from "next/image";
+import { CirclePlus } from "lucide-react"
 import { v7 as uuid } from "uuid";
 import { motion } from "motion/react";
 import {
@@ -104,7 +102,7 @@ function FormBuilderComponent() {
                     className={styles.addButton}
                     onClick={() => handleAddFormElement()}
                 >
-                    <Image src={Plus} alt="add question" /> Add Question
+                    <CirclePlus size={18} /> Add Question
                 </button>
             </motion.div>
         </div>

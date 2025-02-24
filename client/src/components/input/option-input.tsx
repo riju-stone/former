@@ -1,10 +1,9 @@
 import React from "react";
 
-import Uncheck from "@/assets/icons/uncheck.svg";
-import Image from "next/image";
-import Plus from "@/assets/icons/plus.svg";
 import { AnimatePresence, motion } from "motion/react";
 import { FormElement, useFormStore } from "@/store/formStore";
+
+import { SquarePlus, CircleDashed } from "lucide-react"
 
 function OptionsInputComponent({ el }: { el: FormElement }) {
     const formStore = useFormStore();
@@ -37,7 +36,9 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <Image src={Uncheck} alt="checkbox" />
+                                <button className="opacity-50">
+                                    <CircleDashed size={15} />
+                                </button>
                                 <input
                                     type="text"
                                     placeholder={`Option ${index + 1}`}
@@ -47,8 +48,8 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
                             </motion.div>
                         </AnimatePresence>
                         {index == el.options.length - 1 ? (
-                            <button onClick={() => handleAddOption()}>
-                                <Image src={Plus} alt="add" />
+                            <button className="opacity-50" onClick={() => handleAddOption()}>
+                                <SquarePlus size={20} />
                             </button>
                         ) : null}
                     </motion.div>
