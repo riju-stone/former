@@ -25,16 +25,14 @@ const styles = {
 
 const getInputType = (data: FormElement) => {
     switch (data.type) {
-        case "short":
-            return <DefaultInputComponent el={data} disabled={true} />;
         case "long":
-            return <LongInputComponent el={data} disabled={true} />;
+            return <LongInputComponent disabled={true} />;
         case "option":
             return <OptionsInputComponent el={data} />;
         case "date":
-            return <DateInputComponent el={data} disabled={true} />;
+            return <DateInputComponent disabled={true} />;
         default:
-            return <DefaultInputComponent el={data} disabled={true} />;
+            return <DefaultInputComponent disabled={true} />;
     }
 };
 
@@ -42,27 +40,29 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
     const formStore = useFormStore();
     const { updateElementTitle, updateElementSubtitle } = formStore;
 
-    const { attributes, listeners, setNodeRef, transform, transition } =
-        useSortable({ id: id });
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: id });
 
     const style = {
         transform: CSS.Translate.toString(transform),
         transition,
+        zIndex: isDragging ? 999 : 1,
     };
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             <motion.div
                 className="w-full"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.1 }}
+                transition={{ duration: 0.2, type: "spring", ease: "easeInOut" }}
+                layout="size"
+                layoutId={`formElement-${id}`}
             >
                 <div
                     ref={setNodeRef}
                     style={style}
-                    className={styles.formElementWrapper}
+                    className={`${styles.formElementWrapper} ${isDragging ? "shadow-lg" : ""}`}
                 >
                     <div className={styles.formElementHeaderContainer}>
                         <div className={styles.formElementTitleContainer}>
@@ -97,10 +97,12 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                             </button>
                         </div>
                     </div>
-                    {getInputType(element)}
+                    <div className="w-full">
+                        {getInputType(element)}
+                    </div>
                 </div>
-            </motion.div>
-        </AnimatePresence>
+            </motion.div >
+        </AnimatePresence >
     );
 }
 

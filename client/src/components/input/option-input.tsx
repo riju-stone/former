@@ -18,11 +18,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
     };
 
     return (
-        <motion.div
-            layoutId={`inputField-${el.id}`}
-            transition={{ duration: 0.02, type: "spring" }}
-            className="w-full flex flex-col gap-2"
-        >
+        <div className="w-full flex flex-col gap-2">
             {el.options.map((op, index) => {
                 return (
                     <motion.div
@@ -55,7 +51,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
                     </motion.div>
                 );
             })}
-        </motion.div>
+        </div>
     );
 }
 

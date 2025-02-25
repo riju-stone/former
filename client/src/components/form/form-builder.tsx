@@ -54,7 +54,7 @@ function FormBuilderComponent() {
         addElement([...formElements, el]);
     };
 
-    const handleItemSwap = (active, over) => {
+    const handleItemSwap = (active: FormElement, over: FormElement) => {
         const oldIndex = formElements.findIndex((el) => el.id === active.id);
         const newIndex = formElements.findIndex((el) => el.id === over.id);
 
