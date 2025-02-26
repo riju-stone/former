@@ -1,11 +1,12 @@
 "use client";
 
 import FormBuilderComponent from "@/components/form/form-builder";
-import React from "react";
+import React, { useCallback } from "react";
 import { toast } from "sonner";
 import { FormState, useFormStore } from "@/store/formStore";
 import { deleteFormDraft, uploadBuild, uploadDraft } from "@/db/queries";
 import { useRouter } from "next/navigation";
+import { debounce } from "lodash"
 
 // Icons
 import { Eye, Save, BookCheck } from "lucide-react"
@@ -61,10 +62,10 @@ function FormBuilderPage() {
         await uploadDraft(formObject);
     };
 
-    const handleFormPreview = async () => {
+    const handleFormPreview = useCallback(async () => {
         handleSaveDraftLocally();
         router.push(`/preview/${formId}`);
-    };
+    }, [formId]);
 
 
     return (

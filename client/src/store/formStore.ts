@@ -23,6 +23,7 @@ export type FormState = {
 export type FormActions = {
     updateFormTitle: (title: string) => void;
     addElement: (el: Array<FormElement>) => void;
+    deleteElement: (id: string) => void;
     updateElementType: (id: string, type: string) => void;
     updateElementTitle: (id: string, title: string) => void;
     updateElementSubtitle: (id: string, subtitle: string) => void;
@@ -35,6 +36,11 @@ const getElementIndex = (elList: Array<FormElement>, id: string) => {
     return elList.findIndex((element) => element.id === id);
 };
 
+const deleteFromFormElements = (elId: string, elList: Array<FormElement>) => {
+    const filteredList = elList.filter((el) => el.id !== elId)
+    return filteredList
+}
+
 const getUpdatedElementType = (
     elList: Array<FormElement>,
     id: string,
@@ -45,7 +51,7 @@ const getUpdatedElementType = (
 
     // Add a default option
     if (type == "option") {
-        elList[idx].options = Array.from([{ id: "1", value: "" }]);
+        elList[idx].options = Array.from([{ id: "1", value: "Option 1" }]);
     }
 
     return elList;
@@ -102,7 +108,7 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
             formElements: [],
         })),
     updateFormTitle: (title: string) =>
-        set((state: FormState) => ({
+        set((state) => ({
             formTitle: title,
             formElements: state.formElements,
         })),
@@ -110,12 +116,15 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
         set(() => ({
             formElements: el,
         })),
+    deleteElement: (id: string) => set((state) => ({
+        formElements: deleteFromFormElements(id, state.formElements)
+    })),
     updateElementType: (id: string, type: string) =>
-        set((state: FormState) => ({
+        set((state) => ({
             formElements: getUpdatedElementType(state.formElements, id, type),
         })),
     updateElementTitle: (id: string, title: string) =>
-        set((state: FormState) => ({
+        set((state) => ({
             formElements: getUpdatedElementContent(
                 state.formElements,
                 id,
@@ -124,7 +133,7 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
             ),
         })),
     updateElementSubtitle: (id: string, subtitle: string) =>
-        set((state: FormState) => ({
+        set((state) => ({
             formElements: getUpdatedElementContent(
                 state.formElements,
                 id,
@@ -133,7 +142,7 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
             ),
         })),
     addOption: (id: string, opt: Option) =>
-        set((state: FormState) => ({
+        set((state) => ({
             formElements: addOptionToElement(state.formElements, id, opt),
         })),
     updateOption: (elId: string, optId: string, optValue: string) =>

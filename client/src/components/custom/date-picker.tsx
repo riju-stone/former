@@ -30,7 +30,7 @@ export function DatePickerComponent({ disabled }: { disabled: boolean }) {
                     {date ? (
                         format(date, "P")
                     ) : (
-                        <span className="opacity-50">MM-DD-YYYY</span>
+                        <span className="opacity-50">MM/DD/YYYY</span>
                     )}
                     <Calendar1 />
                 </Button>

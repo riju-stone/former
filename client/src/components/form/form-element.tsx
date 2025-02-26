@@ -38,7 +38,7 @@ const getInputType = (data: FormElement) => {
 
 const FormElementComponent = ({ id, element }: { id: string, element: FormElement }) => {
     const formStore = useFormStore();
-    const { updateElementTitle, updateElementSubtitle } = formStore;
+    const { updateElementTitle, updateElementSubtitle, deleteElement } = formStore;
 
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: id });
 
@@ -49,14 +49,13 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
     };
 
     return (
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
             <motion.div
                 className="w-full"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.2, type: "spring", ease: "easeInOut" }}
-                layout="size"
+                transition={{ duration: 0.3, type: "spring", ease: "easeInOut" }}
                 layoutId={`formElement-${id}`}
             >
                 <div
@@ -85,7 +84,8 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                                 id={id}
                                 element={element}
                             />
-                            <button className="opacity-50 touch-none">
+                            <button className="opacity-50 touch-none"
+                                onClick={() => deleteElement(id)}>
                                 <Trash2 size={18} />
                             </button>
                             <button

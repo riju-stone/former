@@ -6,21 +6,21 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Former",
-  description: "A simple & elegant form builder",
+    title: "Former",
+    description: "A simple & elegant form builder",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={` ${inter.className} antialiased`}>
-        <main>{children}</main>
-        <Toaster closeButton position="bottom-left" />
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body className={` ${inter.className} antialiased`}>
+                <main>{children}</main>
+                <Toaster closeButton position="bottom-left" />
+            </body>
+        </html>
+    );
 }
