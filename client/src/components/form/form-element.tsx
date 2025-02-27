@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { AnimatePresence, motion, Reorder } from "motion/react";
+import React from "react";
+import { motion, Reorder, useDragControls } from "motion/react";
 import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import OptionsInputComponent from "@/components/input/option-input";
 import { FormElement, useFormStore } from "@/store/formStore";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import DateInputComponent from "../input/date-input";
 import { Trash2, GripVertical } from "lucide-react"
 
@@ -39,29 +37,25 @@ const getInputType = (data: FormElement) => {
 const FormElementComponent = ({ id, element }: { id: string, element: FormElement }) => {
     const formStore = useFormStore();
     const { updateElementTitle, updateElementSubtitle, deleteElement } = formStore;
-
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: id });
-
-    const style = {
-        transform: CSS.Translate.toString(transform),
-        transition,
-        zIndex: isDragging ? 999 : 1,
-    };
+    const dragControls = useDragControls()
 
     return (
-        <AnimatePresence>
+        <Reorder.Item as="div"
+            className="w-full my-4"
+            value={element.id}
+            dragControls={dragControls}
+            dragListener={false}>
             <motion.div
                 className="w-full"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.3, type: "spring", ease: "easeInOut" }}
+                transition={{ duration: 0.25, type: "spring" }}
+                layout={true}
                 layoutId={`formElement-${id}`}
             >
                 <div
-                    ref={setNodeRef}
-                    style={style}
-                    className={`${styles.formElementWrapper} ${isDragging ? "shadow-lg" : ""}`}
+                    className={`${styles.formElementWrapper}`}
                 >
                     <div className={styles.formElementHeaderContainer}>
                         <div className={styles.formElementTitleContainer}>
@@ -89,8 +83,7 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                                 <Trash2 size={18} />
                             </button>
                             <button
-                                {...attributes}
-                                {...listeners}
+                                onPointerDown={(e) => dragControls.start(e)}
                                 className="opacity-50 touch-none cursor-grab"
                             >
                                 <GripVertical size={18} />
@@ -102,7 +95,7 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                     </div>
                 </div>
             </motion.div >
-        </AnimatePresence >
+        </Reorder.Item>
     );
 }
 

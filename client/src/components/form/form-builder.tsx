@@ -3,26 +3,10 @@
 import React from "react";
 import { CirclePlus } from "lucide-react"
 import { v7 as uuid } from "uuid";
-import { motion } from "motion/react";
-import {
-    closestCenter,
-    DndContext,
-    KeyboardSensor,
-    PointerSensor,
-    TouchSensor,
-    useSensor,
-    useSensors,
-} from "@dnd-kit/core";
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { motion, Reorder } from "motion/react";
 import FormElementComponent from "./form-element";
 
 import { FormElement, useFormStore } from "@/store/formStore";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 const styles = {
     builderWrapper:
@@ -41,61 +25,28 @@ function FormBuilderComponent() {
     const formStore = useFormStore();
     const { formElements, addElement } = formStore;
 
-    const dragSensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        }),
-        useSensor(TouchSensor),
-    );
-
     const handleAddFormElement = () => {
         const el = getDefaultFormElement();
         addElement([...formElements, el]);
     };
 
-    const handleItemSwap = (active: FormElement, over: FormElement) => {
-        const oldIndex = formElements.findIndex((el) => el.id === active.id);
-        const newIndex = formElements.findIndex((el) => el.id === over.id);
-
-        return arrayMove(formElements, oldIndex, newIndex);
-    };
-
-    const handleDragEnd = (event) => {
-        const { active, over } = event;
-
-        if (active.id !== over.id) {
-            const updatedElements = handleItemSwap(active, over);
-            addElement(updatedElements);
-        }
-    };
-
     return (
         <div className={styles.builderWrapper}>
-            <DndContext
-                sensors={dragSensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-                modifiers={[restrictToVerticalAxis]}
-            >
-                <SortableContext
-                    items={formElements}
-                    strategy={verticalListSortingStrategy}
-                >
-                    {formElements.map((element) => {
-                        return (
-                            <FormElementComponent
-                                key={element.id}
-                                id={element.id}
-                                element={element}
-                            />
-                        );
-                    })}
-                </SortableContext>
-            </DndContext>
+            <Reorder.Group as="div" axis="y"
+                className="w-full"
+                values={formElements}
+                onReorder={(els) => addElement(els)}>
+                {formElements.map((element) => {
+                    return <FormElementComponent
+                        key={element.id}
+                        id={element.id}
+                        element={element}
+                    />
+                })}
+            </Reorder.Group>
             <motion.div
-                layout
-                transition={{ duration: 0.1 }}
+                layout="position"
+                transition={{ duration: 0.15 }}
                 className={styles.addQuestionContainer}
             >
                 <button
