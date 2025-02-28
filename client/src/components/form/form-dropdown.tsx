@@ -142,15 +142,15 @@ function FormDropdownComponent({ id, element }) {
             else setMenuType("up")
         }
 
-        function handleMenuClose(event) {
-            console.log(event)
-        }
+        // function handleMenuClose(event) {
+        //     console.log(event)
+        // }
 
-        window.addEventListener("click", handleMenuClose);
+        // window.addEventListener("click", handleMenuClose);
 
-        return () => {
-            window.removeEventListener("click", handleMenuClose);
-        };
+        // return () => {
+        //     window.removeEventListener("click", handleMenuClose);
+        // };
     }, []);
 
     return (

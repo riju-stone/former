@@ -23,7 +23,8 @@ const getDefaultFormElement = (): FormElement => {
 
 function FormBuilderComponent() {
     const formStore = useFormStore();
-    const { formElements, addElement } = formStore;
+    const { formElements, addElement, reorderElements } = formStore;
+
 
     const handleAddFormElement = () => {
         const el = getDefaultFormElement();
@@ -35,7 +36,7 @@ function FormBuilderComponent() {
             <Reorder.Group as="div" axis="y"
                 className="w-full"
                 values={formElements}
-                onReorder={(els) => addElement(els)}>
+                onReorder={reorderElements}>
                 {formElements.map((element) => {
                     return <FormElementComponent
                         key={element.id}
@@ -56,7 +57,7 @@ function FormBuilderComponent() {
                     <CirclePlus size={18} /> Add Question
                 </button>
             </motion.div>
-        </div>
+        </div >
     );
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, Reorder, useDragControls } from "motion/react";
+import { AnimatePresence, motion, Reorder, useDragControls } from "motion/react";
 import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
@@ -41,61 +41,65 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
 
     return (
         <Reorder.Item as="div"
-            className="w-full my-4"
-            value={element.id}
+            className="relative w-full my-4"
+            value={element}
             dragControls={dragControls}
-            dragListener={false}>
-            <motion.div
-                className="w-full"
-                initial={{ opacity: 0, y: -30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.25, type: "spring" }}
-                layout={true}
-                layoutId={`formElement-${id}`}
-            >
-                <div
-                    className={`${styles.formElementWrapper}`}
+            dragListener={false}
+        >
+            <AnimatePresence>
+                <motion.div
+                    className="w-full"
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 30 }}
+                    transition={{ duration: 0.25, type: "spring" }}
+                    layout={true}
+                    layoutId={`formElement-${id}`}
                 >
-                    <div className={styles.formElementHeaderContainer}>
-                        <div className={styles.formElementTitleContainer}>
-                            <input
-                                placeholder="Write a question"
-                                className={styles.formElementTitle}
-                                value={element.main_title}
-                                onChange={(e) => updateElementTitle(id, e.target.value)}
-                            />
-                            <input
-                                placeholder="Write a help text or caption (optional)."
-                                className={styles.formElementSubtitle}
-                                value={element.sub_title}
-                                onChange={(e) => updateElementSubtitle(id, e.target.value)}
-                            />
-                            {element.type == "long" ? <input className={styles.formElementSubtitle} placeholder="Maximum characters" /> : null}
+                    <div
+                        className={`${styles.formElementWrapper}`}
+                    >
+                        <div className={styles.formElementHeaderContainer}>
+                            <div className={styles.formElementTitleContainer}>
+                                <input
+                                    placeholder="Write a question"
+                                    className={styles.formElementTitle}
+                                    value={element.main_title}
+                                    onChange={(e) => updateElementTitle(id, e.target.value)}
+                                />
+                                <input
+                                    placeholder="Write a help text or caption (optional)."
+                                    className={styles.formElementSubtitle}
+                                    value={element.sub_title}
+                                    onChange={(e) => updateElementSubtitle(id, e.target.value)}
+                                />
+                                {element.type == "long" ? <input className={styles.formElementSubtitle} placeholder="Maximum characters" /> : null}
+                            </div>
+                            <div className="flex justify-center items-center gap-2">
+                                <FormDropdownComponent
+                                    id={id}
+                                    element={element}
+                                />
+                                <button className="opacity-50 touch-none"
+                                    onClick={() => deleteElement(id)}>
+                                    <Trash2 size={18} />
+                                </button>
+                                <button
+                                    onPointerDown={(e) => dragControls.start(e)}
+                                    className="opacity-50 touch-none cursor-grab"
+                                >
+                                    <GripVertical size={18} />
+                                </button>
+                            </div>
                         </div>
-                        <div className="flex justify-center items-center gap-2">
-                            <FormDropdownComponent
-                                id={id}
-                                element={element}
-                            />
-                            <button className="opacity-50 touch-none"
-                                onClick={() => deleteElement(id)}>
-                                <Trash2 size={18} />
-                            </button>
-                            <button
-                                onPointerDown={(e) => dragControls.start(e)}
-                                className="opacity-50 touch-none cursor-grab"
-                            >
-                                <GripVertical size={18} />
-                            </button>
+                        <div className="w-full">
+                            {getInputType(element)}
                         </div>
                     </div>
-                    <div className="w-full">
-                        {getInputType(element)}
-                    </div>
-                </div>
-            </motion.div >
+                </motion.div >
+            </AnimatePresence>
         </Reorder.Item>
+
     );
 }
 

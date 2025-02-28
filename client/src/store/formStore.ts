@@ -24,6 +24,7 @@ export type FormActions = {
     updateFormTitle: (title: string) => void;
     addElement: (el: Array<FormElement>) => void;
     deleteElement: (id: string) => void;
+    reorderElements: (formElements: Array<FormElement>) => void;
     updateElementType: (id: string, type: string) => void;
     updateElementTitle: (id: string, title: string) => void;
     updateElementSubtitle: (id: string, subtitle: string) => void;
@@ -118,6 +119,9 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
         })),
     deleteElement: (id: string) => set((state) => ({
         formElements: deleteFromFormElements(id, state.formElements)
+    })),
+    reorderElements: (elements: Array<FormElement>) => set(() => ({
+        formElements: [...elements]
     })),
     updateElementType: (id: string, type: string) =>
         set((state) => ({
