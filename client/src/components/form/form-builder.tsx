@@ -23,7 +23,7 @@ const getDefaultFormElement = (): FormElement => {
 
 function FormBuilderComponent() {
     const formStore = useFormStore();
-    const { formElements, addElement, reorderElements } = formStore;
+    const { formElements, addElement } = formStore;
 
 
     const handleAddFormElement = () => {
@@ -36,7 +36,7 @@ function FormBuilderComponent() {
             <Reorder.Group as="div" axis="y"
                 className="w-full"
                 values={formElements}
-                onReorder={reorderElements}>
+                onReorder={addElement}>
                 {formElements.map((element) => {
                     return <FormElementComponent
                         key={element.id}

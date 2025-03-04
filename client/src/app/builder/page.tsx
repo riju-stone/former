@@ -1,18 +1,12 @@
 "use client";
 
 import FormBuilderComponent from "@/components/form/form-builder";
-import React, { useCallback } from "react";
+import React from "react";
 import { toast } from "sonner";
 import { FormState, useFormStore } from "@/store/formStore";
-import { deleteFormDraft, uploadBuild, uploadDraft } from "@/db/queries";
 import { useRouter } from "next/navigation";
-import { debounce } from "lodash"
-
-// Icons
 import { Eye, Save, BookCheck } from "lucide-react"
-
-import validateForm from "@/lib/validation";
-import { useFormErrorStore } from "@/store/errorStore";
+import { saveFormDraft } from "@/lib/formActions";
 
 const styles = {
     builderPage: "h-full w-full flex justify-center items-center",
@@ -29,12 +23,10 @@ const styles = {
         "h-[32px] flex justify-center items-center gap-1 py-[7px] px-[16px] bg-green-500 border-[1px] border-green-500 rounded-xl text-[14px] text-white font-[600] leading-5 shadow-button",
 };
 
-function FormBuilderPage() {
+function FormBuilderPage()
+{
     const formStore = useFormStore();
-    const { formId, formTitle, formElements, updateFormTitle } = formStore;
-
-    const formErrorStore = useFormErrorStore()
-    const { setFormError } = formErrorStore
+    const { formId, formTitle, formElements, formErrors, updateFormTitle } = formStore;
 
     const router = useRouter();
 
@@ -42,31 +34,26 @@ function FormBuilderPage() {
         formId: formId,
         formTitle: formTitle,
         formElements: formElements,
+        formErrors: formErrors
     };
 
-    const handleFormUpload = async () => {
-        await deleteFormDraft(formObject);
-        await uploadBuild(formObject);
-        localStorage.removeItem(`form-build-${formId}`);
-        router.push("/");
-    };
+    console.log(formObject)
 
-    const handleSaveDraftLocally = () => {
-        localStorage.setItem(
-            `form-build-${formObject.formId}`,
-            JSON.stringify(formObject),
-        );
-    };
+    const handleFormPublish = () =>
+    {
+        // if (!formErrors.formErrorCode && Object.keys(formErrors.formBlockErrors).length == 0) {
+        //     publishFormBuild(formObject)
+        //     router.push("/")
+        // } else {
+        //     toast.error("Form has errors. Please fix them first")
+        // }
+    }
 
-    const handleSaveDraftGlobally = async () => {
-        await uploadDraft(formObject);
-    };
-
-    const handleFormPreview = useCallback(async () => {
-        handleSaveDraftLocally();
+    const handleFormPreview = async () =>
+    {
+        saveFormDraft(formObject)
         router.push(`/preview/${formId}`);
-    }, [formId]);
-
+    };
 
     return (
         <div className={styles.builderPage}>
@@ -81,8 +68,8 @@ function FormBuilderPage() {
                         onChange={(e) => updateFormTitle(e.target.value)}
                     />
                     <button
-                        className={`${styles.whiteButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
-                        disabled={formElements.length > 0 ? false : true}
+                        className={`${styles.whiteButtonDisabled} ${formErrors.formErrorCode.length == 0 ? "opacity-100" : "opacity-50"}`}
+                        disabled={formErrors.formErrorCode.length == 0 ? false : true}
                         onClick={() => handleFormPreview()}
                     >
                         Preview
@@ -93,8 +80,8 @@ function FormBuilderPage() {
                 <div className={styles.footerContainer}>
                     <button
                         type="submit"
-                        className={`${styles.whiteButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
-                        disabled={formElements.length > 0 ? false : true}
+                        className={`${styles.whiteButtonDisabled} ${formErrors.formErrorCode.length == 0 ? "opacity-100" : "opacity-50"}`}
+                        disabled={formErrors.formErrorCode.length == 0 ? false : true}
                     // onClick={() =>
                     //     toast.promise(handleSaveDraftGlobally(), {
                     //         loading: "Uploading Form Draft",
@@ -108,7 +95,7 @@ function FormBuilderPage() {
                     </button>
                     <button
                         type="submit"
-                        onClick={() => validateForm(formObject)}
+                        onClick={() => handleFormPublish()}
                         // onClick={() =>
                         //     toast.promise(handleFormUpload(), {
                         //         loading: "Uploading Current Build",
@@ -116,8 +103,8 @@ function FormBuilderPage() {
                         //         error: "Failed to Upload Form Build",
                         //     })
                         // }
-                        className={`${styles.greenButtonDisabled} ${formElements.length > 0 ? "opacity-100" : "opacity-50"}`}
-                        disabled={formElements.length > 0 ? false : true}
+                        className={`${styles.greenButtonDisabled} ${formErrors.formErrorCode.length == 0 ? "opacity-100" : "opacity-50"}`}
+                        disabled={formErrors.formErrorCode.length == 0 ? false : true}
                     >
                         <BookCheck size={18} />
                         Publish Form
