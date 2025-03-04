@@ -17,16 +17,19 @@ const styles = {
         "flex justify-center items-center gap-1 py-[6px] px-4 bg-white border-[1px] border-gray-200 rounded-xl font-[600] text-[14px] shadow-button",
 };
 
-const getDefaultFormElement = (): FormElement => {
+const getDefaultFormElement = (): FormElement =>
+{
     return { id: uuid(), type: "short", main_title: "", sub_title: "" };
 };
 
-function FormBuilderComponent() {
+function FormBuilderComponent()
+{
     const formStore = useFormStore();
     const { formElements, addElement } = formStore;
 
 
-    const handleAddFormElement = () => {
+    const handleAddFormElement = () =>
+    {
         const el = getDefaultFormElement();
         addElement([...formElements, el]);
     };
@@ -37,7 +40,8 @@ function FormBuilderComponent() {
                 className="w-full"
                 values={formElements}
                 onReorder={addElement}>
-                {formElements.map((element) => {
+                {formElements.map((element) =>
+                {
                     return <FormElementComponent
                         key={element.id}
                         id={element.id}

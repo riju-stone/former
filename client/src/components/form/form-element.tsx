@@ -12,7 +12,9 @@ import { Trash2, GripVertical } from "lucide-react"
 
 const styles = {
     formElementWrapper:
-        "w-full flex flex-col justify-center items-center gap-2 bg-white border-[1px] border-gray-200 rounded-xl hover:bg-gray-50 p-4 touch-auto",
+        "w-full flex flex-col justify-center items-center gap-2 bg-white rounded-xl hover:bg-gray-50 p-4 touch-auto",
+    formNormalElementBorder: "border-[1px] border-gray-200",
+    formErrorElementBorder: "border-[2px] border-red-300",
     formElementHeaderContainer: "w-full flex justify-between items-start gap-2",
     formElementTitleContainer: "flex-1 flex-col justify-center items-center gap-1",
     formElementTitle:
@@ -21,8 +23,10 @@ const styles = {
         "w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none",
 };
 
-const getInputType = (data: FormElement) => {
-    switch (data.type) {
+const getInputType = (data: FormElement) =>
+{
+    switch (data.type)
+    {
         case "long":
             return <LongInputComponent disabled={true} />;
         case "option":
@@ -34,9 +38,10 @@ const getInputType = (data: FormElement) => {
     }
 };
 
-const FormElementComponent = ({ id, element }: { id: string, element: FormElement }) => {
+const FormElementComponent = ({ id, element }: { id: string, element: FormElement }) =>
+{
     const formStore = useFormStore();
-    const { updateElementTitle, updateElementSubtitle, deleteElement } = formStore;
+    const { updateElementTitle, updateElementSubtitle, deleteElement, formErrors } = formStore;
     const dragControls = useDragControls()
 
     return (
@@ -57,7 +62,7 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                     layoutId={`formElement-${id}`}
                 >
                     <div
-                        className={`${styles.formElementWrapper}`}
+                        className={`${styles.formElementWrapper} ${formErrors.formBlockErrors[id] ? styles.formErrorElementBorder : styles.formNormalElementBorder}`}
                     >
                         <div className={styles.formElementHeaderContainer}>
                             <div className={styles.formElementTitleContainer}>
@@ -98,7 +103,7 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                     </div>
                 </motion.div >
             </AnimatePresence>
-        </Reorder.Item>
+        </Reorder.Item >
 
     );
 }

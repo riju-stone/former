@@ -13,7 +13,9 @@ const styles = {
     builderWrapper:
         "h-full w-full md:w-[640px] flex-col justify-center align-middle",
     headerContainer:
-        "h-[56px] w-full flex justify-between items-center bg-gray-00 border-[1px] border-gray-200 px-6",
+        "h-[56px] w-full flex justify-between items-center bg-gray-00 px-6",
+    headerNormal: "border-[1px] border-gray-200",
+    headerError: "border-[2px] border-red-300",
     formTitle: "text-[16px] font-[600] border-none outline-none",
     footerContainer:
         "h-[64px] w-full md:w-[640px] flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px]",
@@ -37,7 +39,10 @@ function FormBuilderPage()
         formErrors: formErrors
     };
 
-    console.log(formObject)
+    const checkForFormErrors = () =>
+    {
+        return formErrors.formErrorCode.length > 0 || Object.keys(formErrors.formBlockErrors).length > 0;
+    }
 
     const handleFormPublish = () =>
     {
@@ -58,7 +63,7 @@ function FormBuilderPage()
     return (
         <div className={styles.builderPage}>
             <div className={styles.builderWrapper}>
-                <div className={styles.headerContainer}>
+                <div className={`${styles.headerContainer} ${formErrors.formErrorCode.length == 0 ? styles.headerNormal : styles.headerError}`}>
                     <input
                         id="form-title"
                         className={`${styles.formTitle}`}
@@ -68,8 +73,8 @@ function FormBuilderPage()
                         onChange={(e) => updateFormTitle(e.target.value)}
                     />
                     <button
-                        className={`${styles.whiteButtonDisabled} ${formErrors.formErrorCode.length == 0 ? "opacity-100" : "opacity-50"}`}
-                        disabled={formErrors.formErrorCode.length == 0 ? false : true}
+                        className={`${styles.whiteButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
+                        disabled={!checkForFormErrors() ? false : true}
                         onClick={() => handleFormPreview()}
                     >
                         Preview
@@ -80,8 +85,8 @@ function FormBuilderPage()
                 <div className={styles.footerContainer}>
                     <button
                         type="submit"
-                        className={`${styles.whiteButtonDisabled} ${formErrors.formErrorCode.length == 0 ? "opacity-100" : "opacity-50"}`}
-                        disabled={formErrors.formErrorCode.length == 0 ? false : true}
+                        className={`${styles.whiteButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
+                        disabled={!checkForFormErrors() ? false : true}
                     // onClick={() =>
                     //     toast.promise(handleSaveDraftGlobally(), {
                     //         loading: "Uploading Form Draft",
@@ -103,8 +108,8 @@ function FormBuilderPage()
                         //         error: "Failed to Upload Form Build",
                         //     })
                         // }
-                        className={`${styles.greenButtonDisabled} ${formErrors.formErrorCode.length == 0 ? "opacity-100" : "opacity-50"}`}
-                        disabled={formErrors.formErrorCode.length == 0 ? false : true}
+                        className={`${styles.greenButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
+                        disabled={!checkForFormErrors() ? false : true}
                     >
                         <BookCheck size={18} />
                         Publish Form
