@@ -13,10 +13,10 @@ const styles = {
     builderWrapper:
         "h-full w-full md:w-[640px] flex-col justify-center align-middle",
     headerContainer:
-        "h-[56px] w-full flex justify-between items-center bg-gray-00 px-6",
-    headerNormal: "border-[1px] border-gray-200",
-    headerError: "border-[2px] border-red-300",
-    formTitle: "text-[16px] font-[600] border-none outline-none",
+        "h-[56px] w-full flex justify-between items-center px-6",
+    headerNormal: "border-[1px] border-gray-200 bg-gray-50",
+    headerError: "border-[2px] border-red-200 bg-red-50",
+    formTitle: "text-[16px] font-[600] bg-transparent border-none outline-none",
     footerContainer:
         "h-[64px] w-full md:w-[640px] flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px]",
     whiteButtonDisabled:
@@ -74,7 +74,6 @@ function FormBuilderPage()
                     />
                     <button
                         className={`${styles.whiteButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
-                        disabled={!checkForFormErrors() ? false : true}
                         onClick={() => handleFormPreview()}
                     >
                         Preview
@@ -86,7 +85,6 @@ function FormBuilderPage()
                     <button
                         type="submit"
                         className={`${styles.whiteButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
-                        disabled={!checkForFormErrors() ? false : true}
                     // onClick={() =>
                     //     toast.promise(handleSaveDraftGlobally(), {
                     //         loading: "Uploading Form Draft",
@@ -109,7 +107,6 @@ function FormBuilderPage()
                         //     })
                         // }
                         className={`${styles.greenButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
-                        disabled={!checkForFormErrors() ? false : true}
                     >
                         <BookCheck size={18} />
                         Publish Form

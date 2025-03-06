@@ -35,18 +35,19 @@ const styles = {
         "h-full w-full flex justify-start align-middle gap-2 p-2 text-[14px] font-medium break-keep rounded-lg bg-gray-00 hover:bg-gray-50 cursor-pointer",
 };
 
-function getDropdownAnimObject(type: string) {
+function getDropdownAnimObject(type: string)
+{
     return {
         closed: {
             opacity: 0,
             y: type == "down" ? -20 : -295,
             x: -275,
             transition: {
-                duration: 0.3,
-                delay: 0.15,
+                duration: 0.2,
+                delay: 0.1,
                 ease: [0.85, 0, 0.15, 1],
                 opacity: {
-                    delay: 0.15,
+                    delay: 0.12,
                 },
             },
         },
@@ -66,8 +67,10 @@ function getDropdownAnimObject(type: string) {
 
 }
 
-function FormTypeLogo({ type }) {
-    switch (type) {
+function FormTypeLogo({ type })
+{
+    switch (type)
+    {
         case "short":
             return <FileText size={18} />
         case "long":
@@ -83,7 +86,8 @@ function FormTypeLogo({ type }) {
     }
 }
 
-function Dropdown({ menuType, isMenuOpen, handleSelection }) {
+function Dropdown({ menuType, isMenuOpen, handleSelection })
+{
     return <AnimatePresence mode="wait">
         {isMenuOpen && (
             <motion.div
@@ -101,7 +105,8 @@ function Dropdown({ menuType, isMenuOpen, handleSelection }) {
                     exit="closed"
                 >
                     <div className={styles.dropdownListHeading}>Input Types</div>
-                    {FormTypes.map((type) => {
+                    {FormTypes.map((type) =>
+                    {
                         return (
                             <div
                                 key={type.tag}
@@ -123,40 +128,87 @@ function Dropdown({ menuType, isMenuOpen, handleSelection }) {
 }
 
 
-function FormDropdownComponent({ id, element }) {
+function FormDropdownComponent({ id, element })
+{
     const dropRef = useRef(null)
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [menuType, setMenuType] = useState("down");
     const modifyElement = useFormStore((state) => state.updateElementType);
 
-    const handleSelection = (e) => {
+    // Function to check position and update menuType
+    const updateMenuPosition = () =>
+    {
+        if (dropRef.current)
+        {
+            const rect = dropRef.current.getBoundingClientRect();
+            const newMenuType = rect.top < window.innerHeight / 2 ? "down" : "up";
+            if (newMenuType !== menuType)
+            {
+                setMenuType(newMenuType);
+            }
+        }
+    };
+
+    const handleSelection = (e) =>
+    {
         const elType = e.currentTarget.getAttribute("data-item");
         modifyElement(id, elType);
         setMenuOpen(false);
     };
 
-    useEffect(() => {
-        if (dropRef.current) {
-            const rect = dropRef.current.getBoundingClientRect();
-            if (rect.top < window.innerHeight / 2) setMenuType("down")
-            else setMenuType("up")
+    // Toggle menu with position check
+    const toggleMenu = () =>
+    {
+        // Check position before opening menu
+        updateMenuPosition();
+        setMenuOpen(!isMenuOpen);
+    };
+
+    useEffect(() =>
+    {
+        // Initial position check
+        updateMenuPosition();
+
+        // Add scroll event listener
+        window.addEventListener("scroll", updateMenuPosition, true);
+
+        // Add resize event listener
+        window.addEventListener("resize", updateMenuPosition);
+
+        return () =>
+        {
+            // Clean up
+            window.removeEventListener("scroll", updateMenuPosition, true);
+            window.removeEventListener("resize", updateMenuPosition);
+        };
+    }, [menuType]);
+
+    useEffect(() =>
+    {
+        const handleClickOutside = (e: MouseEvent) =>
+        {
+            if (dropRef.current && !dropRef.current.contains(e.target as Node))
+            {
+                setMenuOpen(false)
+            }
         }
 
-        // function handleMenuClose(event) {
-        //     console.log(event)
-        // }
+        if (isMenuOpen)
+        {
+            document.addEventListener("click", handleClickOutside)
+        }
 
-        // window.addEventListener("click", handleMenuClose);
+        return () =>
+        {
+            document.removeEventListener("click", handleClickOutside)
+        }
 
-        // return () => {
-        //     window.removeEventListener("click", handleMenuClose);
-        // };
-    }, []);
+    }, [isMenuOpen])
 
     return (
         <div className="relative w-full" ref={dropRef}>
             <button
-                onClick={() => setMenuOpen(!isMenuOpen)} className="h-[1.25rem] flex justify-center items-center gap-1 py-1">
+                onClick={toggleMenu} className="h-[1.25rem] flex justify-center items-center gap-1 py-1">
                 <div className="opacity-50">
                     <AnimatePresence mode="wait">
                         <motion.div key={element.type} initial={{ opacity: 0, y: 10 }}

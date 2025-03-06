@@ -12,9 +12,9 @@ import { Trash2, GripVertical } from "lucide-react"
 
 const styles = {
     formElementWrapper:
-        "w-full flex flex-col justify-center items-center gap-2 bg-white rounded-xl hover:bg-gray-50 p-4 touch-auto",
-    formNormalElementBorder: "border-[1px] border-gray-200",
-    formErrorElementBorder: "border-[2px] border-red-300",
+        "w-full flex flex-col justify-center items-center gap-2 rounded-xl p-4 touch-auto",
+    formNormalElementBorder: "border-[1px] border-gray-200 bg-white hover:bg-gray-50",
+    formErrorElementBorder: "border-[2px] border-red-200 bg-red-50",
     formElementHeaderContainer: "w-full flex justify-between items-start gap-2",
     formElementTitleContainer: "flex-1 flex-col justify-center items-center gap-1",
     formElementTitle:
