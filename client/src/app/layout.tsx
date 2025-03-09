@@ -14,12 +14,13 @@ export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
-}>) {
+}>)
+{
     return (
         <html lang="en">
             <body className={` ${inter.className} antialiased`}>
                 <main>{children}</main>
-                <Toaster closeButton position="bottom-left" />
+                <Toaster richColors closeButton theme="light" position="bottom-right" />
             </body>
         </html>
     );

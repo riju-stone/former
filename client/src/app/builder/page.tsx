@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { FormState, useFormStore } from "@/store/formStore";
 import { useRouter } from "next/navigation";
 import { Eye, Save, BookCheck } from "lucide-react"
-import { saveFormDraft } from "@/lib/formActions";
+import { publishFormBuild, saveFormDraft, saveFormBuild } from "@/lib/formActions";
 
 const styles = {
     builderPage: "h-full w-full flex justify-center items-center",
@@ -46,19 +46,42 @@ function FormBuilderPage()
 
     const handleFormPublish = () =>
     {
-        // if (!formErrors.formErrorCode && Object.keys(formErrors.formBlockErrors).length == 0) {
-        //     publishFormBuild(formObject)
-        //     router.push("/")
-        // } else {
-        //     toast.error("Form has errors. Please fix them first")
-        // }
+        if (!checkForFormErrors())
+        {
+            publishFormBuild(formObject)
+            router.push("/")
+            toast.success("Form published successfully")
+        } else
+        {
+            toast.error("Form has errors. Please fix them first")
+        }
     }
 
-    const handleFormPreview = async () =>
+    const handleFormPreview = () =>
     {
-        saveFormDraft(formObject)
-        router.push(`/preview/${formId}`);
+        if (!checkForFormErrors())
+        {
+            saveFormDraft(formObject)
+            router.push(`/preview/${formId}`);
+
+        } else
+        {
+            toast.error("Form has errors. Please fix them first")
+        }
     };
+
+    const handleFormDraft = () =>
+    {
+        if (!checkForFormErrors())
+        {
+            saveFormBuild(formObject)
+            router.push("/")
+            toast.success("Form build saved successfully")
+        } else
+        {
+            toast.error("Form has errors. Please fix them first")
+        }
+    }
 
     return (
         <div className={styles.builderPage}>
@@ -73,7 +96,7 @@ function FormBuilderPage()
                         onChange={(e) => updateFormTitle(e.target.value)}
                     />
                     <button
-                        className={`${styles.whiteButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
+                        className={`${styles.whiteButtonDisabled} "opacity-100"`}
                         onClick={() => handleFormPreview()}
                     >
                         Preview
@@ -84,14 +107,8 @@ function FormBuilderPage()
                 <div className={styles.footerContainer}>
                     <button
                         type="submit"
-                        className={`${styles.whiteButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
-                    // onClick={() =>
-                    //     toast.promise(handleSaveDraftGlobally(), {
-                    //         loading: "Uploading Form Draft",
-                    //         success: "Form Draft Uploaded",
-                    //         error: "Failed to Upload Form Draft",
-                    //     })
-                    // }
+                        className={`${styles.whiteButtonDisabled} "opacity-100"`}
+                        onClick={() => handleFormDraft()}
                     >
                         <Save size={18} />
                         Save as Draft
@@ -99,14 +116,7 @@ function FormBuilderPage()
                     <button
                         type="submit"
                         onClick={() => handleFormPublish()}
-                        // onClick={() =>
-                        //     toast.promise(handleFormUpload(), {
-                        //         loading: "Uploading Current Build",
-                        //         success: "Form Build Uploaded Successfully",
-                        //         error: "Failed to Upload Form Build",
-                        //     })
-                        // }
-                        className={`${styles.greenButtonDisabled} ${!checkForFormErrors() ? "opacity-100" : "opacity-50"}`}
+                        className={`${styles.greenButtonDisabled} "opacity-100"`}
                     >
                         <BookCheck size={18} />
                         Publish Form

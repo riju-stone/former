@@ -149,9 +149,9 @@ function FormDropdownComponent({ id, element })
         }
     };
 
-    const handleSelection = (e) =>
+    const handleSelection = (e: Event) =>
     {
-        const elType = e.currentTarget.getAttribute("data-item");
+        const elType = (e.currentTarget as HTMLDivElement).getAttribute("data-item");
         modifyElement(id, elType);
         setMenuOpen(false);
     };
