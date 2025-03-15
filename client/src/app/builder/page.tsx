@@ -3,10 +3,11 @@
 import FormBuilderComponent from "@/components/form/form-builder";
 import React from "react";
 import { toast } from "sonner";
-import { FormState, useFormStore } from "@/store/formStore";
+import { useFormStore } from "@/store/formStore";
+import { FormState } from "@/types/formState";
 import { useRouter } from "next/navigation";
 import { Eye, Save, BookCheck } from "lucide-react"
-import { publishFormBuild, saveFormDraft, saveFormBuild } from "@/lib/formActions";
+import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
 
 const styles = {
     builderPage: "h-full w-full flex justify-center items-center",
@@ -48,7 +49,7 @@ function FormBuilderPage()
     {
         if (!checkForFormErrors())
         {
-            publishFormBuild(formObject)
+            saveFormBuild(formObject)
             router.push("/")
             toast.success("Form published successfully")
         } else
@@ -61,7 +62,7 @@ function FormBuilderPage()
     {
         if (!checkForFormErrors())
         {
-            saveFormDraft(formObject)
+            saveFormBuildLocally(formObject)
             router.push(`/preview/${formId}`);
 
         } else

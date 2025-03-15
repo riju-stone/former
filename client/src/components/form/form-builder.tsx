@@ -6,7 +6,8 @@ import { v7 as uuid } from "uuid";
 import { motion, Reorder } from "motion/react";
 import FormElementComponent from "./form-element";
 
-import { FormElement, useFormStore } from "@/store/formStore";
+import { useFormStore } from "@/store/formStore";
+import { FormElement } from "@/types/formState";
 
 const styles = {
     builderWrapper:

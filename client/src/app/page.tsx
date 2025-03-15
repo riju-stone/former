@@ -1,9 +1,10 @@
 "use client";
 
-import { fetchAllFormBuilds, fetchAllFormDrafts } from "@/db/queries";
+import { fetchAllFormBuilds } from "@/db/queries";
 import { useEffect, useState } from "react";
-
-import {
+import Link from "next/link";
+import
+{
     Table,
     TableBody,
     TableCell,
@@ -15,28 +16,29 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useFormStore } from "@/store/formStore";
 
-export default function Home() {
+export default function Home()
+{
     const formStore = useFormStore();
     const { resetFormStore } = formStore;
 
     const [buildData, setBuildData] = useState([]);
-    const [draftData, setDraftData] = useState([]);
     const router = useRouter();
 
-    useEffect(() => {
-        const fetchDataFromDB = async () => {
+    useEffect(() =>
+    {
+        const fetchDataFromDB = async () =>
+        {
             const builds = await fetchAllFormBuilds();
-            const drafts = await fetchAllFormDrafts();
 
             console.log(builds);
             setBuildData(builds);
-            setDraftData(drafts);
         };
 
         fetchDataFromDB();
     }, []);
 
-    const handleCreateNewBuild = () => {
+    const handleCreateNewBuild = () =>
+    {
         resetFormStore();
         router.push("/builder");
     };
@@ -56,7 +58,7 @@ export default function Home() {
                 Create New Form
             </button>
             <p className="text-[1.5rem] md:text-[2rem] font-[500] text-gray-950">
-                Completed Form Builds
+                Published Forms
             </p>
             <div className="w-full md:w-[75%]">
                 <Table>
@@ -67,35 +69,14 @@ export default function Home() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {buildData.map((form) => {
+                        {buildData.map((form) =>
+                        {
                             return (
                                 <TableRow key={`build-row-${form.id}`}>
-                                    <TableCell>{form.formName}</TableCell>
+                                    <TableCell> <Link href={`/builder/${form.id}`}>{form.formName == "" ? "Untitled Form" : form.formName}</Link></TableCell>
                                     <TableCell>{format(form.updatedAt, "PPP")}</TableCell>
                                 </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </div>
-            <p className="text-[1.5rem] md:text-[2rem] font-[500] text-gray-950">
-                Saved Form Drafts
-            </p>
-            <div className="w-full md:w-[75%]">
-                <Table>
-                    <TableHeader className="w-full">
-                        <TableRow>
-                            <TableHead>Form Name</TableHead>
-                            <TableHead>Last Updated</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {draftData.map((form) => {
-                            return (
-                                <TableRow key={`build-row-${form.id}`}>
-                                    <TableCell>{form.formName}</TableCell>
-                                    <TableCell>{format(form.updatedAt, "PPP")}</TableCell>
-                                </TableRow>
+
                             );
                         })}
                     </TableBody>

@@ -1,7 +1,8 @@
 import React from "react";
 
 import { AnimatePresence, motion } from "motion/react";
-import { FormElement, useFormStore } from "@/store/formStore";
+import { useFormStore } from "@/store/formStore";
+import { FormElement } from "@/types/formState";
 
 import { SquarePlus, CircleDashed } from "lucide-react"
 
@@ -38,6 +39,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
                                 <input
                                     type="text"
                                     placeholder={`Option ${index + 1}`}
+                                    value={op.value}
                                     onChange={(e) => updateOption(el.id, op.id, e.target.value)}
                                     className="h-[32px] flex-1 px-2 py-[6px] border-[1px] outline-none bg-transparent hover:bg-white border-gray-200 rounded-lg text-[14px] text-gray-950 font-[400]"
                                 />

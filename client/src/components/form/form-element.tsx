@@ -6,7 +6,8 @@ import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import OptionsInputComponent from "@/components/input/option-input";
-import { FormElement, useFormStore } from "@/store/formStore";
+import { useFormStore } from "@/store/formStore";
+import { FormElement } from "@/types/formState";
 import DateInputComponent from "../input/date-input";
 import { Trash2, GripVertical } from "lucide-react"
 
