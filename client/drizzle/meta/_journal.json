@@ -15,6 +15,20 @@
       "when": 1742318219666,
       "tag": "0001_known_katie_power",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1742321215725,
+      "tag": "0002_outgoing_microchip",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1742322759652,
+      "tag": "0003_cold_shadowcat",
+      "breakpoints": true
     }
   ]
 }
