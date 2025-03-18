@@ -1,0 +1,1 @@
+ALTER TABLE "published-forms" ADD COLUMN "formExpiry" timestamp with time zone NOT NULL;

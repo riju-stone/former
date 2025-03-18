@@ -8,6 +8,13 @@
       "when": 1742032364276,
       "tag": "0000_special_nova",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1742318219666,
+      "tag": "0001_known_katie_power",
+      "breakpoints": true
     }
   ]
 }

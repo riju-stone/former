@@ -21,6 +21,7 @@ export const formPublishedTable = pgTable("published-forms", {
 	id: varchar().primaryKey(),
 	formName: varchar({ length: 50 }).notNull(),
 	builderData: json().notNull(),
+	formExpiry: timestamp({ withTimezone: true }).notNull(),
 	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 	updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
