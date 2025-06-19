@@ -3,7 +3,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { auth } from './lib/auth.js'
-
+import "dotenv/config"
 import type { Session } from "./types.js"
 
 const app = new Hono<{ Variables: Session }>()
@@ -26,7 +26,7 @@ app.use("/api/auth/*", cors({
 // Middleware for Session Management
 app.use("*", async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers })
-  
+
   if (!session) {
     c.set('user', null)
     c.set('session', null)
