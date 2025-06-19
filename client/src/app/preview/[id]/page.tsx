@@ -5,13 +5,12 @@ import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import DateInputComponent from "@/components/input/date-input";
 import { FormElement, FormState, FormOption } from "@/store/formStore";
+import { FormError } from "@/types/formState";
 
-function renderOptionInput(el: FormElement)
-{
+function renderOptionInput(el: FormElement) {
     return (
         <>
-            {el.options.map((opt: FormOption) =>
-            {
+            {el.options.map((opt: FormOption) => {
                 return (
                     <div key={opt.id}>
                         <input
@@ -31,10 +30,8 @@ function renderOptionInput(el: FormElement)
     );
 }
 
-function renderInputType(type: string)
-{
-    switch (type)
-    {
+function renderInputType(type: string) {
+    switch (type) {
         case "short":
             return <DefaultInputComponent disabled={true} />;
         case "long":
@@ -46,16 +43,14 @@ function renderInputType(type: string)
     }
 }
 
-function FormPreviewPage({ params }: { params: Promise<{ id: string }> })
-{
-    const [formData, setFormData] = useState<FormState>({});
+function FormPreviewPage({ params }: { params: Promise<{ id: string }> }) {
+    const [formData, setFormData] = useState<FormState>({ formTitle: '', formElements: [], formId: '', formErrors: { formId: '', formErrorCode: null, formBlockErrors: {} } });
     const { id } = use(params);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         let data = localStorage.getItem(`form-build-${id}`) || "{}";
-        data = JSON.parse(data);
-        setFormData(data);
+        const parsedData = JSON.parse(data) as FormState;
+        setFormData(parsedData);
     }, []);
 
     return Object.values(formData).length > 0 ? (
@@ -67,8 +62,7 @@ function FormPreviewPage({ params }: { params: Promise<{ id: string }> })
             </div>
 
             <div className="h-[calc(100vh_-_56px)] w-full md:w-[640px] flex flex-col justify-start items-center border-l-[1px] border-r-[1px] border-gray-200 bg-white p-6 gap-10 overflow-y-auto">
-                {formData.formElements.map((element: FormElement) =>
-                {
+                {formData.formElements.map((element: FormElement) => {
                     return (
                         <div
                             key={`form-element-${element.id}`}

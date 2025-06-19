@@ -283,3 +283,5 @@ export const useFormStore = create<FormState & FormActions>((set) => ({
 			};
 		}),
 }));
+
+export type { FormState, FormElement, FormOption };

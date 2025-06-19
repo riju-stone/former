@@ -8,12 +8,10 @@ import DateInputComponent from "@/components/input/date-input";
 import { FormElement, FormState, FormOption } from "@/types/formState"
 import { FormBuild } from '@/types/formBuild';
 
-function renderOptionInput(el: FormElement)
-{
+function renderOptionInput(el: FormElement) {
     return (
         <>
-            {el.options.map((opt: FormOption) =>
-            {
+            {el.options.map((opt: FormOption) => {
                 return (
                     <div key={opt.id}>
                         <input
@@ -33,10 +31,8 @@ function renderOptionInput(el: FormElement)
     );
 }
 
-function renderInputType(type: string)
-{
-    switch (type)
-    {
+function renderInputType(type: string) {
+    switch (type) {
         case "short":
             return <DefaultInputComponent disabled={false} />;
         case "long":
@@ -48,14 +44,12 @@ function renderInputType(type: string)
     }
 }
 
-function FormSubmitPage({ params }: { params: Promise<{ id: string }> })
-{
+function FormSubmitPage({ params }: { params: Promise<{ id: string }> }) {
     const [formData, setFormData] = useState<Partial<FormBuild | null>>(null)
     const { id } = use(params);
 
-    useEffect(() =>
-    {
-        fetchFormBuild(id).then(data => setFormData(data[0]))
+    useEffect(() => {
+        fetchFormBuild(id).then(data => setFormData(data[0] as FormBuild))
     }, [id])
 
     console.log(formData)
@@ -69,8 +63,7 @@ function FormSubmitPage({ params }: { params: Promise<{ id: string }> })
             </div>
 
             <div className="h-[calc(100vh_-_56px)] w-full md:w-[640px] flex flex-col justify-start items-center border-l-[1px] border-r-[1px] border-gray-200 bg-white p-6 gap-10 overflow-y-auto">
-                {formData.builderData && formData.builderData.map((element: FormElement) =>
-                {
+                {formData.builderData && formData.builderData.map((element: FormElement) => {
                     console.log(formData)
                     return (
                         <div

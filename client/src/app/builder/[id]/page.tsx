@@ -4,7 +4,7 @@ import React, { use, useEffect, useState } from 'react'
 import FormBuilderComponent from "@/components/form/form-builder";
 import { toast } from "sonner";
 import { useFormStore } from "@/store/formStore";
-import { FormState } from "@/types/formState";
+import { FormElement, FormState } from "@/types/formState";
 import { useRouter } from "next/navigation";
 import { Eye, Save, BookCheck } from "lucide-react"
 import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
@@ -29,8 +29,7 @@ const styles = {
         "flex items-center justify-center h-full w-full",
 };
 
-function FormBuilderPage({ params }: { params: Promise<{ id: string }> })
-{
+function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params)
     const [isLoading, setIsLoading] = useState(true);
     const formStore = useFormStore();
@@ -46,17 +45,13 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> })
 
     const router = useRouter();
 
-    useEffect(() =>
-    {
-        const loadFormData = async () =>
-        {
-            try
-            {
+    useEffect(() => {
+        const loadFormData = async () => {
+            try {
                 setIsLoading(true);
                 const formData = await fetchFormBuild(id);
 
-                if (formData.length > 0)
-                {
+                if (formData.length > 0) {
                     // Reset the form store first
                     resetFormStore();
 
@@ -67,20 +62,17 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> })
                     updateFormTitle(formData[0].formName);
 
                     // Add form elements
-                    addElement(builderData);
+                    addElement(builderData as FormElement[]);
 
                     toast.success("Form build loaded successfully");
-                } else
-                {
+                } else {
                     toast.error("Form not found");
                     router.push("/builder");
                 }
-            } catch (error)
-            {
+            } catch (error) {
                 console.error("Error loading form:", error);
                 toast.error("Failed to load form");
-            } finally
-            {
+            } finally {
                 setIsLoading(false);
             }
         };
@@ -95,51 +87,40 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> })
         formErrors: formErrors
     };
 
-    const checkForFormErrors = () =>
-    {
+    const checkForFormErrors = () => {
         return formErrors.formErrorCode.length > 0 || Object.keys(formErrors.formBlockErrors || {}).length > 0;
     }
 
-    const handleFormPublish = () =>
-    {
-        if (!checkForFormErrors())
-        {
+    const handleFormPublish = () => {
+        if (!checkForFormErrors()) {
             saveFormBuild(formObject)
             router.push("/")
             toast.success("Form published successfully")
-        } else
-        {
+        } else {
             toast.error("Form has errors. Please fix them first")
         }
     }
 
-    const handleFormPreview = () =>
-    {
-        if (!checkForFormErrors())
-        {
+    const handleFormPreview = () => {
+        if (!checkForFormErrors()) {
             saveFormBuildLocally(formObject)
             router.push(`/preview/${formId}`);
-        } else
-        {
+        } else {
             toast.error("Form has errors. Please fix them first")
         }
     };
 
-    const handleFormDraft = () =>
-    {
-        if (!checkForFormErrors())
-        {
+    const handleFormDraft = () => {
+        if (!checkForFormErrors()) {
             saveFormBuild(formObject)
             router.push("/")
             toast.success("Form build saved successfully")
-        } else
-        {
+        } else {
             toast.error("Form has errors. Please fix them first")
         }
     }
 
-    if (isLoading)
-    {
+    if (isLoading) {
         return <div className={styles.loadingState}>Loading form data...</div>;
     }
 
