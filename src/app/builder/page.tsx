@@ -26,8 +26,7 @@ const styles = {
         "h-[32px] flex justify-center items-center gap-1 py-[7px] px-[16px] bg-green-500 border-[1px] border-green-500 rounded-xl text-[14px] text-white font-[600] leading-5 shadow-button",
 };
 
-function FormBuilderPage()
-{
+function FormBuilderPage() {
     const formStore = useFormStore();
     const { formId, formTitle, formElements, formErrors, updateFormTitle } = formStore;
 
@@ -40,46 +39,36 @@ function FormBuilderPage()
         formErrors: formErrors
     };
 
-    const checkForFormErrors = () =>
-    {
+    const checkForFormErrors = () => {
         return formErrors.formErrorCode.length > 0 || Object.keys(formErrors.formBlockErrors).length > 0;
     }
 
-    const handleFormPublish = () =>
-    {
-        if (!checkForFormErrors())
-        {
+    const handleFormPublish = () => {
+        if (!checkForFormErrors()) {
             saveFormBuild(formObject)
             router.push("/")
             toast.success("Form published successfully")
-        } else
-        {
+        } else {
             toast.error("Form has errors. Please fix them first")
         }
     }
 
-    const handleFormPreview = () =>
-    {
-        if (!checkForFormErrors())
-        {
+    const handleFormPreview = () => {
+        if (!checkForFormErrors()) {
             saveFormBuildLocally(formObject)
             router.push(`/preview/${formId}`);
 
-        } else
-        {
+        } else {
             toast.error("Form has errors. Please fix them first")
         }
     };
 
-    const handleFormDraft = () =>
-    {
-        if (!checkForFormErrors())
-        {
+    const handleFormDraft = () => {
+        if (!checkForFormErrors()) {
             saveFormBuild(formObject)
             router.push("/")
             toast.success("Form build saved successfully")
-        } else
-        {
+        } else {
             toast.error("Form has errors. Please fix them first")
         }
     }
