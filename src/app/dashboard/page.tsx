@@ -14,7 +14,6 @@ import {
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useFormStore } from "@/store/formStore";
-import { useSession } from "@/lib/authClient";
 
 export default function Home() {
     const formStore = useFormStore();
@@ -22,8 +21,6 @@ export default function Home() {
 
     const [buildData, setBuildData] = useState([]);
     const router = useRouter();
-
-    const { data: session, isPending, error } = useSession()
 
     useEffect(() => {
         const fetchDataFromDB = async () => {
@@ -33,12 +30,7 @@ export default function Home() {
             setBuildData(builds);
         };
 
-        if (!session) {
-            router.push("/sign-in")
-        } else {
-            fetchDataFromDB();
-        }
-
+        fetchDataFromDB();
     }, []);
 
     const handleCreateNewBuild = () => {

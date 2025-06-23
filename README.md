@@ -1,3 +1,3 @@
 # Former
 
-An elegant form builder platform -- inspired from Google forms & Typeform
+An elegant form builder platform, inspired from Google forms & Typeform
