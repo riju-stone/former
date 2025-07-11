@@ -9,23 +9,6 @@ import { useRouter } from "next/navigation";
 import { Eye, Save, BookCheck } from "lucide-react"
 import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
 
-const styles = {
-    builderPage: "h-full w-full flex justify-center items-center",
-    builderWrapper:
-        "h-full w-full md:w-[640px] flex-col justify-center align-middle",
-    headerContainer:
-        "h-[56px] w-full flex justify-between items-center px-6",
-    headerNormal: "border-[1px] border-gray-200 bg-gray-50",
-    headerError: "border-[2px] border-red-200 bg-red-50",
-    formTitle: "text-[16px] font-[600] bg-transparent border-none outline-none",
-    footerContainer:
-        "h-[64px] w-full md:w-[640px] flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px]",
-    whiteButtonDisabled:
-        "h-[32px] flex justify-center items-center gap-1 py-[6px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] leading-5 shadow-button",
-    greenButtonDisabled:
-        "h-[32px] flex justify-center items-center gap-1 py-[7px] px-[16px] bg-green-500 border-[1px] border-green-500 rounded-xl text-[14px] text-white font-[600] leading-5 shadow-button",
-};
-
 function FormBuilderPage() {
     const formStore = useFormStore();
     const { formId, formTitle, formElements, formErrors, updateFormTitle } = formStore;
@@ -74,19 +57,23 @@ function FormBuilderPage() {
     }
 
     return (
-        <div className={styles.builderPage}>
-            <div className={styles.builderWrapper}>
-                <div className={`${styles.headerContainer} ${formErrors.formErrorCode.length == 0 ? styles.headerNormal : styles.headerError}`}>
+        <div className="h-screen w-screen flex justify-center items-center">
+            <div className="h-full w-full flex flex-col justify-center items-center">
+                <div className={`h-[56px] w-[95%] flex justify-between items-center px-4 rounded-bl-xl rounded-br-xl mb-2
+                    ${formErrors.formErrorCode.length == 0 ?
+                        "border-[1px] border-gray-200 bg-gray-50" :
+                        "border-[2px] border-red-200 bg-red-50"}
+                        `}>
                     <input
                         id="form-title"
-                        className={`${styles.formTitle}`}
+                        className={`text-[16px] font-[600] bg-transparent border-none outline-none`}
                         type="text"
                         placeholder="Untitled form"
                         value={formTitle}
                         onChange={(e) => updateFormTitle(e.target.value)}
                     />
                     <button
-                        className={`${styles.whiteButtonDisabled} "opacity-100"`}
+                        className={`h-[32px] flex justify-center items-center gap-1 py-[6px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] leading-5 shadow-button "opacity-100"`}
                         onClick={() => handleFormPreview()}
                     >
                         Preview
@@ -94,10 +81,10 @@ function FormBuilderPage() {
                     </button>
                 </div>
                 <FormBuilderComponent />
-                <div className={styles.footerContainer}>
+                <div className="bottom-0 h-[64px] w-[95%] flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] rounded-tr-xl rounded-tl-xl mt-2">
                     <button
                         type="submit"
-                        className={`${styles.whiteButtonDisabled} "opacity-100"`}
+                        className={`h-[32px] flex justify-center items-center gap-1 py-[6px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] leading-5 shadow-button opacity-100`}
                         onClick={() => handleFormDraft()}
                     >
                         <Save size={18} />
@@ -106,7 +93,7 @@ function FormBuilderPage() {
                     <button
                         type="submit"
                         onClick={() => handleFormPublish()}
-                        className={`${styles.greenButtonDisabled} "opacity-100"`}
+                        className={`h-[32px] flex justify-center items-center gap-1 py-[7px] px-[16px] bg-green-500 border-[1px] border-green-500 rounded-xl text-[14px] text-white font-[600] leading-5 shadow-button opacity-100`}
                     >
                         <BookCheck size={18} />
                         Publish Form

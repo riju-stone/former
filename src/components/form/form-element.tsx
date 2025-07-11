@@ -11,23 +11,8 @@ import { FormElement } from "@/types/formState";
 import DateInputComponent from "../input/date-input";
 import { Trash2, GripVertical } from "lucide-react"
 
-const styles = {
-    formElementWrapper:
-        "w-full flex flex-col justify-center items-center gap-2 rounded-xl p-4 touch-auto",
-    formNormalElementBorder: "border-[1px] border-gray-200 bg-white hover:bg-gray-50",
-    formErrorElementBorder: "border-[2px] border-red-200 bg-red-50",
-    formElementHeaderContainer: "w-full flex justify-between items-start gap-2",
-    formElementTitleContainer: "flex-1 flex-col justify-center items-center gap-1",
-    formElementTitle:
-        "w-full bg-transparent text-[15px] text-gray-950 font-[600] leading-5 border-none outline-none",
-    formElementSubtitle:
-        "w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none",
-};
-
-const getInputType = (data: FormElement) =>
-{
-    switch (data.type)
-    {
+const getInputType = (data: FormElement) => {
+    switch (data.type) {
         case "long":
             return <LongInputComponent disabled={true} />;
         case "option":
@@ -39,8 +24,7 @@ const getInputType = (data: FormElement) =>
     }
 };
 
-const FormElementComponent = ({ id, element }: { id: string, element: FormElement }) =>
-{
+const FormElementComponent = ({ id, element }: { id: string, element: FormElement }) => {
     const formStore = useFormStore();
     const { updateElementTitle, updateElementSubtitle, deleteElement, formErrors } = formStore;
     const dragControls = useDragControls()
@@ -63,23 +47,23 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                     layoutId={`formElement-${id}`}
                 >
                     <div
-                        className={`${styles.formElementWrapper} ${formErrors.formBlockErrors[id] ? styles.formErrorElementBorder : styles.formNormalElementBorder}`}
+                        className={`w-full flex flex-col justify-center items-center gap-2 rounded-xl p-4 touch-auto ${formErrors.formBlockErrors[id] ? "border-[2px] border-red-200 bg-red-50" : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"}`}
                     >
-                        <div className={styles.formElementHeaderContainer}>
-                            <div className={styles.formElementTitleContainer}>
+                        <div className="w-full flex justify-between items-start gap-2">
+                            <div className="flex-1 flex-col justify-center items-center gap-1">
                                 <input
                                     placeholder="Write a question"
-                                    className={styles.formElementTitle}
+                                    className="w-full bg-transparent text-[15px] text-gray-950 font-[600] leading-5 border-none outline-none"
                                     value={element.main_title}
                                     onChange={(e) => updateElementTitle(id, e.target.value)}
                                 />
                                 <input
                                     placeholder="Write a help text or caption (optional)."
-                                    className={styles.formElementSubtitle}
+                                    className="w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none"
                                     value={element.sub_title}
                                     onChange={(e) => updateElementSubtitle(id, e.target.value)}
                                 />
-                                {element.type == "long" ? <input className={styles.formElementSubtitle} placeholder="Maximum characters" /> : null}
+                                {element.type == "long" ? <input className="w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none" placeholder="Maximum characters" /> : null}
                             </div>
                             <div className="flex justify-center items-center gap-2">
                                 <FormDropdownComponent

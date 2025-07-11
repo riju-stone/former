@@ -24,19 +24,7 @@ const listItemsAnim = {
     },
 };
 
-const styles = {
-    dropdownWrapper:
-        "absolute left-[50%] my-[0.5rem] z-10 h-[274px] w-[300px] flex justify-center align-middle bg-white border-[1px] border-gray-200 rounded-xl shadow-dropdown p-1 overflow-hidden",
-    dropdownListContainer:
-        "h-full w-full flex flex-col justify-center align-middle",
-    dropdownListHeading:
-        "h-full w-full font-[600] text-[12px] text-gray-500 uppercase rounded-lg bg-gray-50 leading-4 px-4 py-2 mb-1",
-    dropdownListItem:
-        "h-full w-full flex justify-start align-middle gap-2 p-2 text-[14px] font-medium break-keep rounded-lg bg-gray-00 hover:bg-gray-50 cursor-pointer",
-};
-
-function getDropdownAnimObject(type: string)
-{
+function getDropdownAnimObject(type: string) {
     return {
         closed: {
             opacity: 0,
@@ -67,10 +55,8 @@ function getDropdownAnimObject(type: string)
 
 }
 
-function FormTypeLogo({ type })
-{
-    switch (type)
-    {
+function FormTypeLogo({ type }) {
+    switch (type) {
         case "short":
             return <FileText size={18} />
         case "long":
@@ -86,32 +72,30 @@ function FormTypeLogo({ type })
     }
 }
 
-function Dropdown({ menuType, isMenuOpen, handleSelection })
-{
+function Dropdown({ menuType, isMenuOpen, handleSelection }) {
     return <AnimatePresence mode="wait">
         {isMenuOpen && (
             <motion.div
-                className={`${styles.dropdownWrapper}`}
+                className={`absolute left-[50%] my-[0.5rem] z-10 h-[274px] w-[300px] flex justify-center align-middle bg-white border-[1px] border-gray-200 rounded-xl shadow-dropdown p-1 overflow-hidden`}
                 variants={getDropdownAnimObject(menuType)}
                 initial="closed"
                 animate="open"
                 exit="closed"
             >
                 <motion.div
-                    className={styles.dropdownListContainer}
+                    className="h-full w-full flex flex-col justify-center align-middle"
                     variants={listItemsAnim}
                     initial="closed"
                     animate="open"
                     exit="closed"
                 >
-                    <div className={styles.dropdownListHeading}>Input Types</div>
-                    {FormTypes.map((type) =>
-                    {
+                    <div className="h-full w-full font-[600] text-[12px] text-gray-500 uppercase rounded-lg bg-gray-50 leading-4 px-4 py-2 mb-1">Input Types</div>
+                    {FormTypes.map((type) => {
                         return (
                             <div
                                 key={type.tag}
                                 data-item={type.tag}
-                                className={styles.dropdownListItem}
+                                className="h-full w-full flex justify-start align-middle gap-2 p-2 text-[14px] font-medium break-keep rounded-lg bg-gray-00 hover:bg-gray-50 cursor-pointer"
                                 onClick={(e) => handleSelection(e)}
                             >
                                 <span>
@@ -128,44 +112,37 @@ function Dropdown({ menuType, isMenuOpen, handleSelection })
 }
 
 
-function FormDropdownComponent({ id, element })
-{
+function FormDropdownComponent({ id, element }) {
     const dropRef = useRef(null)
     const [isMenuOpen, setMenuOpen] = useState(false);
     const [menuType, setMenuType] = useState("down");
     const modifyElement = useFormStore((state) => state.updateElementType);
 
     // Function to check position and update menuType
-    const updateMenuPosition = () =>
-    {
-        if (dropRef.current)
-        {
+    const updateMenuPosition = () => {
+        if (dropRef.current) {
             const rect = dropRef.current.getBoundingClientRect();
             const newMenuType = rect.top < window.innerHeight / 2 ? "down" : "up";
-            if (newMenuType !== menuType)
-            {
+            if (newMenuType !== menuType) {
                 setMenuType(newMenuType);
             }
         }
     };
 
-    const handleSelection = (e: Event) =>
-    {
+    const handleSelection = (e: Event) => {
         const elType = (e.currentTarget as HTMLDivElement).getAttribute("data-item");
         modifyElement(id, elType);
         setMenuOpen(false);
     };
 
     // Toggle menu with position check
-    const toggleMenu = () =>
-    {
+    const toggleMenu = () => {
         // Check position before opening menu
         updateMenuPosition();
         setMenuOpen(!isMenuOpen);
     };
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         // Initial position check
         updateMenuPosition();
 
@@ -175,31 +152,25 @@ function FormDropdownComponent({ id, element })
         // Add resize event listener
         window.addEventListener("resize", updateMenuPosition);
 
-        return () =>
-        {
+        return () => {
             // Clean up
             window.removeEventListener("scroll", updateMenuPosition, true);
             window.removeEventListener("resize", updateMenuPosition);
         };
     }, [menuType]);
 
-    useEffect(() =>
-    {
-        const handleClickOutside = (e: MouseEvent) =>
-        {
-            if (dropRef.current && !dropRef.current.contains(e.target as Node))
-            {
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
                 setMenuOpen(false)
             }
         }
 
-        if (isMenuOpen)
-        {
+        if (isMenuOpen) {
             document.addEventListener("click", handleClickOutside)
         }
 
-        return () =>
-        {
+        return () => {
             document.removeEventListener("click", handleClickOutside)
         }
 
