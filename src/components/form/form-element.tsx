@@ -11,6 +11,7 @@ import { FormElement } from "@/types/formState";
 import DateInputComponent from "../input/date-input";
 import { Trash2, GripVertical } from "lucide-react"
 import FileInputComponent from "../input/file-input";
+import FormValidationComponent from "./form-validation";
 
 const getInputType = (data: FormElement) => {
     switch (data.type) {
@@ -87,7 +88,7 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                         <div className="w-full">
                             {getInputType(element)}
                         </div>
-
+                        <FormValidationComponent inputType={element.type} />
                     </div>
                 </motion.div >
             </AnimatePresence>
