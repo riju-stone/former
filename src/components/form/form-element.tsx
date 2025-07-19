@@ -10,6 +10,7 @@ import { useFormStore } from "@/store/formStore";
 import { FormElement } from "@/types/formState";
 import DateInputComponent from "../input/date-input";
 import { Trash2, GripVertical } from "lucide-react"
+import FileInputComponent from "../input/file-input";
 
 const getInputType = (data: FormElement) => {
     switch (data.type) {
@@ -19,6 +20,8 @@ const getInputType = (data: FormElement) => {
             return <OptionsInputComponent el={data} />;
         case "date":
             return <DateInputComponent disabled={true} />;
+        case "file":
+            return <FileInputComponent disabled={true} />;
         default:
             return <DefaultInputComponent disabled={true} />;
     }
@@ -63,7 +66,6 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                                     value={element.sub_title}
                                     onChange={(e) => updateElementSubtitle(id, e.target.value)}
                                 />
-                                {element.type == "long" ? <input className="w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none" placeholder="Maximum characters" /> : null}
                             </div>
                             <div className="flex justify-center items-center gap-2">
                                 <FormDropdownComponent
@@ -85,6 +87,7 @@ const FormElementComponent = ({ id, element }: { id: string, element: FormElemen
                         <div className="w-full">
                             {getInputType(element)}
                         </div>
+
                     </div>
                 </motion.div >
             </AnimatePresence>

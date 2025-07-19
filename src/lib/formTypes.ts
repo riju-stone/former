@@ -24,6 +24,10 @@ const FormTypes = [
         name: "Date",
         tag: "date",
     },
+    {
+        name: "File upload",
+        tag: "file",
+    },
 ];
 
 export default FormTypes

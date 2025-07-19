@@ -1,5 +1,4 @@
 import React from "react";
-import { FormElement } from "@/store/formStore";
 
 function DefaultInputComponent({ disabled }: { disabled: boolean }) {
     return (

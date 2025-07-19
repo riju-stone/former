@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useFormStore } from "@/store/formStore";
 import FormTypes from "@/lib/formTypes";
 
-import { ChevronDown, FileText, ScrollText, CircleDot, Hash, Link2, Calendar1 } from "lucide-react"
+import { ChevronDown, FileText, ScrollText, CircleDot, Hash, Link2, Calendar1, Paperclip } from "lucide-react"
 
 const listItemsAnim = {
     closed: {
@@ -41,7 +41,7 @@ function getDropdownAnimObject(type: string) {
         },
         open: {
             opacity: 1,
-            y: type == "down" ? 12 : -320,
+            y: type == "down" ? 12 : -340,
             x: -275,
             transition: {
                 duration: 0.4,
@@ -69,6 +69,8 @@ function FormTypeLogo({ type }) {
             return <Calendar1 size={18} />
         case "url":
             return <Link2 size={18} />
+        case "file":
+            return <Paperclip size={18} />
     }
 }
 
@@ -76,7 +78,7 @@ function Dropdown({ menuType, isMenuOpen, handleSelection }) {
     return <AnimatePresence mode="wait">
         {isMenuOpen && (
             <motion.div
-                className={`absolute left-[50%] my-[0.5rem] z-10 h-[274px] w-[300px] flex justify-center align-middle bg-white border-[1px] border-gray-200 rounded-xl shadow-dropdown p-1 overflow-hidden`}
+                className={`absolute left-[50%] my-[0.5rem] z-10 h-[fit-content] w-[300px] flex justify-center align-middle bg-white border-[1px] border-gray-200 rounded-xl shadow-dropdown p-1 overflow-hidden`}
                 variants={getDropdownAnimObject(menuType)}
                 initial="closed"
                 animate="open"
