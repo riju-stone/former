@@ -3,12 +3,21 @@ export type FormOption = {
 	value: string;
 };
 
+export type FormElementConstraint = {
+	id: string;
+	type: string;
+	name: string;
+	defaultValue: string;
+	customValue: string | null;
+};
+
 export type FormElement = {
 	id: string;
 	main_title: string;
 	sub_title?: string;
 	type: string;
 	options?: Array<FormOption>;
+	constraints?: Array<FormElementConstraint>;
 };
 
 export type FormElementError = {

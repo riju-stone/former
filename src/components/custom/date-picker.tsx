@@ -23,7 +23,7 @@ export function DatePickerComponent({ disabled }: { disabled: boolean }) {
                     disabled={disabled}
                     variant={"outline"}
                     className={cn(
-                        "w-full justify-between text-left font-normal bg-transparent",
+                        "w-full min-w-[150px] justify-between text-left font-normal bg-transparent",
                         !date && "text-muted-foreground",
                     )}
                 >

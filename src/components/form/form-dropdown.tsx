@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useFormStore } from "@/store/formStore";
-import FormTypes from "@/lib/formTypes";
+import { FormTypes } from "@/types/formBuild";
 
 import { ChevronDown, FileText, ScrollText, CircleDot, Hash, Link2, Calendar1, Paperclip } from "lucide-react"
 
