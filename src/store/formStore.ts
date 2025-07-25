@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { v7 as uuid } from "uuid";
+import { immer } from "zustand/middleware/immer";
+import { debounce } from "lodash";
 import {
 	FormActions,
 	FormElement,
@@ -31,74 +33,9 @@ const initFormState = () => {
 				FORM_ERROR_TYPES.EMPTY_FORM_TITLE,
 				FORM_ERROR_TYPES.EMPTY_FORM,
 			],
-			formBlockErrors: null,
+			formBlockErrors: {},
 		},
 	};
-};
-
-const getElementIndex = (elList: Array<FormElement>, id: string) => {
-	return elList.findIndex((element) => element.id === id);
-};
-
-const deleteFromFormElements = (elId: string, elList: Array<FormElement>) => {
-	const filteredList = elList.filter((el) => el.id !== elId);
-	return filteredList;
-};
-
-const getUpdatedElementType = (
-	elList: Array<FormElement>,
-	id: string,
-	type: string
-) => {
-	const idx = getElementIndex(elList, id);
-	elList[idx].type = type;
-
-	// Add a default option
-	if (type == "option") {
-		elList[idx].options = Array.from([{ id: "1", value: "Option 1" }]);
-	}
-
-	return elList;
-};
-
-const getUpdatedElementContent = (
-	elList: Array<FormElement>,
-	id: string,
-	content: string,
-	op: string
-) => {
-	const idx = getElementIndex(elList, id);
-
-	if (op == "main") {
-		elList[idx].main_title = content;
-	} else if (op == "sub") {
-		elList[idx].sub_title = content;
-	}
-
-	return elList;
-};
-
-const addOptionToElement = (
-	elList: Array<FormElement>,
-	id: string,
-	newOption: FormOption
-) => {
-	const idx = getElementIndex(elList, id);
-
-	elList[idx].options.push(newOption);
-	return elList;
-};
-
-const getUpdatedOptions = (
-	elList: Array<FormElement>,
-	elId: string,
-	optId: string,
-	optValue: string
-) => {
-	const idx = getElementIndex(elList, elId);
-	elList[idx].options[Number(optId) - 1].value = optValue;
-
-	return elList;
 };
 
 const validateFormTitle = (title: string): number[] => {
@@ -166,122 +103,120 @@ const validateForm = (formState: FormState): FormError => {
 	};
 };
 
-export const useFormStore = create<FormState & FormActions>((set) => ({
-	...initFormState(),
-	resetFormStore: () =>
-		set(() => ({
-			...initFormState(),
-		})),
-	updateFormTitle: (title: string) =>
-		set((state: FormState) => {
-			const updatedState = {
-				...state,
-				formTitle: title,
-			};
-			return {
-				...updatedState,
-				formErrors: validateForm(updatedState),
-			};
-		}),
-	addElement: (el: Array<FormElement>) =>
-		set((state: FormState) => {
-			const updatedState = {
-				...state,
-				formElements: el,
-			};
+// Create debounced validation
+const debouncedValidation = debounce((getState: () => FormState & FormActions, setState: any) => {
+	const state = getState();
+	setState((draft: FormState) => {
+		draft.formErrors = validateForm(state);
+	});
+}, 300);
 
-			return {
-				...updatedState,
-				formErrors: validateForm(updatedState),
-			};
-		}),
-	deleteElement: (id: string) =>
-		set((state) => {
-			const updatedState = {
-				...state,
-				formElements: deleteFromFormElements(id, state.formElements),
-			};
+export const useFormStore = create<FormState & FormActions>()(
+	immer((set, get) => ({
+		...initFormState(),
 
-			return {
-				...updatedState,
-				formErrors: validateForm(updatedState),
-			};
-		}),
-	updateElementType: (id: string, type: string) =>
-		set((state) => {
-			const updatedState = {
-				...state,
-				formElements: getUpdatedElementType(state.formElements, id, type),
-			};
+		resetFormStore: () =>
+			set(() => ({
+				...initFormState(),
+			})),
 
-			return {
-				...updatedState,
-				formErrors: validateForm(updatedState),
-			};
-		}),
-	updateElementTitle: (id: string, title: string) =>
-		set((state) => {
-			const updatedState = {
-				...state,
-				formElements: getUpdatedElementContent(
-					state.formElements,
-					id,
-					title,
-					"main"
-				),
-			};
+		updateFormTitle: (title: string) =>
+			set((state) => {
+				state.formTitle = title;
+				// Trigger debounced validation
+				debouncedValidation(get, set);
+			}),
 
-			return {
-				...updatedState,
-				formErrors: validateForm(updatedState),
-			};
-		}),
-	updateElementSubtitle: (id: string, subtitle: string) =>
-		set((state) => {
-			const updatedState = {
-				...state,
-				formElements: getUpdatedElementContent(
-					state.formElements,
-					id,
-					subtitle,
-					"sub"
-				),
-			};
+		addElement: (el: Array<FormElement>) =>
+			set((state) => {
+				state.formElements = el;
+				// Immediate validation for structural changes
+				state.formErrors = validateForm(state);
+			}),
 
-			return {
-				...updatedState,
-				formErrors: validateForm(updatedState),
-			};
-		}),
-	addOption: (id: string, opt: FormOption) =>
-		set((state) => {
-			const updatedState = {
-				...state,
-				formElements: addOptionToElement(state.formElements, id, opt),
-			};
+		deleteElement: (id: string) =>
+			set((state) => {
+				state.formElements = state.formElements.filter((el) => el.id !== id);
+				// Immediate validation for structural changes
+				state.formErrors = validateForm(state);
+			}),
 
-			return {
-				...updatedState,
-				formErrors: validateForm(updatedState),
-			};
-		}),
-	updateOption: (elId: string, optId: string, optValue: string) =>
-		set((state) => {
-			const updatedState = {
-				...state,
-				formElements: getUpdatedOptions(
-					state.formElements,
-					elId,
-					optId,
-					optValue
-				),
-			};
+		updateElementType: (id: string, type: string) =>
+			set((state) => {
+				const element = state.formElements.find((el) => el.id === id);
+				if (element) {
+					element.type = type;
+					// Add default option if type is option
+					if (type === "option") {
+						element.options = [{ id: "1", value: "Option 1" }];
+					}
+					// Immediate validation for type changes
+					state.formErrors = validateForm(state);
+				}
+			}),
 
-			return {
-				...updatedState,
-				formErrors: validateForm(updatedState),
-			};
-		}),
-}));
+		updateElementTitle: (id: string, title: string) =>
+			set((state) => {
+				const element = state.formElements.find((el) => el.id === id);
+				if (element) {
+					element.main_title = title;
+					// Debounced validation for text inputs
+					debouncedValidation(get, set);
+				}
+			}),
+
+		updateElementSubtitle: (id: string, subtitle: string) =>
+			set((state) => {
+				const element = state.formElements.find((el) => el.id === id);
+				if (element) {
+					element.sub_title = subtitle;
+					// No validation needed for optional subtitle
+				}
+			}),
+
+		addOption: (id: string, opt: FormOption) =>
+			set((state) => {
+				const element = state.formElements.find((el) => el.id === id);
+				if (element && element.options) {
+					element.options.push(opt);
+					// Immediate validation for structural changes
+					state.formErrors = validateForm(state);
+				}
+			}),
+
+		updateOption: (elId: string, optId: string, optValue: string) =>
+			set((state) => {
+				const element = state.formElements.find((el) => el.id === elId);
+				if (element && element.options) {
+					const option = element.options.find((opt) => opt.id === optId);
+					if (option) {
+						option.value = optValue;
+						// Debounced validation for option text inputs
+						debouncedValidation(get, set);
+					}
+				}
+			}),
+		addBatchUpdate: (updates: Array<() => void>) => {
+			set((state) => {
+				updates.forEach(update => update());
+				state.formErrors = validateForm(state);
+			});
+		},
+		validateElement: (id: string) => {
+			set((state) => {
+				const element = state.formElements.find(el => el.id === id);
+				if (element) {
+					// Validate only this element
+					const { blockErrors } = validateFormElements([element]);
+					if (blockErrors[id]) {
+						state.formErrors.formBlockErrors[id] = blockErrors[id];
+					} else {
+						delete state.formErrors.formBlockErrors[id];
+					}
+				}
+			});
+		},
+	}))
+);
 
 export type { FormState, FormElement, FormOption };

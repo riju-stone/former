@@ -66,7 +66,7 @@ function FormBuilderPage() {
                         `}>
                     <input
                         id="form-title"
-                        className={`text-[16px] font-[600] bg-transparent border-none outline-none`}
+                        className={`text-[16px] w-[75%] font-[600] bg-transparent border-none outline-none`}
                         type="text"
                         placeholder="Untitled form"
                         value={formTitle}
@@ -81,7 +81,11 @@ function FormBuilderPage() {
                     </button>
                 </div>
                 <FormBuilderComponent />
-                <div className="bottom-0 h-[64px] w-[95%] flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] rounded-tr-xl rounded-tl-xl mt-2">
+                <div className={`bottom-0 h-[64px] w-[95%] flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] rounded-tr-xl rounded-tl-xl mt-2
+                    ${formErrors.formErrorCode.length == 0 ?
+                        "border-[1px] border-gray-200 bg-gray-50" :
+                        "border-[2px] border-red-200 bg-red-50"}
+                        `}>
                     <button
                         type="submit"
                         className={`h-[32px] flex justify-center items-center gap-1 py-[6px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] leading-5 shadow-button opacity-100`}
