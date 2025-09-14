@@ -1,14 +1,14 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "../db/index.js";   
-import * as authSchema from "../db/schema/auth-schema.js";
-import { env } from "../env.js";
+import { db } from "@db/index";   
+import * as authSchema from "@db/schema/auth-schema";
+import { env } from "../env";
 
 export const auth = betterAuth({
     baseURL: env.BETTER_AUTH_URL,
     secret: env.BETTER_AUTH_SECRET,
     trustedOrigins: [
-        "http://localhost:3000"
+        env.APP_URL
     ],
     socialProviders: {
         github: {

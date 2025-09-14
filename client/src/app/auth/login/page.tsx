@@ -3,19 +3,30 @@
 import { signIn } from "@/lib/authClient";
 import { Button } from "@/components/ui/button";
 import { useCallback } from "react";
+import Link from "next/link";
 
 export default function LoginPage() {
 
   const handleSignIn = useCallback(async (provider: "google" | "github") => {
     await signIn.social({
       provider,
-      callbackURL: process.env.NEXT_PUBLIC_ORIGIN + "/dashboard",
+      callbackURL: window.location.origin + "/dashboard/home",
     });
   }, []);
 
   return <div className="flex flex-col items-center justify-center h-screen">
-    <div className="flex flex-col items-center justify-center gap-2">
+    <div className="text-5xl font-bold mb-8">Sign in to Your Former Account</div>
+    <div className="w-[30%] flex flex-col items-center justify-center gap-2 my-4">
+      <input type="email" placeholder="Email" className="w-full border border-gray-300 rounded px-2 py-1 mb-2" />
+      <input type="password" placeholder="Password" className="w-full border border-gray-300 rounded px-2 py-1 mb-2" />
+      <Button className="w-full">Sign in with Email</Button>
+      <p className="text-sm mt-2"><Link href="/auth/forgot-password" className="text-blue-500">Forgot your password?</Link></p>
+      <p className="text-sm mt-2">Don't have an account? <Link href="/auth/register" className="text-blue-500">Register</Link></p>
+    </div>
+    <div className="text-lg uppercase">Or</div>
+    <div className="w-[30%] flex flex-col items-center justify-center gap-2 my-4">
       <Button
+        className="w-full"
         onClick={() => handleSignIn("google")}
       >
         <svg
@@ -44,7 +55,8 @@ export default function LoginPage() {
         Sign in with Google
       </Button>
       <Button
-          onClick={() => handleSignIn("github")}
+        className="w-full"
+        onClick={() => handleSignIn("github")}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

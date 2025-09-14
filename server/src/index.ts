@@ -3,11 +3,11 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { csrf } from 'hono/csrf'
 import { logger } from 'hono/logger'
-import authRoute from './routes/auth.route.js'
+import authRoute from '@routes/auth.route'
 import { compress } from 'hono/compress'
-import { protectRoute } from './middleware/auth.middleware.js'
-import generalRoutes from './routes/general.route.js'
-import { env } from './env.js'
+import { protectRoute } from '@middleware/auth.middleware'
+import generalRoutes from '@routes/general.route'
+import { env } from './env'
 
 // App
 const app = new Hono()

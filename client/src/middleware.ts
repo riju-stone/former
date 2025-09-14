@@ -4,7 +4,7 @@ export async function middleware(req: NextRequest) {
   const session = req.cookies.get("better-auth.session_token")
 
   if (!session) {
-    const redirectUrl = new URL("/login", req.url);
+    const redirectUrl = new URL("/auth/login", req.url);
     return NextResponse.redirect(redirectUrl);
   }
 
@@ -12,5 +12,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/builder/:path*", "/preview/:path*"]
+  matcher: ["/dashboard/:path*", "/builder/:path*", "/preview/:path*"]
 }
