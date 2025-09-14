@@ -1,15 +1,13 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function Home() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+import Link from "next/link";
 
-  if (session) {
-    redirect("/dashboard")
-  } else {
-    redirect("/sign-in")
-  }
+export default function HomePage() {
+  return <div className="w-screen h-screen flex flex-col items-center justify-center">
+    <h1 className="text-8xl font-bold">Former</h1>
+    <h2 className="text-2xl font-bold mb-4">A simple form builder</h2>
+    <Link href="/dashboard" className="text-blue-500 underline">
+      Go to Dashboard
+    </Link>
+  </div>;
 }

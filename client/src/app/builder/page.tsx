@@ -3,7 +3,7 @@
 import FormBuilderComponent from "@/components/form/form-builder";
 import React from "react";
 import { toast } from "sonner";
-import { useFormStore } from "@/store/formStore";
+import { useFormStore } from "@/store/formBuilderStore";
 import { FormState } from "@/types/formState";
 import { useRouter } from "next/navigation";
 import { Eye, Save, BookCheck } from "lucide-react"
@@ -19,7 +19,8 @@ function FormBuilderPage() {
         formId: formId,
         formTitle: formTitle,
         formElements: formElements,
-        formErrors: formErrors
+        formErrors: formErrors,
+        formSteps: 1, // Not implemented yet
     };
 
     const checkForFormErrors = () => {

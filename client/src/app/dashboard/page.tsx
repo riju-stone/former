@@ -15,7 +15,7 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useFormStore } from "@/store/formBuilderStore";
 
-export default function Home() {
+export default function DashboardPage() {
     const formStore = useFormStore();
     const { resetFormStore } = formStore;
 
@@ -40,12 +40,6 @@ export default function Home() {
 
     return (
         <div className="w-screen h-screen bg-white flex flex-col justify-center items-center">
-            <p className="text-[4rem] md:text-[7rem] font-[800] text-gray-950 leading-tight">
-                former
-            </p>
-            <p className="text-[1.2rem] md:text-[2rem] font-[400] text-gray-950">
-                A simple form builder
-            </p>
             <button
                 className="absolute top-4 right-4 px-4 py-2 text-white bg-green-500 rounded-xl shadow-button"
                 onClick={() => handleCreateNewBuild()}

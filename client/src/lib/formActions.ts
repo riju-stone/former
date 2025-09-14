@@ -1,7 +1,7 @@
 "use client";
 
 import { uploadBuild } from "@/db/queries";
-import { FormState } from "@/store/formStore";
+import { FormState } from "@/store/formBuilderStore";
 
 export async function saveFormBuild(formObject: FormState) {
 	await uploadBuild(formObject);
