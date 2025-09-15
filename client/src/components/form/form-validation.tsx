@@ -1,20 +1,33 @@
-import { ChevronDown } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import React, { useState } from 'react'
-import ValidationGroupComponent from '../custom/validation-group'
-import { FormTypes } from '@/types/formBuild'
+"use client";
 
-function FormValidationComponent({ inputType, elementId }: { inputType: string, elementId: string }) {
-  const [isExpanded, setIsExpanded] = useState(false)
+import { ChevronDown } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import React, { useState } from "react";
+import ValidationGroupComponent from "../custom/validation-group";
+import { FormTypes } from "@/types/formBuild";
 
-  const formType = FormTypes.find(form => form.tag === inputType)
-  const validationGroup = formType?.validations || []
+function FormValidationComponent({
+  inputType,
+  elementId,
+}: {
+  inputType: string;
+  elementId: string;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const formType = FormTypes.find((form) => form.tag === inputType);
+  const validationGroup = formType?.validations || [];
 
   return validationGroup.length > 0 ? (
-    <div className='w-full text-gray-650 text-[12px] font-[600]'>
-      <div className='flex flex-col items-start gap-2'>
-        <div className='w-full flex items-center gap-2 cursor-pointer' onClick={() => setIsExpanded(!isExpanded)}>
-          <span className='text-gray-500 text-[14px] font-[500]'>Input Options</span>
+    <div className="w-full text-gray-650 text-[12px] font-[600]">
+      <div className="flex flex-col items-start gap-2">
+        <div
+          className="w-full flex items-center gap-2 cursor-pointer"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <span className="text-gray-500 text-[14px] font-[500]">
+            Input Options
+          </span>
           <motion.div
             className="flex justify-center items-center opacity-50"
             initial={{ rotateZ: 0 }}
@@ -33,9 +46,12 @@ function FormValidationComponent({ inputType, elementId }: { inputType: string, 
                 exit={{ opacity: 0, height: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className='flex flex-col items-center gap-2'>
-                  <div className='flex items-center gap-2'>
-                    <ValidationGroupComponent validationGroup={validationGroup} elementId={elementId} />
+                <div className="flex flex-col items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <ValidationGroupComponent
+                      validationGroup={validationGroup}
+                      elementId={elementId}
+                    />
                   </div>
                 </div>
               </motion.div>
@@ -44,7 +60,7 @@ function FormValidationComponent({ inputType, elementId }: { inputType: string, 
         </div>
       </div>
     </div>
-  ) : null
+  ) : null;
 }
 
-export default FormValidationComponent
+export default FormValidationComponent;

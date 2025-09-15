@@ -7,18 +7,29 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
   SidebarTrigger,
 } from "../ui/sidebar";
-import { Home, Blocks, Radio, Save, Settings } from "lucide-react";
+import { Home, Blocks, Radio, Save, Settings, ChevronUp } from "lucide-react";
 import Link from "next/dist/client/link";
+import ProfileComponent from "./profile";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 const items = [
   {
     title: "Home",
-    url: "/dashboard/home",
+    url: "/dashboard/",
     icon: Home,
   },
   {
@@ -45,32 +56,58 @@ const items = [
 
 function CustomSidebarComponent() {
   return (
-    <React.Fragment>
-      <SidebarTrigger className="absolute top-2 left-2 z-50" />
-      <Sidebar>
-        <SidebarContent className="mt-10">
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <div className="text-sm text-gray-500 p-4">v1.0.0</div>
-        </SidebarFooter>
-      </Sidebar>
-    </React.Fragment>
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarTrigger className="ml-0.5" />
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuButton size="lg">
+                <ProfileComponent />
+                <ChevronUp className="ml-auto" />
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" className="w-52 ml-2" align="end">
+              <DropdownMenuItem>
+                <span>Account</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <span>Sign Out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
   );
 }
 

@@ -4,18 +4,14 @@ import { toast } from "sonner";
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL as string,
   fetchOptions: {
-    onRequest() {
-      // You can show a loading indicator here if needed
-      toast.loading("Authenticating...", { id: "auth" });
-    },
     onError(e) {
       if (e.error.status === 429) {
-        toast.error("Too many requests. Please try again later.");
+        toast.error("Too many requests. Please try again later.", { id: "auth" });
       } else {
-        toast.error("Something went wrong. Please try again")
+        toast.error("Something went wrong. Please try again.", { id: "auth" });
       }
     },
   },
 })
 
-export const { signIn, signUp, signOut, useSession } = authClient;
+export const { signIn, signUp, signOut, useSession, accountInfo } = authClient;
