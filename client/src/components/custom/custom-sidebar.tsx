@@ -15,7 +15,7 @@ import {
   SidebarTrigger,
 } from "../ui/sidebar";
 import { Home, Blocks, Radio, Save, Settings, ChevronUp } from "lucide-react";
-import Link from "next/dist/client/link";
+import Link from "next/link";
 import ProfileComponent from "./profile";
 import {
   DropdownMenu,
@@ -54,7 +54,7 @@ const items = [
   },
 ];
 
-function CustomSidebarComponent() {
+function CustomSidebarComponent({ data }: { data: any }) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -87,7 +87,7 @@ function CustomSidebarComponent() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton size="lg">
-                <ProfileComponent />
+                <ProfileComponent userData={data} />
                 <ChevronUp className="ml-auto" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>

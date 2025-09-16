@@ -1,25 +1,15 @@
 "use client";
 
-import { useSession } from "@/lib/authClient";
-import React, { useEffect } from "react";
+import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-function ProfileComponent() {
-  const [userData, setUserData] = React.useState<any>(null);
-  const { data } = useSession();
-
-  useEffect(() => {
-    if (data?.user) {
-      setUserData(data.user);
-    }
-  }, [data]);
-
+function ProfileComponent({ userData }: { userData: any }) {
   return (
     <>
       <Avatar className="w-8 h-8 rounded-lg">
         <AvatarImage
-          src={data?.user?.image || undefined}
-          alt={data?.user?.name || "User Avatar"}
+          src={userData?.image || undefined}
+          alt={userData?.name || "User Avatar"}
         />
         <AvatarFallback>AC</AvatarFallback>
       </Avatar>
@@ -35,4 +25,4 @@ function ProfileComponent() {
   );
 }
 
-export default ProfileComponent;
+export default React.memo(ProfileComponent);
