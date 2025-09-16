@@ -24,7 +24,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
+import { signOut } from "@/lib/authClient";
+import { useRouter } from "next/navigation";
 
 const items = [
   {
@@ -55,6 +56,15 @@ const items = [
 ];
 
 function CustomSidebarComponent({ data }: { data: any }) {
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    // Implement sign-out logic here
+    console.log("Sign out clicked");
+    await signOut();
+    router.push("/dashboard/");
+  };
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -99,7 +109,7 @@ function CustomSidebarComponent({ data }: { data: any }) {
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSignOut()}>
                 <span>Sign Out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

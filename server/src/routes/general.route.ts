@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 
-const generalRoutes = new Hono()
+const generalRoutes = new Hono();
 
-generalRoutes.get('/api/health', (c) => {
+generalRoutes.get("/health", (c) => {
   return c.json({
-    "message": "Health Ok"
-  })
-})
+    message: "Health Ok",
+  });
+});
 
-export default generalRoutes
+export default generalRoutes;

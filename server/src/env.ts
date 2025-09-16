@@ -2,9 +2,11 @@ import { configDotenv } from "dotenv";
 configDotenv();
 
 export const env = {
+  NODE_ENV: process.env.NODE_ENV || "dev",
   PORT: parseInt(process.env.PORT as string) || 8000,
   APP_URL: process.env.APP_URL || "http://localhost:3000",
-  BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || "http://localhost:8000/api/auth",
+  BETTER_AUTH_URL:
+    process.env.BETTER_AUTH_URL || "http://localhost:8000/api/auth",
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || "undefined",
   POSTGRES_URL: process.env.POSTGRES_URL || "undefined",
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "undefined",

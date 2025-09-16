@@ -15,11 +15,11 @@ const getDefaultFormElement = (): FormElement => {
 
 function FormBuilderComponent() {
   const formStore = useFormStore();
-  const { formElements, addElement } = formStore;
+  const { formBuilderData, addElement } = formStore;
 
   const handleAddFormElement = () => {
     const el = getDefaultFormElement();
-    addElement([...formElements, el]);
+    addElement([...formBuilderData, el]);
   };
 
   return (
@@ -29,10 +29,10 @@ function FormBuilderComponent() {
           as="div"
           axis="y"
           className="w-full"
-          values={formElements}
+          values={formBuilderData}
           onReorder={addElement}
         >
-          {formElements.map((element) => {
+          {formBuilderData.map((element) => {
             return (
               <FormElementComponent
                 key={element.id}

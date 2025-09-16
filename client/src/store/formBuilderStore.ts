@@ -26,7 +26,7 @@ const initFormState = () => {
   return <FormState>{
     formId: formId,
     formTitle: "",
-    formElements: [],
+    formBuilderData: [],
     formErrors: {
       formId: formId,
       formErrorCode: [
@@ -94,7 +94,7 @@ const validateFormElements = (
 const validateForm = (formState: FormState): FormError => {
   const formTitleErrors = validateFormTitle(formState.formTitle);
   const { formErrors, blockErrors } = validateFormElements(
-    formState.formElements
+    formState.formBuilderData
   );
   return {
     formId: formState.formId,
@@ -104,12 +104,15 @@ const validateForm = (formState: FormState): FormError => {
 };
 
 // Create debounced validation
-const debouncedValidation = debounce((getState: () => FormState & FormActions, setState: any) => {
-  const state = getState();
-  setState((draft: FormState) => {
-    draft.formErrors = validateForm(state);
-  });
-}, 300);
+const debouncedValidation = debounce(
+  (getState: () => FormState & FormActions, setState: any) => {
+    const state = getState();
+    setState((draft: FormState) => {
+      draft.formErrors = validateForm(state);
+    });
+  },
+  300
+);
 
 export const useFormStore = create<FormState & FormActions>()(
   immer((set, get) => ({
@@ -129,21 +132,23 @@ export const useFormStore = create<FormState & FormActions>()(
 
     addElement: (el: Array<FormElement>) =>
       set((state) => {
-        state.formElements = el;
+        state.formBuilderData = el;
         // Immediate validation for structural changes
         state.formErrors = validateForm(state);
       }),
 
     deleteElement: (id: string) =>
       set((state) => {
-        state.formElements = state.formElements.filter((el) => el.id !== id);
+        state.formBuilderData = state.formBuilderData.filter(
+          (el) => el.id !== id
+        );
         // Immediate validation for structural changes
         state.formErrors = validateForm(state);
       }),
 
     updateElementType: (id: string, type: string) =>
       set((state) => {
-        const element = state.formElements.find((el) => el.id === id);
+        const element = state.formBuilderData.find((el) => el.id === id);
         if (element) {
           element.type = type;
           // Add default option if type is option
@@ -157,7 +162,7 @@ export const useFormStore = create<FormState & FormActions>()(
 
     updateElementTitle: (id: string, title: string) =>
       set((state) => {
-        const element = state.formElements.find((el) => el.id === id);
+        const element = state.formBuilderData.find((el) => el.id === id);
         if (element) {
           element.main_title = title;
           // Debounced validation for text inputs
@@ -167,7 +172,7 @@ export const useFormStore = create<FormState & FormActions>()(
 
     updateElementSubtitle: (id: string, subtitle: string) =>
       set((state) => {
-        const element = state.formElements.find((el) => el.id === id);
+        const element = state.formBuilderData.find((el) => el.id === id);
         if (element) {
           element.sub_title = subtitle;
           // No validation needed for optional subtitle
@@ -176,7 +181,7 @@ export const useFormStore = create<FormState & FormActions>()(
 
     addOption: (id: string, opt: FormOption) =>
       set((state) => {
-        const element = state.formElements.find((el) => el.id === id);
+        const element = state.formBuilderData.find((el) => el.id === id);
         if (element && element.options) {
           element.options.push(opt);
           // Immediate validation for structural changes
@@ -186,7 +191,7 @@ export const useFormStore = create<FormState & FormActions>()(
 
     updateOption: (elId: string, optId: string, optValue: string) =>
       set((state) => {
-        const element = state.formElements.find((el) => el.id === elId);
+        const element = state.formBuilderData.find((el) => el.id === elId);
         if (element && element.options) {
           const option = element.options.find((opt) => opt.id === optId);
           if (option) {
@@ -198,13 +203,13 @@ export const useFormStore = create<FormState & FormActions>()(
       }),
     addBatchUpdate: (updates: Array<() => void>) => {
       set((state) => {
-        updates.forEach(update => update());
+        updates.forEach((update) => update());
         state.formErrors = validateForm(state);
       });
     },
     validateElement: (id: string) => {
       set((state) => {
-        const element = state.formElements.find(el => el.id === id);
+        const element = state.formBuilderData.find((el) => el.id === id);
         if (element) {
           // Validate only this element
           const { blockErrors } = validateFormElements([element]);

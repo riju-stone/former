@@ -11,7 +11,7 @@ import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
 
 function FormBuilderPage() {
   const formStore = useFormStore();
-  const { formId, formTitle, formElements, formErrors, updateFormTitle } =
+  const { formId, formTitle, formBuilderData, formErrors, updateFormTitle } =
     formStore;
 
   const router = useRouter();
@@ -19,7 +19,7 @@ function FormBuilderPage() {
   const formObject: FormState = {
     formId: formId,
     formTitle: formTitle,
-    formElements: formElements,
+    formBuilderData: formBuilderData,
     formErrors: formErrors,
     formSteps: 1, // Not implemented yet
   };
@@ -50,10 +50,20 @@ function FormBuilderPage() {
     }
   };
 
-  const handleFormDraft = () => {
+  const handleFormDraft = async () => {
     if (!checkForFormErrors()) {
-      saveFormBuild(formObject);
-      router.push("/");
+      const res = await fetch("http://localhost:8000/api/form/builder/draft", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ formData: formObject }),
+        credentials: "include",
+      }).then((res) => res.json());
+
+      console.log("Draft save response:", res);
+
+      // router.push("/");
       toast.success("Form build saved successfully");
     } else {
       toast.error("Form has errors. Please fix them first");

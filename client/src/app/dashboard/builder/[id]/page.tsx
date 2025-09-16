@@ -17,7 +17,7 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   const {
     formId,
     formTitle,
-    formElements,
+    formBuilderData,
     formErrors,
     updateFormTitle,
     resetFormStore,
@@ -64,7 +64,7 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   const formObject: FormState = {
     formId: formId,
     formTitle: formTitle,
-    formElements: formElements,
+    formBuilderData: formBuilderData,
     formErrors: formErrors,
     formSteps: 1,
   };
@@ -95,9 +95,19 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
     }
   };
 
-  const handleFormDraft = () => {
+  const handleFormDraft = async () => {
     if (!checkForFormErrors()) {
-      saveFormBuild(formObject);
+      const res = await fetch("http://localhost:8080/api/form/builder/draft", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ formData: formObject }),
+        credentials: "include",
+      }).then((res) => res.json());
+
+      console.log("Draft save response:", res);
+
       router.push("/");
       toast.success("Form build saved successfully");
     } else {
@@ -108,7 +118,7 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        Loading form data...
+        Loading form data
       </div>
     );
   }
