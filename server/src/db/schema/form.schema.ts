@@ -31,3 +31,18 @@ export const formPublishedTable = pgTable("published-forms", {
     .notNull()
     .defaultNow(),
 });
+
+export const formSubmissionsTable = pgTable("form-submissions", {
+  id: varchar().primaryKey(),
+  user_email: text("user_email").notNull(),
+  formId: text("form_id")
+    .notNull()
+    .references(() => formPublishedTable.id),
+  submissionData: json("submission_data").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

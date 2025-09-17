@@ -39,3 +39,11 @@ export type FormPublishType = {
   updatedAt?: Date;
   formExpiry: Date;
 };
+
+export type FormSubmissionType = {
+  id: string;
+  user_email: string;
+  formId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};

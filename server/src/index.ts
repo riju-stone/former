@@ -2,17 +2,18 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
-import { logger } from "hono/logger";
 import authRoute from "@routes/auth.route";
 import { compress } from "hono/compress";
 import { protectRoute } from "@middleware/auth.middleware";
 import generalRoutes from "@routes/general.route";
 import { env } from "./env";
 import formRoute from "@routes/form.route";
+import customLogger from "@utils/logger";
+import { logRoutes } from "@middleware/logger.middleware";
 
 const nodeEnv = env.NODE_ENV || "dev";
-console.warn(`Running in ${nodeEnv} mode`);
-console.warn("In dev mode, some security features are disabled.");
+customLogger.warn(`Running in ${nodeEnv} mode`);
+customLogger.warn("In dev mode, some security features are disabled.");
 
 // App
 const app = new Hono();
@@ -25,7 +26,7 @@ if (nodeEnv === "prod") {
     })
   );
 }
-app.use(logger());
+
 app.use(compress({ encoding: "gzip" }));
 
 // Added Security
@@ -44,9 +45,11 @@ if (nodeEnv === "prod") {
 }
 
 // Protected Routes Middleware
+app.use("*", logRoutes);
 app.use("/api/form/builder/*", protectRoute);
+app.use("/api/form/analytics/*", protectRoute);
 
-// Routes
+// Routes≤
 app.route("/api", generalRoutes);
 app.route("/api", authRoute);
 app.route("/api", formRoute);
@@ -57,6 +60,6 @@ serve(
     port: env.PORT,
   },
   (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
+    customLogger.info(`Server is running on http://localhost:${info.port}`);
   }
 );

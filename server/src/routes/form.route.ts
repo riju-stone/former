@@ -1,24 +1,16 @@
-import {
-  fetchAllLiveFormsByUser,
-  fetchAllSavedFormsByUser,
-  fetchLiveFormById,
-  fetchSavedFormById,
-  publishForm,
-  uploadFormBuilderDraft,
-} from "@db/queries/form.queries";
-import { auth } from "@lib/auth";
+import { User } from "better-auth/*";
 import { Hono } from "hono";
+import * as queries from "@db/queries/form.queries";
 
 const formRoute = new Hono();
 
 // PROTECTED ROUTES
 // Fetch All Live Forms by a user
 formRoute.get("/form/builder/all/live", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
-  const userId = session?.user.id!;
+  const user = c.get("user" as never) as User;
 
   try {
-    const liveForms = await fetchAllLiveFormsByUser(userId);
+    const liveForms = await queries.fetchAllLiveFormsByUser(user.id);
     return c.json({ data: liveForms });
   } catch (err) {
     console.error("Error fetching live forms:", err);
@@ -28,11 +20,10 @@ formRoute.get("/form/builder/all/live", async (c) => {
 
 // Fetch all form builder drafts by a user
 formRoute.get("/form/builder/all/saved", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
-  const userId = session?.user.id!;
+  const user = c.get("user" as never) as User;
 
   try {
-    const savedForms = await fetchAllSavedFormsByUser(userId);
+    const savedForms = await queries.fetchAllSavedFormsByUser(user.id);
     return c.json({ data: savedForms });
   } catch (err) {
     console.error("Error fetching saved forms:", err);
@@ -42,8 +33,7 @@ formRoute.get("/form/builder/all/saved", async (c) => {
 
 // Upload Form
 formRoute.post("/form/builder/upload", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
-  const userId = session?.user.id!;
+  const user = c.get("user" as never) as User;
   const { formData } = await c.req.json();
 
   if (!formData) {
@@ -60,22 +50,21 @@ formRoute.post("/form/builder/upload", async (c) => {
 
   const _formUploadData = {
     id: formId,
-    userId: userId,
+    userId: user.id,
     formName: formTitle,
     builderData: formBuilderData,
     ...formData,
   };
 
-  await publishForm(_formUploadData);
+  await queries.publishForm(_formUploadData);
 
   return c.json({ message: "Form uploaded successfully" });
 });
 
 // Save form builder draft data
 formRoute.post("/form/builder/draft", async (c) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  const user = c.get("user" as never) as User;
   const { formData } = await c.req.json();
-  const userId = session?.user.id;
 
   if (!formData) {
     return c.json({ message: "formData is required" }, 400);
@@ -91,14 +80,15 @@ formRoute.post("/form/builder/draft", async (c) => {
 
   const _formDraftData = {
     id: formId,
-    userId: userId!,
+    userId: user.id,
     formName: formTitle,
     builderData: formBuilderData,
+    ...formData,
   };
 
   // Here, you would typically process and save the formData to your database
   try {
-    await uploadFormBuilderDraft(_formDraftData);
+    await queries.uploadFormBuilderDraft(_formDraftData);
   } catch (err) {
     console.error("Error saving form draft:", err);
     return c.json({ message: "Error saving form draft" }, 500);
@@ -115,7 +105,7 @@ formRoute.get("/form/builder/data", async (c) => {
   }
 
   try {
-    const formData = await fetchSavedFormById(formId);
+    const formData = await queries.fetchSavedFormById(formId);
     return c.json({ data: formData });
   } catch (err) {
     console.error("Error fetching form data:", err);
@@ -132,7 +122,7 @@ formRoute.get("/form/data", async (c) => {
   }
 
   try {
-    const formData = await fetchLiveFormById(formId);
+    const formData = await queries.fetchLiveFormById(formId);
     return c.json({ data: formData });
   } catch (err) {
     console.error("Error fetching form data:", err);
