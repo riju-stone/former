@@ -44,6 +44,7 @@ export type FormSubmissionType = {
   id: string;
   user_email: string;
   formId: string;
+  submissionData: FormData;
   createdAt?: Date;
   updatedAt?: Date;
 };

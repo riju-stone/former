@@ -1,7 +1,15 @@
-import { formBuilderTable, formPublishedTable } from "@db/schema/form.schema";
+import {
+  formBuilderTable,
+  formPublishedTable,
+  formSubmissionsTable,
+} from "@db/schema/form.schema";
 import { db } from "../index";
 import { desc, eq } from "drizzle-orm";
-import { FormDraftType, FormPublishType } from "types/form.types";
+import {
+  FormDraftType,
+  FormPublishType,
+  FormSubmissionType,
+} from "types/form.types";
 
 // Fetch Queries
 export async function fetchAllLiveFormsByUser(userId: string) {
@@ -61,6 +69,9 @@ export async function publishForm(formData: FormPublishType) {
   return await db.insert(formPublishedTable).values(formData);
 }
 
+export async function submitFormResponse(responseData: FormSubmissionType) {
+  return await db.insert(formSubmissionsTable).values(responseData);
+}
 // Delete Queries
 export async function deleteFormBuilderDraft(formId: string) {
   return await db
