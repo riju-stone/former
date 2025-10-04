@@ -72,6 +72,7 @@ export async function publishForm(formData: FormPublishType) {
 export async function submitFormResponse(responseData: FormSubmissionType) {
   return await db.insert(formSubmissionsTable).values(responseData);
 }
+
 // Delete Queries
 export async function deleteFormBuilderDraft(formId: string) {
   return await db

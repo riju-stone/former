@@ -11,6 +11,8 @@ export const env = {
     process.env.BETTER_AUTH_URL || "http://localhost:8000/api/auth",
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || "undefined",
   POSTGRES_URL: process.env.POSTGRES_URL || "undefined",
+  UPSTASH_REDIS_HOST: process.env.UPSTASH_REDIS_HOST || "undefined",
+  UPSTASH_REDIS_PORT: process.env.UPSTASH_REDIS_PORT || "6379",
   UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL || "undefined",
   UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN || "undefined",
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "undefined",
