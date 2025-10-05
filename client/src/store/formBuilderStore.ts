@@ -5,11 +5,13 @@ import { debounce } from "lodash";
 import {
   FormActions,
   FormElement,
+  FormElementConstraint,
   FormElementError,
   FormError,
   FormOption,
   FormState,
 } from "@/types/formState";
+import { FormTypes } from "@/types/formBuild";
 
 export const FORM_ERROR_TYPES = {
   EMPTY_FORM_TITLE: 0,
@@ -151,6 +153,18 @@ export const useFormStore = create<FormState & FormActions>()(
         const element = state.formBuilderData.find((el) => el.id === id);
         if (element) {
           element.type = type;
+          element.constraints = FormTypes.find((ft) => ft.tag === type)
+            ? [...FormTypes.find((ft) => ft.tag === type)!.validations].map(
+                (val) => ({
+                  id: uuid(),
+                  type: val.type,
+                  name: val.name,
+                  defaultValue: val.defaultValue.toString(),
+                  customValue: null,
+                })
+              )
+            : [];
+
           // Add default option if type is option
           if (type === "option") {
             element.options = [{ id: "1", value: "Option 1" }];
@@ -178,7 +192,31 @@ export const useFormStore = create<FormState & FormActions>()(
           // No validation needed for optional subtitle
         }
       }),
+    updateElementConstraint: (
+      elementId: string,
+      constraintId: string,
+      updatedValue: any
+    ) =>
+      set((state) => {
+        const element = state.formBuilderData.find((el) => el.id === elementId);
+        if (element) {
+          if (!element.constraints) {
+            element.constraints = [] as FormElementConstraint[];
+          }
 
+          const existingConstraintObj = (
+            element.constraints as FormElementConstraint[]
+          ).find((c) => c.id === constraintId);
+
+          if (existingConstraintObj) {
+            // Update existing constraint
+            existingConstraintObj.customValue = updatedValue;
+          }
+
+          // Immediate validation for constraint changes
+          state.formErrors = validateForm(state);
+        }
+      }),
     addOption: (id: string, opt: FormOption) =>
       set((state) => {
         const element = state.formBuilderData.find((el) => el.id === id);

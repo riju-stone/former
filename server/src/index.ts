@@ -19,30 +19,30 @@ customLogger.warn("In dev mode, some security features are disabled.");
 const app = new Hono();
 
 // Middleware
-if (nodeEnv === "prod") {
-  app.use(
-    csrf({
-      origin: ["http://localhost:3000", "https://formerapp.vercel.app"],
-    })
-  );
-}
+// if (nodeEnv === "prod") {
+app.use(
+  csrf({
+    origin: ["http://localhost:3000", "https://formerapp.vercel.app"],
+  })
+);
+// }
 
 app.use(compress({ encoding: "gzip" }));
 
 // Added Security
-if (nodeEnv === "prod") {
-  app.use(
-    "*",
-    cors({
-      origin: ["http://localhost:3000", "https://formerapp.vercel.app"],
-      allowHeaders: ["Content-Type", "Authorization"],
-      allowMethods: ["POST", "GET", "OPTIONS", "PATCH", "DELETE"],
-      exposeHeaders: ["Content-Length"],
-      maxAge: 86400,
-      credentials: true,
-    })
-  );
-}
+// if (nodeEnv === "prod") {
+app.use(
+  "*",
+  cors({
+    origin: ["http://localhost:3000", "https://formerapp.vercel.app"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS", "PATCH", "DELETE"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 86400,
+    credentials: true,
+  })
+);
+// }
 
 // Protected Routes Middleware
 app.use("*", logRoutes);

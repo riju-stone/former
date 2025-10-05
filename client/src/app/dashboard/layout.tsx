@@ -18,7 +18,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <CustomSidebarComponent data={userData} />
-      <main className="w-full h-screen">{children}</main>
+      <main className="w-full h-screen overflow-hidden">{children}</main>
     </SidebarProvider>
   );
 }

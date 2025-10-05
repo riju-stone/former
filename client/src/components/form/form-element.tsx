@@ -106,7 +106,7 @@ const FormElementComponent = ({
               </div>
             </div>
             <div className="w-full">{getInputType(element)}</div>
-            <FormValidationComponent inputType={element.type} elementId={id} />
+            <FormValidationComponent elementId={id} />
           </div>
         </motion.div>
       </AnimatePresence>

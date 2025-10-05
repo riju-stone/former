@@ -8,7 +8,7 @@ export type FormElementConstraint = {
   type: string;
   name: string;
   defaultValue: string;
-  customValue: string | null;
+  customValue?: string | null;
 };
 
 export type FormElement = {
@@ -18,7 +18,7 @@ export type FormElement = {
   sub_title?: string;
   type: string;
   options?: Array<FormOption>;
-  constraints?: Array<FormElementConstraint>;
+  constraints: Array<FormElementConstraint> | [];
 };
 
 export type FormElementError = {
@@ -47,6 +47,11 @@ export type FormActions = {
   updateElementType: (id: string, type: string) => void;
   updateElementTitle: (id: string, title: string) => void;
   updateElementSubtitle: (id: string, subtitle: string) => void;
+  updateElementConstraint: (
+    elementId: string,
+    constraintId: string,
+    updatedValue: any
+  ) => void;
   addOption: (id: string, opt: FormOption) => void;
   updateOption: (elId: string, optId: string, optValue: string) => void;
   resetFormStore: () => void;

@@ -8,9 +8,25 @@ import FormElementComponent from "./form-element";
 
 import { useFormStore } from "@/store/formBuilderStore";
 import { FormElement } from "@/types/formState";
+import { FormTypes } from "@/types/formBuild";
 
 const getDefaultFormElement = (): FormElement => {
-  return { id: uuid(), type: "short", main_title: "", sub_title: "", step: 1 };
+  return {
+    id: uuid(),
+    type: "short",
+    main_title: "",
+    sub_title: "",
+    step: 1,
+    constraints: [
+      ...FormTypes.find((ft) => ft.tag === "short")!.validations,
+    ].map((val) => ({
+      id: uuid(),
+      type: val.type,
+      name: val.name,
+      defaultValue: val.defaultValue.toString(),
+      customValue: null,
+    })),
+  };
 };
 
 function FormBuilderComponent() {
@@ -24,7 +40,7 @@ function FormBuilderComponent() {
 
   return (
     <div className="w-full flex justify-center items-center">
-      <div className="h-[calc(100vh-135px)] w-full max-w-[600px] flex flex-col justify-start items-center gap-6 border-[1px] border-gray-200 overflow-y-auto p-5 rounded-md mx-2">
+      <div className="h-[calc(100vh-135px)] w-full max-w-[600px] flex flex-col justify-start items-center gap-6 border-[1px] border-gray-200 overflow-y-auto p-5 rounded-md mx-2 overflow-x-hidden">
         <Reorder.Group
           as="div"
           axis="y"

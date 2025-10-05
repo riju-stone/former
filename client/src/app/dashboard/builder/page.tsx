@@ -13,7 +13,6 @@ function FormBuilderPage() {
   const formStore = useFormStore();
   const { formId, formTitle, formBuilderData, formErrors, updateFormTitle } =
     formStore;
-
   const router = useRouter();
 
   const formObject: FormState = {
@@ -62,8 +61,7 @@ function FormBuilderPage() {
       }).then((res) => res.json());
 
       console.log("Draft save response:", res);
-
-      // router.push("/");
+      router.push("/");
       toast.success("Form build saved successfully");
     } else {
       toast.error("Form has errors. Please fix them first");
@@ -74,11 +72,11 @@ function FormBuilderPage() {
     <div className="h-screen w-full flex justify-center items-center">
       <div className="h-full w-full flex flex-col justify-center items-center">
         <div
-          className={`h-[56px] w-[90%] flex justify-between items-center px-4 rounded-bl-xl rounded-br-xl mb-2
+          className={`h-[56px] w-full flex justify-between items-center px-4 mb-2
                     ${
                       formErrors.formErrorCode.length == 0
-                        ? "border-[1px] border-gray-200 bg-gray-50"
-                        : "border-[2px] border-red-200 bg-red-50"
+                        ? "border-b-[1px] border-gray-200 bg-gray-50"
+                        : "border-b-[2px] border-red-200 bg-red-50"
                     }
                         `}
         >
@@ -100,11 +98,11 @@ function FormBuilderPage() {
         </div>
         <FormBuilderComponent />
         <div
-          className={`bottom-0 h-[64px] w-[90%] flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] rounded-tr-xl rounded-tl-xl mt-2
+          className={`bottom-0 h-[64px] w-full flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] mt-2
                     ${
                       formErrors.formErrorCode.length == 0
-                        ? "border-[1px] border-gray-200 bg-gray-50"
-                        : "border-[2px] border-red-200 bg-red-50"
+                        ? "border-t-[1px] border-gray-200 bg-gray-50"
+                        : "border-t-[2px] border-red-200 bg-red-50"
                     }
                         `}
         >

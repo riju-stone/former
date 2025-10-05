@@ -3,22 +3,16 @@
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import React, { useState } from "react";
-import ValidationGroupComponent from "../custom/validation-group";
-import { FormTypes } from "@/types/formBuild";
+import { useFormStore } from "@/store/formBuilderStore";
+import ValidationGroupComponent from "@/components/custom/validation-group";
 
-function FormValidationComponent({
-  inputType,
-  elementId,
-}: {
-  inputType: string;
-  elementId: string;
-}) {
+function FormValidationComponent({ elementId }: { elementId: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { constraints } = useFormStore((state) =>
+    state.formBuilderData.find((el) => el.id === elementId)
+  );
 
-  const formType = FormTypes.find((form) => form.tag === inputType);
-  const validationGroup = formType?.validations || [];
-
-  return validationGroup.length > 0 ? (
+  return constraints.length > 0 ? (
     <div className="w-full text-gray-650 text-[12px] font-[600]">
       <div className="flex flex-col items-start gap-2">
         <div
@@ -26,7 +20,7 @@ function FormValidationComponent({
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <span className="text-gray-500 text-[14px] font-[500]">
-            Input Options
+            Constraints
           </span>
           <motion.div
             className="flex justify-center items-center opacity-50"
@@ -49,7 +43,7 @@ function FormValidationComponent({
                 <div className="flex flex-col items-center gap-2">
                   <div className="flex items-center gap-2">
                     <ValidationGroupComponent
-                      validationGroup={validationGroup}
+                      validationGroup={constraints}
                       elementId={elementId}
                     />
                   </div>
