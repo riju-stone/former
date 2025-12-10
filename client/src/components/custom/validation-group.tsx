@@ -31,16 +31,18 @@ function ValidationInput({
       );
     case "array":
       return (
-        <div className="h-[50px] w-[50%] flex items-center gap-2 overflow-scroll px-2">
-          {validation.defaultValue.map((item: any) => (
-            <div
-              key={item}
-              className="h-[32px] w-full bg-transparent px-2 py-[6px] text-[12px] text-gray-600 outline-none border-[1px] border-gray-200 rounded-lg cursor-pointer"
-            >
+        <select
+          className="h-[32px] w-full bg-transparent px-2 py-[6px] text-[12px] text-gray-600 outline-none border-[1px] border-gray-200 rounded-lg cursor-pointer"
+          onChange={(e) =>
+            updateElementConstraint(elementId, validation.id, e.target.value)
+          }
+        >
+          {validation.defaultValue.split(",").map((item: any) => (
+            <option key={item} value={item}>
               {item}
-            </div>
+            </option>
           ))}
-        </div>
+        </select>
       );
     case "date":
       return <DatePickerComponent disabled={false} />;

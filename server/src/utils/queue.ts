@@ -11,6 +11,10 @@ const formProcessingQueue = new Queue("form-processing-queue", {
     port: redisPort,
     password: redisPassword,
   },
+  limiter: {
+    max: 10, // maximum 10 jobs
+    duration: 6000, // 6 seconds
+  },
 });
 
 export default formProcessingQueue;
