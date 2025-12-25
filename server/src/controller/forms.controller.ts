@@ -121,7 +121,7 @@ export async function handleFormSubmission(c: Context) {
   const { formSubmissionData } = await c.req.json();
 
   if (!formSubmissionData) {
-    return c.json({ message: "formSubmissionData is required" }, 400);
+    return c.json({ message: "Form submission data is required" }, 400);
   }
 
   const { formId, userEmail, submissionData } = formSubmissionData;
@@ -153,26 +153,38 @@ export async function handleFormSubmission(c: Context) {
 }
 
 export async function handleFormSubmissionV2(c: Context) {
-  // Validate form data
-  const { formId, userEmail, submissionData } = await c.req.json();
+  try {
+    // Validate form data
+    const { formId, userEmail, submissionData } = await c.req.json();
 
-  if (!formId || !userEmail || !submissionData) {
-    return c.json(
-      { message: "formId, userEmail, and submissionData are required" },
-      400
+    if (!formId || !userEmail || !submissionData) {
+      return c.json(
+        { message: "formId, userEmail, and submissionData are required" },
+        400
+      );
+    }
+
+    const _formSubmissionData = {
+      id: crypto.randomUUID(),
+      formId,
+      user_email: userEmail,
+      submissionData,
+    };
+
+    // Push form submission data into queue
+    await formProcessingQueue.add({
+      event: JSON.stringify(_formSubmissionData),
+      message: "New form submission received",
+    });
+
+    // Return success response
+    return c.json({ message: "Form submission received" });
+  } catch (err) {
+    customLogger.error(
+      `Error processing form submission: ${JSON.stringify(err)}`
     );
+    return c.json({ message: "Error processing form submission" }, 500);
   }
-
-  // Push form submission data into queue
-  await formProcessingQueue.add({
-    event: "formSubmission",
-    formId,
-    userEmail,
-    submissionData,
-  });
-
-  // Return success response
-  return c.json({ message: "Form submission received" });
 }
 
 export async function handleFetchLiveFormData(c: Context) {
@@ -189,7 +201,7 @@ export async function handleFetchLiveFormData(c: Context) {
       return c.json({ data: cachedFormData });
     } else {
       const formData = await queries.fetchLiveFormById(formId);
-      await redis.set(formId, formData, { ex: 3600 * 5 }); // Cache for 5 hours
+      await redis.set(formId, formData, { ex: 3600 * 2 }); // Cache for 2 hours
       customLogger.debug(`Cache miss for formId: ${formId}. Fetched from DB.`);
       return c.json({ data: formData });
     }
