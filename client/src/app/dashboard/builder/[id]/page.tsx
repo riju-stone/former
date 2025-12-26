@@ -14,15 +14,7 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [isLoading, setIsLoading] = useState(true);
   const formStore = useFormStore();
-  const {
-    formId,
-    formTitle,
-    formBuilderData,
-    formErrors,
-    updateFormTitle,
-    resetFormStore,
-    addElement,
-  } = formStore;
+  const { formId, formTitle, formBuilderData, formErrors, updateFormTitle, resetFormStore, addElement } = formStore;
 
   const router = useRouter();
 
@@ -77,7 +69,8 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   const checkForFormErrors = () => {
     return (
       formErrors.formErrorCode.length > 0 ||
-      Object.keys(formErrors.formBlockErrors || {}).length > 0
+      Object.keys(formErrors.formBlockErrors || {}).length > 0 ||
+      Object.keys(formErrors.formElementErrors || {}).length > 0
     );
   };
 
@@ -121,11 +114,7 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full w-full">
-        Loading form data
-      </div>
-    );
+    return <div className="flex items-center justify-center h-full w-full">Loading form data</div>;
   }
 
   return (

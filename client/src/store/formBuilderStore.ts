@@ -1,12 +1,7 @@
 import { create } from "zustand";
 import { v7 as uuid } from "uuid";
 import { immer } from "zustand/middleware/immer";
-import {
-  FormActions,
-  FormElement,
-  FormOption,
-  FormState,
-} from "@/types/formBuilderState";
+import { FormActions, FormElement, FormOption, FormState } from "@/types/formBuilderState";
 import { FormTypes } from "@/types/formMetadata";
 import {
   initFormState,
@@ -89,23 +84,16 @@ export const useFormStore = create<FormState & FormActions>()(
         set((state) => {
           const path = findElementPath(state.formBuilderData, id);
           if (path) {
-            state.formBuilderData[path.stepKey][path.index].sub_title =
-              subtitle;
+            state.formBuilderData[path.stepKey][path.index].sub_title = subtitle;
           }
         }),
 
-      updateElementConstraint: (
-        elementId: string,
-        constraintId: string,
-        updatedValue: any
-      ) =>
+      updateElementConstraint: (elementId: string, constraintId: string, updatedValue: any) =>
         set((state) => {
           const path = findElementPath(state.formBuilderData, elementId);
           if (path) {
             const element = state.formBuilderData[path.stepKey][path.index];
-            const constraint = element.constraints.find(
-              (c) => c.id === constraintId
-            );
+            const constraint = element.constraints.find((c) => c.id === constraintId);
 
             if (constraint) {
               constraint.customValue = updatedValue;
@@ -152,12 +140,12 @@ export const useFormStore = create<FormState & FormActions>()(
             const codes = validateSingleElement(element);
 
             if (codes.length > 0) {
-              state.formErrors.formBlockErrors[id] = {
-                blockId: id,
-                blockErrorCode: codes,
+              state.formErrors.formElementErrors[id] = {
+                elementId: id,
+                elementErrorCode: codes,
               };
             } else {
-              delete state.formErrors.formBlockErrors[id];
+              delete state.formErrors.formElementErrors[id];
             }
           }
         });
@@ -171,6 +159,7 @@ export const useFormStore = create<FormState & FormActions>()(
           const stepKey = `step${steps}`;
           if (!state.formBuilderData[stepKey]) {
             state.formBuilderData[stepKey] = [];
+            state.formErrors = validateForm(state);
           }
         }),
     };

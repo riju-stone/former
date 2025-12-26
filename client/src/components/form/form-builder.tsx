@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CirclePlus, Ellipsis, PlusIcon, Trash2 } from "lucide-react";
+import { CirclePlus, PlusIcon, Trash2 } from "lucide-react";
 import { v7 as uuid } from "uuid";
 import { AnimatePresence, motion, Reorder } from "motion/react";
 import FormElementComponent from "./form-element";
@@ -10,16 +10,14 @@ import { useFormStore } from "@/store/formBuilderStore";
 import { FormElement } from "@/types/formBuilderState";
 import { FormTypes } from "@/types/formMetadata";
 
-const getDefaultFormElement = (): FormElement => {
+const getDefaultFormElement = (step: number): FormElement => {
   return {
     id: uuid(),
     type: "short",
     main_title: "",
     sub_title: "",
-    step: 1,
-    constraints: [
-      ...FormTypes.find((ft) => ft.tag === "short")!.validations,
-    ].map((val) => ({
+    step: step + 1,
+    constraints: [...FormTypes.find((ft) => ft.tag === "short")!.validations].map((val) => ({
       id: uuid(),
       type: val.type,
       name: val.name,
@@ -31,7 +29,7 @@ const getDefaultFormElement = (): FormElement => {
 
 function FormBuilderComponent() {
   const formStore = useFormStore();
-  const { formBuilderData, formSteps, updateFormSteps, addElement } = formStore;
+  const { formTitle, formBuilderData, formSteps, updateFormSteps, addElement, formErrors } = formStore;
 
   const handleAddFormSteps = () => {
     // Not implemented yet
@@ -39,13 +37,16 @@ function FormBuilderComponent() {
   };
 
   const handleAddFormElement = (step: number) => {
-    const el = getDefaultFormElement();
+    const el = getDefaultFormElement(step);
     el.step = step;
     addElement([...formBuilderData[`step${step}`], el], `step${step}`);
   };
 
   const handleDeleteFormStepBlock = (step: number) => {
     const updatedData = { ...formBuilderData };
+    const updatedFormTitle = formTitle;
+
+    // Remove the specified step
     delete updatedData[`step${step}`];
     // Shift subsequent steps up
     for (let i = step + 1; i <= formSteps; i++) {
@@ -60,7 +61,9 @@ function FormBuilderComponent() {
 
     // Reset Form Store
     formStore.resetFormStore();
+
     // Apply the updated data using addElement for each step
+    formStore.updateFormTitle(updatedFormTitle);
     Object.keys(updatedData).forEach((key) => {
       addElement(updatedData[key], key);
     });
@@ -79,25 +82,21 @@ function FormBuilderComponent() {
               transition={{ duration: 0.5, type: "spring" }}
               layout={true}
               key={step}
-              className="h-[calc(100vh-150px)] max-w-[600px] min-w-[450px] flex flex-col justify-start items-center border-[1px] border-gray-200 overflow-y-auto p-5 rounded-md mx-2 my-1 overflow-x-hidden"
+              className={`h-[calc(100vh-150px)] max-w-[600px] min-w-[450px] flex flex-col justify-start items-center overflow-y-auto p-5 rounded-md mx-2 my-1 overflow-x-hidden ${
+                formErrors.formBlockErrors[`step${step + 1}`]
+                  ? "border-[2px] border-red-200 bg-red-50"
+                  : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"
+              }`}
             >
               <Reorder.Group
                 as="div"
                 axis="y"
                 className="w-full"
                 values={formBuilderData[`step${step + 1}`]}
-                onReorder={(newOrder) =>
-                  addElement(newOrder, `step${step + 1}`)
-                }
+                onReorder={(newOrder) => addElement(newOrder, `step${step + 1}`)}
               >
                 {formBuilderData[`step${step + 1}`].map((element) => {
-                  return (
-                    <FormElementComponent
-                      key={element.id}
-                      id={element.id}
-                      element={element}
-                    />
-                  );
+                  return <FormElementComponent key={element.id} id={element.id} element={element} />;
                 })}
               </Reorder.Group>
               <motion.div

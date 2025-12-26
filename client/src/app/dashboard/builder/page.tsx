@@ -11,8 +11,7 @@ import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
 
 function FormBuilderPage() {
   const formStore = useFormStore();
-  const { formId, formTitle, formBuilderData, formErrors, updateFormTitle } =
-    formStore;
+  const { formId, formTitle, formBuilderData, formErrors, updateFormTitle } = formStore;
   const router = useRouter();
 
   const formObject: FormState = {
@@ -26,7 +25,8 @@ function FormBuilderPage() {
   const checkForFormErrors = () => {
     return (
       formErrors.formErrorCode.length > 0 ||
-      Object.keys(formErrors.formBlockErrors).length > 0
+      Object.keys(formErrors.formBlockErrors).length > 0 ||
+      Object.keys(formErrors.formElementErrors).length > 0
     );
   };
 

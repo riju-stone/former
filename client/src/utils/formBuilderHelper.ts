@@ -23,11 +23,11 @@ export const initFormState = (): FormState => {
     formSteps: 1,
     formErrors: {
       formId,
-      formErrorCode: [
-        FORM_ERROR_TYPES.EMPTY_FORM_TITLE,
-        FORM_ERROR_TYPES.EMPTY_FORM,
-      ],
-      formBlockErrors: {},
+      formErrorCode: [FORM_ERROR_TYPES.EMPTY_FORM_TITLE],
+      formBlockErrors: {
+        step1: [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK],
+      },
+      formElementErrors: {},
     },
   };
 };
@@ -58,7 +58,7 @@ export const validateFormTitle = (title: string): FormErrorCode[] => {
 export const validateSingleElement = (el: FormElement): number[] => {
   const blockErrorCodes: number[] = [];
   if (!el.main_title || el.main_title.trim() === "") {
-    blockErrorCodes.push(FORM_ERROR_TYPES.EMPTY_BLOCK_TITLE);
+    blockErrorCodes.push(FORM_ERROR_TYPES.EMPTY_FORM_ELEMENT_TITLE);
   }
   if (el.type === "option" && el.options) {
     el.options.forEach((opt) => {
@@ -70,48 +70,54 @@ export const validateSingleElement = (el: FormElement): number[] => {
   return blockErrorCodes;
 };
 
+export const validateFormBlocks = (
+  elements: Record<string, Array<FormElement>>
+): { formBlockErrors: Record<string, Array<FormErrorCode>> } => {
+  let formBlocks = Object.keys(elements);
+  const formBlockErrors: Record<string, Array<FormErrorCode>> = {};
+
+  formBlocks.forEach((blockKey) => {
+    if (elements[blockKey].length === 0) {
+      formBlockErrors[blockKey] = [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK];
+    }
+  });
+
+  return { formBlockErrors };
+};
+
 export const validateFormElements = (
   elements: Array<FormElement>
-): { formErrors: number[]; blockErrors: Record<string, FormElementError> } => {
-  const formErrors: number[] = [];
-  const blockErrors: Record<string, FormElementError> = {};
-
-  if (!elements || elements.length === 0) {
-    formErrors.push(FORM_ERROR_TYPES.EMPTY_FORM);
-    return { formErrors, blockErrors };
-  }
+): { formElementErrors: Record<string, FormElementError> } => {
+  const formElementErrors: Record<string, FormElementError> = {};
 
   elements.forEach((el) => {
     const codes = validateSingleElement(el);
     if (codes.length > 0) {
-      blockErrors[el.id] = {
-        blockId: el.id,
-        blockErrorCode: codes,
+      formElementErrors[el.id] = {
+        elementId: el.id,
+        elementErrorCode: codes,
       };
     }
   });
 
-  return { formErrors, blockErrors };
+  return { formElementErrors };
 };
 
 export const validateForm = (formState: FormState): FormError => {
   const formTitleErrors = validateFormTitle(formState.formTitle);
-  const { formErrors, blockErrors } = validateFormElements(
-    Object.values(formState.formBuilderData).flat()
-  );
+  const { formBlockErrors } = validateFormBlocks(formState.formBuilderData);
+  const { formElementErrors } = validateFormElements(Object.values(formState.formBuilderData).flat());
+
   return {
     formId: formState.formId,
-    formErrorCode: [...formTitleErrors, ...formErrors],
-    formBlockErrors: blockErrors,
+    formErrorCode: [...formTitleErrors],
+    formBlockErrors: formBlockErrors,
+    formElementErrors: formElementErrors,
   };
 };
 
 // Factory to create a debounced validation function bound to the store's get/set
-export const createDebouncedValidation = (
-  getState: () => FormState & FormActions,
-  setState: any,
-  wait = 300
-) =>
+export const createDebouncedValidation = (getState: () => FormState & FormActions, setState: any, wait = 300) =>
   debounce(() => {
     const state = getState();
     setState((draft: FormState) => {

@@ -5,6 +5,7 @@ import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import { DatePickerComponent } from "@/components/custom/date-picker";
 import { FormElement, FormState, FormOption } from "@/store/formBuilderStore";
+import { FORM_ERROR_TYPES } from "@/utils/formBuilderHelper";
 
 function renderOptionInput(el: FormElement) {
   return (
@@ -12,13 +13,7 @@ function renderOptionInput(el: FormElement) {
       {el.options.map((opt: FormOption) => {
         return (
           <div key={opt.id}>
-            <input
-              type="radio"
-              name={el.id}
-              id={opt.value}
-              value={opt.value}
-              disabled={false}
-            />
+            <input type="radio" name={el.id} id={opt.value} value={opt.value} disabled={false} />
             <label htmlFor={opt.value} className="ml-2">
               {opt.value}
             </label>
@@ -45,12 +40,17 @@ function renderInputType(type: string) {
 function FormPreviewPage({ params }: { params: Promise<{ id: string }> }) {
   const [formData, setFormData] = useState<FormState>({
     formTitle: "",
-    formBuilderData: [],
+    formBuilderData: {
+      step1: [],
+    },
     formId: "",
     formErrors: {
       formId: "",
       formErrorCode: null,
-      formBlockErrors: {},
+      formElementErrors: {},
+      formBlockErrors: {
+        step1: [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK],
+      },
     },
     formSteps: 1,
   });
@@ -65,32 +65,30 @@ function FormPreviewPage({ params }: { params: Promise<{ id: string }> }) {
   return Object.values(formData).length > 0 ? (
     <div className="h-screen w-screen flex flex-col justify-center items-center">
       <div className="h-[56px] w-full md:w-[640px] flex justify-between items-center bg-white border-[1px] border-gray-200 px-6">
-        <p className="text-[16px] font-[600] leading-[22px]">
-          {formData.formTitle}
-        </p>
+        <p className="text-[16px] font-[600] leading-[22px]">{formData.formTitle}</p>
       </div>
 
-      <div className="h-[calc(100vh_-_56px)] w-full md:w-[640px] flex flex-col justify-start items-center border-l-[1px] border-r-[1px] border-gray-200 bg-white p-6 gap-10 overflow-y-auto">
-        {formData.formBuilderData.map((element: FormElement) => {
+      <div className="h-full w-full md:w-[640px] flex flex-col justify-start items-center border-l-[1px] border-r-[1px] border-gray-200 bg-white p-6 gap-10 overflow-y-auto">
+        {Object.values(formData.formBuilderData).map((stepElements: FormElement[], idx: number) => {
           return (
-            <div
-              key={`form-element-${element.id}`}
-              className="w-full flex flex-col gap-1"
-            >
-              <label className="text-[14px] text-gray-950 font-[600] leading-5">
-                {element.main_title}
-              </label>
-              <p className="text-[12px] text-gray-700">{element.sub_title}</p>
-              {element.type !== "option"
-                ? renderInputType(element.type)
-                : renderOptionInput(element)}
+            <div className="w-full border-[1px] rounded-md p-5 flex flex-col gap-2" key={`form-step-${idx}`}>
+              <p className="text-[20px] font-[600] mb-4">Form Step {idx + 1}</p>
+              {stepElements.map((element: FormElement) => {
+                return (
+                  <div key={`form-element-${element.id}`} className="w-full flex flex-col gap-1 mb-5">
+                    <label className="text-[16px] text-gray-950 font-[600] leading-5">{element.main_title}</label>
+                    <p className="text-[12px] text-gray-700">{element.sub_title}</p>
+                    {element.type !== "option" ? renderInputType(element.type) : renderOptionInput(element)}
+                  </div>
+                );
+              })}
             </div>
           );
         })}
       </div>
     </div>
   ) : (
-    <div>No Data</div>
+    <div className="h-screen w-screen flex flex-col justify-center items-center">No Data</div>
   );
 }
 

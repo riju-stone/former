@@ -3,8 +3,8 @@ export enum FormErrorCode {
   EMPTY_FORM_TITLE = 0,
   UNSUPPORTED_TITLE = 1,
   MAX_LENGTH_REACHED = 2,
-  EMPTY_FORM = 3,
-  EMPTY_BLOCK_TITLE = 4,
+  EMPTY_FORM_BLOCK = 3,
+  EMPTY_FORM_ELEMENT_TITLE = 4,
   EMPTY_OPTION = 5,
 }
 
@@ -32,14 +32,15 @@ export type FormElement = {
 };
 
 export type FormElementError = {
-  blockId: string;
-  blockErrorCode: Array<FormErrorCode>;
+  elementId: string;
+  elementErrorCode: Array<FormErrorCode>;
 };
 
 export type FormError = {
   formId: string;
   formErrorCode: Array<FormErrorCode>;
-  formBlockErrors: Record<string, FormElementError>;
+  formBlockErrors: Record<string, Array<FormErrorCode>>;
+  formElementErrors: Record<string, FormElementError>;
 };
 
 export type FormBuilderData = Record<string, Array<FormElement>>;
@@ -59,11 +60,7 @@ export type FormActions = {
   updateElementType: (id: string, type: string) => void;
   updateElementTitle: (id: string, title: string) => void;
   updateElementSubtitle: (id: string, subtitle: string) => void;
-  updateElementConstraint: (
-    elementId: string,
-    constraintId: string,
-    updatedValue: any
-  ) => void;
+  updateElementConstraint: (elementId: string, constraintId: string, updatedValue: any) => void;
   addOption: (id: string, opt: FormOption) => void;
   updateOption: (elId: string, optId: string, optValue: string) => void;
   resetFormStore: () => void;
