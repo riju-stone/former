@@ -4,9 +4,9 @@ import FormBuilderComponent from "@/components/form/form-builder";
 import React from "react";
 import { toast } from "sonner";
 import { useFormStore } from "@/store/formBuilderStore";
-import { FormState } from "@/types/formState";
+import { FormState } from "@/types/formBuilderState";
 import { useRouter } from "next/navigation";
-import { Eye, Save, BookCheck } from "lucide-react";
+import { Eye, Save, BookCheck, Plus, PlusIcon } from "lucide-react";
 import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
 
 function FormBuilderPage() {

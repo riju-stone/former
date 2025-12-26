@@ -8,9 +8,14 @@ import ValidationGroupComponent from "@/components/custom/validation-group";
 
 function FormValidationComponent({ elementId }: { elementId: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { constraints } = useFormStore((state) =>
-    state.formBuilderData.find((el) => el.id === elementId)
-  );
+  const { constraints } = useFormStore((state) => {
+    let element;
+    for (const step of Object.keys(state.formBuilderData)) {
+      element = state.formBuilderData[step].find((el) => el.id === elementId);
+      if (element) break;
+    }
+    return element;
+  }) || { constraints: [] };
 
   return constraints.length > 0 ? (
     <div className="w-full text-gray-650 text-[12px] font-[600]">

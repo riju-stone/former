@@ -12,7 +12,7 @@ import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import OptionsInputComponent from "@/components/input/option-input";
 import { useFormStore } from "@/store/formBuilderStore";
-import { FormElement } from "@/types/formState";
+import { FormElement } from "@/types/formBuilderState";
 import { DatePickerComponent } from "@/components/custom/date-picker";
 import { Trash2, GripVertical } from "lucide-react";
 import FileInputComponent from "../input/file-input";

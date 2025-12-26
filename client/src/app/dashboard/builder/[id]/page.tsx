@@ -4,7 +4,7 @@ import React, { use, useEffect, useState } from "react";
 import FormBuilderComponent from "@/components/form/form-builder";
 import { toast } from "sonner";
 import { useFormStore } from "@/store/formBuilderStore";
-import { FormElement, FormState } from "@/types/formState";
+import { FormElement, FormState } from "@/types/formBuilderState";
 import { useRouter } from "next/navigation";
 import { Eye, Save, BookCheck } from "lucide-react";
 import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
@@ -43,7 +43,12 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
           updateFormTitle(formData[0].formName);
 
           // Add form elements
-          addElement(builderData as FormElement[]);
+          // Iterate through all steps in builderData and add elements
+          Object.entries(builderData).forEach(([stepKey, elements]) => {
+            if (Array.isArray(elements)) {
+              addElement(elements as Array<FormElement>, stepKey);
+            }
+          });
 
           toast.success("Form build loaded successfully");
         } else {

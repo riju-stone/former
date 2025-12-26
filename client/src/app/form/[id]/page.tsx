@@ -5,8 +5,8 @@ import React, { use, useState, useEffect } from "react";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
 import { DatePickerComponent } from "@/components/custom/date-picker";
-import { FormElement, FormOption } from "@/types/formState";
-import { FormBuild } from "@/types/formBuild";
+import { FormElement, FormOption } from "@/types/formBuilderState";
+import { FormBuild } from "@/types/formMetadata";
 
 function renderOptionInput(el: FormElement) {
   return (

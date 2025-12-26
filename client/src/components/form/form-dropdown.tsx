@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useFormStore } from "@/store/formBuilderStore";
-import { FormTypes } from "@/types/formBuild";
+import { FormTypes } from "@/types/formMetadata";
 
 import {
   ChevronDown,

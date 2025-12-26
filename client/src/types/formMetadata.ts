@@ -1,4 +1,4 @@
-import { FormElement } from "./formState";
+import { FormElement } from "./formBuilderState";
 
 export type FormBuild = {
   id: string;
