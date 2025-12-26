@@ -5,16 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useFormStore } from "@/store/formBuilderStore";
 import { FormTypes } from "@/types/formMetadata";
 
-import {
-  ChevronDown,
-  FileText,
-  ScrollText,
-  CircleDot,
-  Hash,
-  Link2,
-  Calendar1,
-  Paperclip,
-} from "lucide-react";
+import { ChevronDown, FileText, ScrollText, CircleDot, Hash, Link2, Calendar1, Paperclip } from "lucide-react";
 
 const listItemsAnim = {
   closed: {
@@ -143,9 +134,7 @@ function FormDropdownComponent({ id, element }) {
   };
 
   const handleSelection = (e: Event) => {
-    const elType = (e.currentTarget as HTMLDivElement).getAttribute(
-      "data-item"
-    );
+    const elType = (e.currentTarget as HTMLDivElement).getAttribute("data-item");
     modifyElement(id, elType);
     setMenuOpen(false);
   };
@@ -192,10 +181,7 @@ function FormDropdownComponent({ id, element }) {
 
   return (
     <div className="relative w-full" ref={dropRef}>
-      <button
-        onClick={toggleMenu}
-        className="h-[1.25rem] flex justify-center items-center gap-1 py-1"
-      >
+      <button onClick={toggleMenu} className="h-[1.25rem] flex justify-center items-center gap-1 py-1">
         <div className="opacity-50">
           <AnimatePresence mode="wait">
             <motion.div
@@ -220,11 +206,7 @@ function FormDropdownComponent({ id, element }) {
           </motion.div>
         </div>
       </button>
-      <Dropdown
-        menuType={menuType}
-        isMenuOpen={isMenuOpen}
-        handleSelection={handleSelection}
-      />
+      <Dropdown menuType={menuType} isMenuOpen={isMenuOpen} handleSelection={handleSelection} />
     </div>
   );
 }

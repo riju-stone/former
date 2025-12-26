@@ -89,9 +89,7 @@ export const FormTypes = [
         name: "Maximum Date",
         tag: "max_date",
         type: "date",
-        defaultValue: new Date(
-          new Date().setFullYear(new Date().getFullYear() + 10)
-        ),
+        defaultValue: new Date(new Date().setFullYear(new Date().getFullYear() + 10)),
         placeholder: "Maximum Date",
       },
     ],

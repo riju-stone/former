@@ -22,10 +22,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
     <div className="w-full flex flex-col gap-2">
       {el.options.map((op, index) => {
         return (
-          <motion.div
-            key={`option-${index}`}
-            className="w-full flex justify-center items-center gap-2"
-          >
+          <motion.div key={`option-${index}`} className="w-full flex justify-center items-center gap-2">
             <AnimatePresence>
               <motion.div
                 className="w-full flex justify-center items-center gap-2"

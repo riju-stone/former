@@ -1,12 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  AnimatePresence,
-  motion,
-  Reorder,
-  useDragControls,
-} from "motion/react";
+import { AnimatePresence, motion, Reorder, useDragControls } from "motion/react";
 import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
@@ -33,20 +28,9 @@ const getInputType = (data: FormElement) => {
   }
 };
 
-const FormElementComponent = ({
-  id,
-  element,
-}: {
-  id: string;
-  element: FormElement;
-}) => {
+const FormElementComponent = ({ id, element }: { id: string; element: FormElement }) => {
   const formStore = useFormStore();
-  const {
-    updateElementTitle,
-    updateElementSubtitle,
-    deleteElement,
-    formErrors,
-  } = formStore;
+  const { updateElementTitle, updateElementSubtitle, deleteElement, formErrors } = formStore;
   const dragControls = useDragControls();
 
   return (
@@ -69,7 +53,7 @@ const FormElementComponent = ({
         >
           <div
             className={`w-full flex flex-col justify-center items-center gap-2 rounded-xl p-4 touch-auto ${
-              formErrors.formBlockErrors[id]
+              formErrors.formElementErrors[id]
                 ? "border-[2px] border-red-200 bg-red-50"
                 : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"
             }`}
@@ -91,16 +75,10 @@ const FormElementComponent = ({
               </div>
               <div className="flex justify-center items-center gap-2">
                 <FormDropdownComponent id={id} element={element} />
-                <button
-                  className="opacity-50 touch-none"
-                  onClick={() => deleteElement(id)}
-                >
+                <button className="opacity-50 touch-none" onClick={() => deleteElement(id)}>
                   <Trash2 size={18} />
                 </button>
-                <button
-                  onPointerDown={(e) => dragControls.start(e)}
-                  className="opacity-50 touch-none cursor-grab"
-                >
+                <button onPointerDown={(e) => dragControls.start(e)} className="opacity-50 touch-none cursor-grab">
                   <GripVertical size={18} />
                 </button>
               </div>
