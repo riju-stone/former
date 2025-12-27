@@ -1,5 +1,5 @@
 import Queue from "bull";
-import { env } from "../env";
+import { env } from "../env.js";
 
 const redisHost = env.UPSTASH_REDIS_HOST || "localhost";
 const redisPort = Number(env.UPSTASH_REDIS_PORT) || 6379;

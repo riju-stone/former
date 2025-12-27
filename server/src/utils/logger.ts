@@ -1,4 +1,4 @@
-import { env } from "env";
+import { env } from "../env.js";
 import pino from "pino";
 
 const LOG_DATE = new Date().toISOString().split("T")[0];
