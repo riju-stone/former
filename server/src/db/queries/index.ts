@@ -1,1 +1,1 @@
-export * from "./form.queries";
+export * from "./form.queries.js";

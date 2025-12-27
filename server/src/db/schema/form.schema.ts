@@ -1,5 +1,5 @@
 import { pgTable, text, json, timestamp, varchar } from "drizzle-orm/pg-core";
-import { user } from "./auth.schema";
+import { user } from "./auth.schema.js";
 
 export const formBuilderTable = pgTable("saved-forms", {
   id: text("id").primaryKey(),
