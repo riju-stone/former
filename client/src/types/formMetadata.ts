@@ -1,13 +1,3 @@
-import { FormElement } from "./formBuilderState";
-
-export type FormBuild = {
-  id: string;
-  formName: string;
-  builderData: Array<FormElement>;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 export const FormTypes = [
   {
     name: "Short answer",

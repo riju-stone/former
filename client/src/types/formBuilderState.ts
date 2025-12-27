@@ -53,6 +53,14 @@ export type FormState = {
   formSteps: number;
 };
 
+export type FormBuild = {
+  formId: string;
+  formName: string;
+  builderData: FormBuilderData;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type FormActions = {
   updateFormTitle: (title: string) => void;
   addElement: (el: Array<FormElement>, step: string) => void;

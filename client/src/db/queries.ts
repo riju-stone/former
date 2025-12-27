@@ -1,4 +1,4 @@
-import { FormState } from "@/types/formBuilderState";
+import { FormBuild, FormState } from "@/types/formBuilderState";
 import { db } from "./index";
 import { formBuilderTable } from "./schema";
 import { eq } from "drizzle-orm";
@@ -9,7 +9,7 @@ export async function fetchAllFormBuilds() {
 
 export async function fetchFormBuild(formId: string) {
   console.log("Querying Form Builder Table: ", formId);
-  return await db.select().from(formBuilderTable).where(eq(formBuilderTable.id, formId));
+  return (await db.select().from(formBuilderTable).where(eq(formBuilderTable.id, formId))) as unknown as FormBuild;
 }
 
 export async function uploadBuild(formBuildData: FormState) {
@@ -20,9 +20,9 @@ export async function uploadBuild(formBuildData: FormState) {
   };
 
   // Fetching Form Data
-  const existingData = await fetchFormBuild(formBuilderObject.id);
+  const existingData = (await fetchFormBuild(formBuilderObject.id)).builderData;
 
-  if (existingData.length > 0) {
+  if (Object.values(existingData).length > 0) {
     await db.update(formBuilderTable).set(formBuilderObject).where(eq(formBuilderTable.id, formBuilderObject.id));
     console.log("Form Build Updated");
   } else {
