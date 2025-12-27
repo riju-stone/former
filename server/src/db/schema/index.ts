@@ -1,2 +1,2 @@
-export * from "@db/schema/form.schema";
-export * from "@db/schema/auth.schema";
+export * from "./form.schema";
+export * from "./auth.schema";

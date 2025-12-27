@@ -1,4 +1,4 @@
-import customLogger from "@utils/logger";
+import customLogger from "../utils/logger";
 import { Next, Context } from "hono";
 
 export function logRoutes(c: Context, next: Next) {

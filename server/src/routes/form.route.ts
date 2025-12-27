@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import * as controller from "@controller/forms.controller";
+import * as controller from "../controller/forms.controller";
 
 const formRoute = new Hono();
 
@@ -8,10 +8,7 @@ const formRoute = new Hono();
 formRoute.get("/form/builder/all/live", controller.handleFetchAllUserLiveForms);
 
 // Fetch all form builder drafts by a user
-formRoute.get(
-  "/form/builder/all/saved",
-  controller.handleFetchAllUserDraftForms
-);
+formRoute.get("/form/builder/all/saved", controller.handleFetchAllUserDraftForms);
 
 // Upload Form
 formRoute.post("/form/builder/upload", controller.handlePublishForm);

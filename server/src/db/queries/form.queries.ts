@@ -1,15 +1,7 @@
-import {
-  formBuilderTable,
-  formPublishedTable,
-  formSubmissionsTable,
-} from "@db/schema/form.schema";
+import { formBuilderTable, formPublishedTable, formSubmissionsTable } from "../schema/form.schema";
 import { db } from "../index";
 import { desc, eq } from "drizzle-orm";
-import {
-  FormDraftType,
-  FormPublishType,
-  FormSubmissionType,
-} from "types/form.types";
+import { FormDraftType, FormPublishType, FormSubmissionType } from "types/form.types";
 
 // Fetch Queries
 export async function fetchAllLiveFormsByUser(userId: string) {
@@ -37,17 +29,11 @@ export async function fetchAllSavedFormsByUser(userId: string) {
 }
 
 export async function fetchLiveFormById(formId: string) {
-  return await db
-    .select()
-    .from(formPublishedTable)
-    .where(eq(formPublishedTable.id, formId));
+  return await db.select().from(formPublishedTable).where(eq(formPublishedTable.id, formId));
 }
 
 export async function fetchSavedFormById(formId: string) {
-  return await db
-    .select()
-    .from(formBuilderTable)
-    .where(eq(formBuilderTable.id, formId));
+  return await db.select().from(formBuilderTable).where(eq(formBuilderTable.id, formId));
 }
 
 // Upload queries
@@ -75,13 +61,9 @@ export async function submitFormResponse(responseData: FormSubmissionType) {
 
 // Delete Queries
 export async function deleteFormBuilderDraft(formId: string) {
-  return await db
-    .delete(formBuilderTable)
-    .where(eq(formBuilderTable.id, formId));
+  return await db.delete(formBuilderTable).where(eq(formBuilderTable.id, formId));
 }
 
 export async function deletePublishedForm(formId: string) {
-  return await db
-    .delete(formPublishedTable)
-    .where(eq(formPublishedTable.id, formId));
+  return await db.delete(formPublishedTable).where(eq(formPublishedTable.id, formId));
 }

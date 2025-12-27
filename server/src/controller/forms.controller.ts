@@ -1,9 +1,9 @@
 import { Context } from "hono";
-import customLogger from "@utils/logger";
-import formProcessingQueue from "@utils/queue";
+import customLogger from "../utils/logger";
+import formProcessingQueue from "../utils/queue";
 import { User } from "better-auth/*";
-import * as queries from "@db/queries/form.queries";
-import redis from "@utils/cache";
+import * as queries from "../db/queries/form.queries";
+import redis from "../utils/cache";
 
 export async function handlePublishForm(c: Context) {
   const user = c.get("user" as never) as User;
@@ -15,10 +15,7 @@ export async function handlePublishForm(c: Context) {
 
   const { formId, formTitle, formBuilderData } = formData;
   if (!formId || !formTitle || !formBuilderData) {
-    return c.json(
-      { message: "formId, formTitle, and formBuilderData are required" },
-      400
-    );
+    return c.json({ message: "formId, formTitle, and formBuilderData are required" }, 400);
   }
 
   const _formUploadData = {
@@ -48,10 +45,7 @@ export async function handleSaveDraftForm(c: Context) {
 
   const { formId, formTitle, formBuilderData } = formData;
   if (!formId || !formTitle || !formBuilderData) {
-    return c.json(
-      { message: "formId, formTitle, and formBuilderData are required" },
-      400
-    );
+    return c.json({ message: "formId, formTitle, and formBuilderData are required" }, 400);
   }
 
   const _formDraftData = {
@@ -127,10 +121,7 @@ export async function handleFormSubmission(c: Context) {
   const { formId, userEmail, submissionData } = formSubmissionData;
 
   if (!formId || !userEmail || !submissionData) {
-    return c.json(
-      { message: "formId, userEmail, and submissionData are required" },
-      400
-    );
+    return c.json({ message: "formId, userEmail, and submissionData are required" }, 400);
   }
 
   const _formSubmissionData = {
@@ -143,9 +134,7 @@ export async function handleFormSubmission(c: Context) {
   try {
     await queries.submitFormResponse(_formSubmissionData);
   } catch (err) {
-    customLogger.error(
-      `Error submitting form response: ${JSON.stringify(err)}`
-    );
+    customLogger.error(`Error submitting form response: ${JSON.stringify(err)}`);
     return c.json({ message: "Error submitting form response" }, 500);
   }
 
@@ -158,10 +147,7 @@ export async function handleFormSubmissionV2(c: Context) {
     const { formId, userEmail, submissionData } = await c.req.json();
 
     if (!formId || !userEmail || !submissionData) {
-      return c.json(
-        { message: "formId, userEmail, and submissionData are required" },
-        400
-      );
+      return c.json({ message: "formId, userEmail, and submissionData are required" }, 400);
     }
 
     const _formSubmissionData = {
@@ -180,9 +166,7 @@ export async function handleFormSubmissionV2(c: Context) {
     // Return success response
     return c.json({ message: "Form submission received" });
   } catch (err) {
-    customLogger.error(
-      `Error processing form submission: ${JSON.stringify(err)}`
-    );
+    customLogger.error(`Error processing form submission: ${JSON.stringify(err)}`);
     return c.json({ message: "Error processing form submission" }, 500);
   }
 }
