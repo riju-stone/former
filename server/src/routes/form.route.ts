@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import * as controller from "../controller/forms.controller";
+import * as controller from "../controller/forms.controller.js";
 
 const formRoute = new Hono();
 

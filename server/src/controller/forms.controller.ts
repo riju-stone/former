@@ -1,9 +1,9 @@
 import { Context } from "hono";
-import customLogger from "../utils/logger";
-import formProcessingQueue from "../utils/queue";
+import customLogger from "../utils/logger.js";
+import formProcessingQueue from "../utils/queue.js";
 import { User } from "better-auth/*";
-import * as queries from "../db/queries/form.queries";
-import redis from "../utils/cache";
+import * as queries from "../db/queries/form.queries.js";
+import redis from "../utils/cache.js";
 
 export async function handlePublishForm(c: Context) {
   const user = c.get("user" as never) as User;

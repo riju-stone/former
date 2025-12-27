@@ -1,5 +1,5 @@
-import { formBuilderTable, formPublishedTable, formSubmissionsTable } from "../schema/form.schema";
-import { db } from "../index";
+import { formBuilderTable, formPublishedTable, formSubmissionsTable } from "../schema/form.schema.js";
+import { db } from "../index.js";
 import { desc, eq } from "drizzle-orm";
 import { FormDraftType, FormPublishType, FormSubmissionType } from "types/form.types";
 
