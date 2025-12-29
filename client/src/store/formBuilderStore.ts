@@ -29,39 +29,49 @@ export const useFormStore = create<FormState & FormActions>()(
           debouncedValidation();
         }),
 
-      addElement: (el: Array<FormElement>, step: string) =>
+      updateFormBlockTitle: (title: string, formBlockId: string) =>
         set((state) => {
-          state.formBuilderData[step] = el;
+          state.formBuilderData[formBlockId].formBlockTitle = title;
+          debouncedValidation();
+        }),
+
+      setElements: (elements: Array<FormElement>, formBlockId: string) =>
+        set((state) => {
+          state.formBuilderData[formBlockId].formBlockElements = elements;
+        }),
+
+      addElement: (el: Array<FormElement>, formBlockId: string) =>
+        set((state) => {
+          state.formBuilderData[formBlockId].formBlockElements.push(...el);
           state.formErrors = validateForm(state);
         }),
 
-      deleteElement: (id: string) =>
+      deleteElement: (id: string, formBlockId: string) =>
         set((state) => {
           // Optimization: Break loop once found
-          const path = findElementPath(state.formBuilderData, id);
+          const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, id);
           if (path) {
-            state.formBuilderData[path.stepKey].splice(path.index, 1);
+            state.formBuilderData[formBlockId].formBlockElements.splice(path.index, 1);
             state.formErrors = validateForm(state);
           }
         }),
 
-      updateElementType: (id: string, type: string) =>
+      updateElementType: (id: string, type: string, formBlockId: string) =>
         set((state) => {
-          const path = findElementPath(state.formBuilderData, id);
+          const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, id);
           if (path) {
-            const element = state.formBuilderData[path.stepKey][path.index];
+            const element = state.formBuilderData[formBlockId].formBlockElements[path.index];
             element.type = type;
 
-            // Logic extraction for cleaner code
             const formType = FormTypes.find((ft) => ft.tag === type);
             element.constraints = formType
               ? formType.validations.map((val) => ({
-                  id: uuid(),
-                  type: val.type,
-                  name: val.name,
-                  defaultValue: val.defaultValue.toString(),
-                  customValue: null,
-                }))
+                id: uuid(),
+                type: val.type,
+                name: val.name,
+                defaultValue: val.defaultValue.toString(),
+                customValue: null,
+              }))
               : [];
 
             if (type === "option") {
@@ -71,28 +81,28 @@ export const useFormStore = create<FormState & FormActions>()(
           }
         }),
 
-      updateElementTitle: (id: string, title: string) =>
+      updateElementTitle: (id: string, title: string, formBlockId: string) =>
         set((state) => {
-          const path = findElementPath(state.formBuilderData, id);
+          const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, id);
           if (path) {
-            state.formBuilderData[path.stepKey][path.index].main_title = title;
+            state.formBuilderData[formBlockId].formBlockElements[path.index].main_title = title;
             debouncedValidation();
           }
         }),
 
-      updateElementSubtitle: (id: string, subtitle: string) =>
+      updateElementSubtitle: (id: string, subtitle: string, formBlockId: string) =>
         set((state) => {
-          const path = findElementPath(state.formBuilderData, id);
+          const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, id);
           if (path) {
-            state.formBuilderData[path.stepKey][path.index].sub_title = subtitle;
+            state.formBuilderData[formBlockId].formBlockElements[path.index].sub_title = subtitle;
           }
         }),
 
-      updateElementConstraint: (elementId: string, constraintId: string, updatedValue: any) =>
+      updateElementConstraint: (elementId: string, constraintId: string, updatedValue: any, formBlockId: string) =>
         set((state) => {
-          const path = findElementPath(state.formBuilderData, elementId);
+          const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, elementId);
           if (path) {
-            const element = state.formBuilderData[path.stepKey][path.index];
+            const element = state.formBuilderData[formBlockId].formBlockElements[path.index];
             const constraint = element.constraints.find((c) => c.id === constraintId);
 
             if (constraint) {
@@ -102,22 +112,22 @@ export const useFormStore = create<FormState & FormActions>()(
           }
         }),
 
-      addOption: (id: string, opt: FormOption) =>
+      addOption: (id: string, opt: FormOption, formBlockId: string) =>
         set((state) => {
-          const path = findElementPath(state.formBuilderData, id);
+          const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, id);
           if (path) {
-            const element = state.formBuilderData[path.stepKey][path.index];
+            const element = state.formBuilderData[formBlockId].formBlockElements[path.index];
             if (!element.options) element.options = [];
             element.options.push(opt);
             state.formErrors = validateForm(state);
           }
         }),
 
-      updateOption: (elId: string, optId: string, optValue: string) =>
+      updateOption: (elId: string, optId: string, optValue: string, formBlockId: string) =>
         set((state) => {
-          const path = findElementPath(state.formBuilderData, elId);
+          const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, elId);
           if (path) {
-            const element = state.formBuilderData[path.stepKey][path.index];
+            const element = state.formBuilderData[formBlockId].formBlockElements[path.index];
             const option = element.options?.find((opt) => opt.id === optId);
             if (option) {
               option.value = optValue;
@@ -126,17 +136,11 @@ export const useFormStore = create<FormState & FormActions>()(
           }
         }),
 
-      addBatchUpdate: (updater: (draft: FormState) => void) =>
+      validateElement: (id: string, formBlockId: string) => {
         set((state) => {
-          updater(state);
-          state.formErrors = validateForm(state);
-        }),
-
-      validateElement: (id: string) => {
-        set((state) => {
-          const path = findElementPath(state.formBuilderData, id);
+          const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, id);
           if (path) {
-            const element = state.formBuilderData[path.stepKey][path.index];
+            const element = state.formBuilderData[formBlockId].formBlockElements[path.index];
             const codes = validateSingleElement(element);
 
             if (codes.length > 0) {
@@ -151,16 +155,31 @@ export const useFormStore = create<FormState & FormActions>()(
         });
       },
 
-      updateFormSteps: (steps: number) =>
+      addFormBlock: () =>
+        set((state) => {
+          const formBlockId = uuid();
+          state.formBuilderData[formBlockId] = {
+            blockId: formBlockId,
+            formBlockTitle: "",
+            formBlockElements: [],
+          };
+          state.formSteps += 1;
+          state.formErrors = validateForm(state);
+        }),
+
+      deleteFormBlock: (formBlockId: string) =>
         set((state) => {
           // Make sure formSteps is at least 1
-          if (steps < 1) steps = 1;
-          state.formSteps = steps;
-          const stepKey = `step${steps}`;
-          if (!state.formBuilderData[stepKey]) {
-            state.formBuilderData[stepKey] = [];
+          if (state.formSteps <= 1) {
+            const initState = initFormState();
+            state.formBuilderData = initState.formBuilderData;
+            state.formSteps = 1;
             state.formErrors = validateForm(state);
+            return;
           }
+          delete state.formBuilderData[formBlockId];
+          state.formSteps -= 1;
+          state.formErrors = validateForm(state);
         }),
     };
   })

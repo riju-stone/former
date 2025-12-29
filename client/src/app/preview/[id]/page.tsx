@@ -6,6 +6,7 @@ import LongInputComponent from "@/components/input/long-input";
 import { DatePickerComponent } from "@/components/custom/date-picker";
 import { FormElement, FormState, FormOption } from "@/store/formBuilderStore";
 import { FORM_ERROR_TYPES } from "@/utils/formBuilderHelper";
+import { FormBuilderData } from "@/types/formBuilderState";
 
 function renderOptionInput(el: FormElement) {
   return (
@@ -41,7 +42,10 @@ function FormPreviewPage({ params }: { params: Promise<{ id: string }> }) {
   const [formData, setFormData] = useState<FormState>({
     formTitle: "",
     formBuilderData: {
-      step1: [],
+      "form-block-1": {
+        formBlockTitle: "Form Block 1",
+        formBlockElements: [],
+      },
     },
     formId: "",
     formErrors: {
@@ -49,7 +53,7 @@ function FormPreviewPage({ params }: { params: Promise<{ id: string }> }) {
       formErrorCode: null,
       formElementErrors: {},
       formBlockErrors: {
-        step1: [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK],
+        "form-block-1": [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK],
       },
     },
     formSteps: 1,
@@ -62,18 +66,18 @@ function FormPreviewPage({ params }: { params: Promise<{ id: string }> }) {
     setFormData(parsedData);
   }, []);
 
-  return Object.values(formData).length > 0 ? (
+  return Object.values(formData.formBuilderData).length > 0 ? (
     <div className="h-screen w-screen flex flex-col justify-center items-center">
       <div className="h-[56px] w-full md:w-[640px] flex justify-between items-center bg-white border-[1px] border-gray-200 px-6">
         <p className="text-[16px] font-[600] leading-[22px]">{formData.formTitle}</p>
       </div>
 
       <div className="h-full w-full md:w-[640px] flex flex-col justify-start items-center border-l-[1px] border-r-[1px] border-gray-200 bg-white p-6 gap-10 overflow-y-auto">
-        {Object.values(formData.formBuilderData).map((stepElements: FormElement[], idx: number) => {
+        {Object.values(formData.formBuilderData).map((formBlock: FormBuilderData) => {
           return (
-            <div className="w-full border-[1px] rounded-md p-5 flex flex-col gap-2" key={`form-step-${idx}`}>
-              <p className="text-[20px] font-[600] mb-4">Form Step {idx + 1}</p>
-              {stepElements.map((element: FormElement) => {
+            <div className="w-full border-[1px] rounded-md p-5 flex flex-col gap-2" key={`form-block-${formBlock.formBlockTitle}`}>
+              <p className="text-[20px] font-[600] mb-4">{formBlock.formBlockTitle}</p>
+              {formBlock.formBlockElements.map((element: FormElement) => {
                 return (
                   <div key={`form-element-${element.id}`} className="w-full flex flex-col gap-1 mb-5">
                     <label className="text-[16px] text-gray-950 font-[600] leading-5">{element.main_title}</label>

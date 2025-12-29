@@ -3,9 +3,10 @@ export enum FormErrorCode {
   EMPTY_FORM_TITLE = 0,
   UNSUPPORTED_TITLE = 1,
   MAX_LENGTH_REACHED = 2,
-  EMPTY_FORM_BLOCK = 3,
-  EMPTY_FORM_ELEMENT_TITLE = 4,
-  EMPTY_OPTION = 5,
+  EMPTY_FORM_BLOCK_TITLE = 3,
+  EMPTY_FORM_BLOCK = 4,
+  EMPTY_FORM_ELEMENT_TITLE = 5,
+  EMPTY_OPTION = 6,
 }
 
 export type FormOption = {
@@ -23,12 +24,11 @@ export type FormElementConstraint = {
 
 export type FormElement = {
   id: string;
-  step: number;
   main_title: string;
   sub_title?: string;
   type: string;
   options?: Array<FormOption>;
-  constraints: Array<FormElementConstraint>; // Removed | [] as Array covers it
+  constraints: Array<FormElementConstraint>;
 };
 
 export type FormElementError = {
@@ -43,12 +43,16 @@ export type FormError = {
   formElementErrors: Record<string, FormElementError>;
 };
 
-export type FormBuilderData = Record<string, Array<FormElement>>;
+export type FormBuilderData = {
+  blockId: string;
+  formBlockTitle: string;
+  formBlockElements: Array<FormElement>;
+};
 
 export type FormState = {
   formId: string;
   formTitle: string;
-  formBuilderData: FormBuilderData;
+  formBuilderData: Record<string, FormBuilderData>;
   formErrors: FormError;
   formSteps: number;
 };
@@ -56,21 +60,24 @@ export type FormState = {
 export type FormBuild = {
   formId: string;
   formName: string;
-  builderData: FormBuilderData;
+  builderData: Array<FormBuilderData>;
   createdAt: string;
   updatedAt: string;
 };
 
 export type FormActions = {
   updateFormTitle: (title: string) => void;
-  addElement: (el: Array<FormElement>, step: string) => void;
-  deleteElement: (id: string) => void;
-  updateElementType: (id: string, type: string) => void;
-  updateElementTitle: (id: string, title: string) => void;
-  updateElementSubtitle: (id: string, subtitle: string) => void;
-  updateElementConstraint: (elementId: string, constraintId: string, updatedValue: any) => void;
-  addOption: (id: string, opt: FormOption) => void;
-  updateOption: (elId: string, optId: string, optValue: string) => void;
+  updateFormBlockTitle: (title: string, formBlockId: string) => void;
+  setElements: (elements: Array<FormElement>, formBlockId: string) => void;
+  addElement: (el: Array<FormElement>, formBlockId: string) => void;
+  deleteElement: (id: string, formBlockId: string) => void;
+  updateElementType: (id: string, type: string, formBlockId: string) => void;
+  updateElementTitle: (id: string, title: string, formBlockId: string) => void;
+  updateElementSubtitle: (id: string, subtitle: string, formBlockId: string) => void;
+  updateElementConstraint: (elementId: string, constraintId: string, updatedValue: any, formBlockId: string) => void;
+  addOption: (id: string, opt: FormOption, formBlockId: string) => void;
+  updateOption: (elId: string, optId: string, optValue: string, formBlockId: string) => void;
   resetFormStore: () => void;
-  updateFormSteps: (steps: number) => void;
+  addFormBlock: () => void;
+  deleteFormBlock: (formBlockId: string) => void;
 };

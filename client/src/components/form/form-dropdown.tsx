@@ -116,7 +116,7 @@ function Dropdown({ menuType, isMenuOpen, handleSelection }) {
   );
 }
 
-function FormDropdownComponent({ id, element }) {
+function FormDropdownComponent({ id, element, formBlockId }) {
   const dropRef = useRef(null);
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [menuType, setMenuType] = useState("down");
@@ -135,7 +135,7 @@ function FormDropdownComponent({ id, element }) {
 
   const handleSelection = (e: Event) => {
     const elType = (e.currentTarget as HTMLDivElement).getAttribute("data-item");
-    modifyElement(id, elType);
+    modifyElement(id, elType, formBlockId);
     setMenuOpen(false);
   };
 

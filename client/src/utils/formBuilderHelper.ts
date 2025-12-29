@@ -7,40 +7,44 @@ import {
   FormError,
   FormState,
   FormErrorCode,
+  FormBuilderData,
 } from "@/types/formBuilderState";
 
 export const FORM_ERROR_TYPES = FormErrorCode;
 
 export const initFormState = (): FormState => {
   const formId = uuid();
+  const firstBlockId = uuid();
 
   return <FormState>{
     formId,
     formTitle: "",
     formBuilderData: {
-      step1: [],
+      [firstBlockId]: {
+        blockId: firstBlockId,
+        formBlockTitle: "",
+        formBlockElements: [],
+      }
     },
     formSteps: 1,
     formErrors: {
-      formId,
+      formId: formId,
       formErrorCode: [FORM_ERROR_TYPES.EMPTY_FORM_TITLE],
       formBlockErrors: {
-        step1: [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK],
+        [firstBlockId]: [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK],
       },
       formElementErrors: {},
     },
-  };
+  } as FormState;
 };
 
 // Helper to find element location quickly
 export const findElementPath = (
-  data: Record<string, FormElement[]>,
+  data: Array<FormElement>,
   id: string
-): { stepKey: string; index: number } | null => {
-  for (const stepKey in data) {
-    const index = data[stepKey].findIndex((el) => el.id === id);
-    if (index !== -1) return { stepKey, index };
-  }
+): { index: number } | null => {
+  const index = data.findIndex((el) => el.id === id);
+  if (index !== -1) return { index };
   return null;
 };
 
@@ -71,14 +75,16 @@ export const validateSingleElement = (el: FormElement): number[] => {
 };
 
 export const validateFormBlocks = (
-  elements: Record<string, Array<FormElement>>
+  formBlocks: Record<string, FormBuilderData>
 ): { formBlockErrors: Record<string, Array<FormErrorCode>> } => {
-  let formBlocks = Object.keys(elements);
   const formBlockErrors: Record<string, Array<FormErrorCode>> = {};
 
-  formBlocks.forEach((blockKey) => {
-    if (elements[blockKey].length === 0) {
-      formBlockErrors[blockKey] = [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK];
+  Object.values(formBlocks).forEach((block) => {
+    if (block.formBlockElements.length === 0) {
+      formBlockErrors[block.blockId] = [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK];
+    }
+    if (!block.formBlockTitle || block.formBlockTitle.trim() === "") {
+      formBlockErrors[block.blockId] = [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK_TITLE];
     }
   });
 
@@ -106,7 +112,7 @@ export const validateFormElements = (
 export const validateForm = (formState: FormState): FormError => {
   const formTitleErrors = validateFormTitle(formState.formTitle);
   const { formBlockErrors } = validateFormBlocks(formState.formBuilderData);
-  const { formElementErrors } = validateFormElements(Object.values(formState.formBuilderData).flat());
+  const { formElementErrors } = validateFormElements(Object.values(formState.formBuilderData).flat().map((block) => block.formBlockElements).flat() as Array<FormElement>);
 
   return {
     formId: formState.formId,

@@ -13,12 +13,12 @@ import { Trash2, GripVertical } from "lucide-react";
 import FileInputComponent from "../input/file-input";
 import FormValidationComponent from "./form-validation";
 
-const getInputType = (data: FormElement) => {
+const getInputType = (data: FormElement, formBlockId: string) => {
   switch (data.type) {
     case "long":
       return <LongInputComponent disabled={true} />;
     case "option":
-      return <OptionsInputComponent el={data} />;
+      return <OptionsInputComponent el={data} formBlockId={formBlockId} />;
     case "date":
       return <DatePickerComponent disabled={true} />;
     case "file":
@@ -28,7 +28,7 @@ const getInputType = (data: FormElement) => {
   }
 };
 
-const FormElementComponent = ({ id, element }: { id: string; element: FormElement }) => {
+const FormElementComponent = ({ id, element, formBlockId }: { id: string; element: FormElement; formBlockId: string }) => {
   const formStore = useFormStore();
   const { updateElementTitle, updateElementSubtitle, deleteElement, formErrors } = formStore;
   const dragControls = useDragControls();
@@ -49,14 +49,13 @@ const FormElementComponent = ({ id, element }: { id: string; element: FormElemen
           exit={{ opacity: 0, y: 30 }}
           transition={{ duration: 0.25, type: "spring" }}
           layout={true}
-          layoutId={`formElement-${id}`}
+          layoutId={`formElement-${formBlockId}-${id}`}
         >
           <div
-            className={`w-full flex flex-col justify-center items-center gap-2 rounded-xl p-4 touch-auto ${
-              formErrors.formElementErrors[id]
-                ? "border-[2px] border-red-200 bg-red-50"
-                : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"
-            }`}
+            className={`w-full flex flex-col justify-center items-center gap-2 rounded-xl p-4 touch-auto ${formErrors.formElementErrors[id]
+              ? "border-[2px] border-red-200 bg-red-50"
+              : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"
+              }`}
           >
             <div className="w-full flex justify-between items-start gap-2">
               <div className="flex-1 flex-col justify-center items-center gap-1">
@@ -64,18 +63,18 @@ const FormElementComponent = ({ id, element }: { id: string; element: FormElemen
                   placeholder="Write a question"
                   className="w-full bg-transparent text-[15px] text-gray-950 font-[600] leading-5 border-none outline-none"
                   value={element.main_title}
-                  onChange={(e) => updateElementTitle(id, e.target.value)}
+                  onChange={(e) => updateElementTitle(id, e.target.value, formBlockId)}
                 />
                 <input
                   placeholder="Write a help text or caption (optional)."
                   className="w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none"
                   value={element.sub_title}
-                  onChange={(e) => updateElementSubtitle(id, e.target.value)}
+                  onChange={(e) => updateElementSubtitle(id, e.target.value, formBlockId)}
                 />
               </div>
               <div className="flex justify-center items-center gap-2">
-                <FormDropdownComponent id={id} element={element} />
-                <button className="opacity-50 touch-none" onClick={() => deleteElement(id)}>
+                <FormDropdownComponent id={id} element={element} formBlockId={formBlockId} />
+                <button className="opacity-50 touch-none" onClick={() => deleteElement(id, formBlockId)}>
                   <Trash2 size={18} />
                 </button>
                 <button onPointerDown={(e) => dragControls.start(e)} className="opacity-50 touch-none cursor-grab">
@@ -83,8 +82,8 @@ const FormElementComponent = ({ id, element }: { id: string; element: FormElemen
                 </button>
               </div>
             </div>
-            <div className="w-full">{getInputType(element)}</div>
-            <FormValidationComponent elementId={id} />
+            <div className="w-full">{getInputType(element, formBlockId)}</div>
+            <FormValidationComponent elementId={id} formBlockId={formBlockId} />
           </div>
         </motion.div>
       </AnimatePresence>

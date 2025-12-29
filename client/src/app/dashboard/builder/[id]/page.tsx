@@ -4,9 +4,9 @@ import React, { use, useEffect, useState } from "react";
 import FormBuilderComponent from "@/components/form/form-builder";
 import { toast } from "sonner";
 import { useFormStore } from "@/store/formBuilderStore";
-import { FormElement, FormState } from "@/types/formBuilderState";
+import { FormBuilderData, FormElement, FormState } from "@/types/formBuilderState";
 import { useRouter } from "next/navigation";
-import { Eye, Save, BookCheck } from "lucide-react";
+import { Eye, Save, BookCheck, LayoutTemplate } from "lucide-react";
 import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
 import { fetchFormBuild } from "@/db/queries";
 
@@ -14,7 +14,7 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [isLoading, setIsLoading] = useState(true);
   const formStore = useFormStore();
-  const { formId, formTitle, formBuilderData, formErrors, updateFormTitle, resetFormStore, addElement } = formStore;
+  const { formId, formTitle, formSteps, formBuilderData, formErrors, updateFormTitle, resetFormStore, addElement, addFormBlock } = formStore;
 
   const router = useRouter();
 
@@ -24,12 +24,12 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
         setIsLoading(true);
         const formData = await fetchFormBuild(id);
 
-        if (formData.length > 0) {
+        if (Object.keys(formData[0].builderData).length > 0) {
           // Reset the form store first
           resetFormStore();
 
           // Parse the builder data from JSON string to object
-          const builderData = formData[0].builderData;
+          const builderData = formData[0].builderData as FormBuilderData;
 
           // Update form title
           updateFormTitle(formData[0].formName);
@@ -63,7 +63,11 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
     formTitle: formTitle,
     formBuilderData: formBuilderData,
     formErrors: formErrors,
-    formSteps: 1,
+    formSteps: formSteps,
+  };
+
+  const handleAddFormBlock = () => {
+    addFormBlock();
   };
 
   const checkForFormErrors = () => {
@@ -119,34 +123,49 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <div className="h-screen w-full flex justify-center items-center">
-      <div className="h-full w-full flex flex-col justify-center items-center">
+      <div className="h-full w-full flex flex-col justify-center items-center gap-2">
         <div
-          className={`h-[56px] w-[95%] flex justify-between items-center px-4 rounded-bl-xl rounded-br-xl mb-2
-                    ${
-                      formErrors.formErrorCode.length == 0
-                        ? "border-[1px] border-gray-200 bg-gray-50"
-                        : "border-[2px] border-red-200 bg-red-50"
-                    }
+          className={`h-[56px] w-full flex justify-between items-center px-4 mb-2
+                    ${formErrors.formErrorCode.length == 0
+              ? "border-b-[1px] border-gray-200 bg-gray-50"
+              : "border-b-[2px] border-red-200 bg-red-50"
+            }
                         `}
         >
           <input
             id="form-title"
-            className={`text-[16px] font-[600] bg-transparent border-none outline-none`}
+            className={`text-[16px] w-full font-[600] bg-transparent border-none outline-none mr-2`}
             type="text"
             placeholder="Untitled form"
             value={formTitle}
             onChange={(e) => updateFormTitle(e.target.value)}
           />
-          <button
-            className={`h-[32px] flex justify-center items-center gap-1 py-[6px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] leading-5 shadow-button opacity-100`}
-            onClick={() => handleFormPreview()}
-          >
-            Preview
-            <Eye size={18} />
-          </button>
+          <div className="w-fit flex justify-center items-center gap-2">
+            <button
+              className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] shadow-button opacity-100 text-nowrap`}
+              onClick={() => handleAddFormBlock()}
+            >
+              Add Block
+              <LayoutTemplate size={18} />
+            </button>
+            <button
+              className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] shadow-button opacity-100 text-nowrap`}
+              onClick={() => handleFormPreview()}
+            >
+              Preview
+              <Eye size={18} />
+            </button>
+          </div>
         </div>
         <FormBuilderComponent />
-        <div className="bottom-0 h-[64px] w-[95%] flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] rounded-tr-xl rounded-tl-xl mt-2">
+        <div
+          className={`bottom-0 h-[64px] w-full flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] mt-2
+                    ${formErrors.formErrorCode.length == 0
+              ? "border-t-[1px] border-gray-200 bg-gray-50"
+              : "border-t-[2px] border-red-200 bg-red-50"
+            }
+                        `}
+        >
           <button
             type="submit"
             className={`h-[32px] flex justify-center items-center gap-1 py-[6px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] leading-5 shadow-button opacity-100`}

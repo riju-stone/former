@@ -6,7 +6,7 @@ import { FormElement } from "@/types/formBuilderState";
 
 import { SquarePlus, CircleDashed } from "lucide-react";
 
-function OptionsInputComponent({ el }: { el: FormElement }) {
+function OptionsInputComponent({ el, formBlockId }: { el: FormElement; formBlockId: string }) {
   const formStore = useFormStore();
   const { addOption, updateOption } = formStore;
 
@@ -15,7 +15,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
       id: `${el.options.length + 1}`,
       value: "",
     };
-    addOption(el.id, newOption);
+    addOption(el.id, newOption, formBlockId);
   };
 
   return (
@@ -37,7 +37,7 @@ function OptionsInputComponent({ el }: { el: FormElement }) {
                   type="text"
                   placeholder={`Option ${index + 1}`}
                   value={op.value}
-                  onChange={(e) => updateOption(el.id, op.id, e.target.value)}
+                  onChange={(e) => updateOption(el.id, op.id, e.target.value, formBlockId)}
                   className="h-[32px] flex-1 px-2 py-[6px] border-[1px] outline-none bg-transparent hover:bg-white border-gray-200 rounded-lg text-[14px] text-gray-950 font-[400]"
                 />
               </motion.div>
