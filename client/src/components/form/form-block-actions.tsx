@@ -37,24 +37,28 @@ function FormBlockActionComponent({ step, title }: { step: string, title: string
   };
 
   return (
-    <div className='sticky top-0 left-0 w-full h-8 z-50 flex justify-between items-center gap-2'
+    <div className='sticky top-0 left-0 w-full z-50 flex justify-between items-center'
       key={`form-block-actions-${step}`}>
-      <input
-        id="form-block-title"
-        className={`text-[16px] w-[75%] font-[600] bg-transparent border-none outline-none`}
-        type="text"
-        placeholder="Untitled block"
-        onChange={(e) => handleUpdateFormBlockTitle(e.target.value)}
-        value={title}
-      />
-      <button className='flex justify-center items-center gap-1 py-[6px] px-4 bg-white border-[2px] border-gray-200 rounded-xl font-[600] text-[10px] shadow-button'
-        onClick={() => handleAddFormElement(step)} >
-        <PlusIcon size={15} />
-      </button>
-      <button className='flex justify-center items-center gap-1 py-[6px] px-4 bg-red-100 border-[2px] border-red-200 rounded-xl font-[600] text-[10px] text-red-500 shadow-button'
-        onClick={() => handleDeleteFormStepBlock(step)}>
-        <Trash2 size={15} />
-      </button>
+      <div className='relative flex-1 flex justify-center items-center gap-2 p-2 bg-white/70 backdrop-blur-md'>
+        <input
+          id="form-block-title"
+          className={`text-[16px] w-[75%] font-[600] bg-transparent border-none outline-none`}
+          type="text"
+          placeholder="Untitled block"
+          onChange={(e) => handleUpdateFormBlockTitle(e.target.value)}
+          value={title}
+        />
+        <div className='flex justify-center items-center gap-2'>
+          <button className='flex justify-center items-center py-[6px] px-2 bg-white border-[2px] border-gray-200 rounded-xl font-[600] text-[10px] shadow-button hover:scale-110 transition-all duration-200'
+            onClick={() => handleAddFormElement(step)} >
+            <PlusIcon size={15} />
+          </button>
+          <button className='flex justify-center items-center py-[6px] px-2 bg-red-100 border-[2px] border-red-200 rounded-xl font-[600] text-[10px] text-red-500 shadow-button hover:scale-110 transition-all duration-200'
+            onClick={() => handleDeleteFormStepBlock(step)}>
+            <Trash2 size={15} />
+          </button>
+        </div>
+      </div>
     </div >
   )
 }

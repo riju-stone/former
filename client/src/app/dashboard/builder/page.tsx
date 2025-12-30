@@ -76,7 +76,7 @@ function FormBuilderPage() {
     <div className="h-screen w-full flex justify-center items-center">
       <div className="h-full w-full flex flex-col justify-center items-center gap-2">
         <div
-          className={`h-[56px] w-full flex justify-between items-center px-4 mb-2
+          className={`h-[64px] w-full flex justify-between items-center px-4 mb-2
                     ${formErrors.formErrorCode.length == 0
               ? "border-b-[1px] border-gray-200 bg-gray-50"
               : "border-b-[2px] border-red-200 bg-red-50"
@@ -93,14 +93,14 @@ function FormBuilderPage() {
           />
           <div className="w-fit flex justify-center items-center gap-2">
             <button
-              className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] shadow-button opacity-100 text-nowrap`}
+              className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] shadow-button opacity-100 text-nowrap hover:scale-110 transition-all duration-200`}
               onClick={() => handleAddFormBlock()}
             >
               Add Block
               <LayoutTemplate size={18} />
             </button>
             <button
-              className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] shadow-button opacity-100 text-nowrap`}
+              className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] shadow-button opacity-100 text-nowrap hover:scale-110 transition-all duration-200`}
               onClick={() => handleFormPreview()}
             >
               Preview
@@ -119,7 +119,7 @@ function FormBuilderPage() {
         >
           <button
             type="submit"
-            className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] leading-5 shadow-button opacity-100`}
+            className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-white border-[1px] border-gray-200 rounded-xl text-[14px] text-gray-950 font-[600] shadow-button opacity-100 hover:scale-110 transition-all duration-200`}
             onClick={() => handleFormDraft()}
           >
             <Save size={18} />
@@ -128,7 +128,7 @@ function FormBuilderPage() {
           <button
             type="submit"
             onClick={() => handleFormPublish()}
-            className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-green-500 border-[1px] border-green-500 rounded-xl text-[14px] text-white font-[600] leading-5 shadow-button opacity-100`}
+            className={`h-[32px] flex justify-center items-center gap-1 py-[8px] px-[16px] bg-green-500 border-[1px] border-green-500 rounded-xl text-[14px] text-white font-[600] shadow-button opacity-100 hover:scale-110 transition-all duration-200`}
           >
             <BookCheck size={18} />
             Publish Form

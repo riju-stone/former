@@ -43,7 +43,8 @@ function FormPreviewPage({ params }: { params: Promise<{ id: string }> }) {
     formTitle: "",
     formBuilderData: {
       "form-block-1": {
-        formBlockTitle: "Form Block 1",
+        blockId: "form-block-1",
+        formBlockTitle: "",
         formBlockElements: [],
       },
     },
@@ -53,7 +54,7 @@ function FormPreviewPage({ params }: { params: Promise<{ id: string }> }) {
       formErrorCode: null,
       formElementErrors: {},
       formBlockErrors: {
-        "form-block-1": [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK],
+        "form-block-1": [FORM_ERROR_TYPES.EMPTY_FORM_BLOCK_TITLE, FORM_ERROR_TYPES.EMPTY_FORM_BLOCK],
       },
     },
     formSteps: 1,

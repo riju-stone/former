@@ -25,7 +25,7 @@ function FormBuilderComponent() {
               transition={{ duration: 0.5, type: "spring" }}
               layout={true}
               key={key}
-              className={`h-full w-[450px] flex flex-col justify-start items-center overflow-y-auto p-5 rounded-md mx-2 my-1 overflow-x-hidden ${formErrors.formBlockErrors[key]
+              className={`h-full w-[450px] flex flex-col justify-start items-center overflow-y-auto rounded-md mx-2 my-1 overflow-x-hidden overscroll-none ${formErrors.formBlockErrors[key]
                 ? "border-[2px] border-red-200 bg-red-50"
                 : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"
                 }`}
@@ -36,7 +36,7 @@ function FormBuilderComponent() {
                   <Reorder.Group
                     as="div"
                     axis="y"
-                    className="w-full"
+                    className="w-full px-4"
                     values={formBuilderData[key].formBlockElements}
                     onReorder={(newOrder) => setElements(newOrder as Array<FormElement>, key)}
                   >
