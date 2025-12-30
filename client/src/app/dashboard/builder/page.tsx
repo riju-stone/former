@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import { useFormStore } from "@/store/formBuilderStore";
 import { FormState } from "@/types/formBuilderState";
 import { useRouter } from "next/navigation";
-import { Eye, Save, BookCheck, Plus, PlusIcon, LayoutGrid, LayoutTemplate } from "lucide-react";
-import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
+import { Eye, Save, BookCheck, LayoutTemplate } from "lucide-react";
+import { saveFormBuildLocally, saveFormDraft, publishForm } from "@/utils/formApiHelper";
+import { doesFormHaveErrors } from "@/utils/formBuilderHelper";
 
 function FormBuilderPage() {
   const formStore = useFormStore();
@@ -26,18 +27,10 @@ function FormBuilderPage() {
     addFormBlock();
   };
 
-  const checkForFormErrors = () => {
-    return (
-      formErrors.formErrorCode.length > 0 ||
-      Object.keys(formErrors.formBlockErrors).length > 0 ||
-      Object.keys(formErrors.formElementErrors).length > 0
-    );
-  };
-
-  const handleFormPublish = () => {
-    if (!checkForFormErrors()) {
-      saveFormBuild(formObject);
-      router.push("/");
+  const handleFormPublish = async () => {
+    if (!doesFormHaveErrors(formErrors)) {
+      const res = await publishForm(formObject);
+      console.log("Publish response:", res);
       toast.success("Form published successfully");
     } else {
       toast.error("Form has errors. Please fix them first");
@@ -45,7 +38,7 @@ function FormBuilderPage() {
   };
 
   const handleFormPreview = () => {
-    if (!checkForFormErrors()) {
+    if (!doesFormHaveErrors(formErrors)) {
       saveFormBuildLocally(formObject);
       router.push(`/preview/${formId}`);
     } else {
@@ -54,15 +47,8 @@ function FormBuilderPage() {
   };
 
   const handleFormDraft = async () => {
-    if (!checkForFormErrors()) {
-      const res = await fetch("http://localhost:8000/api/form/builder/draft", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ formData: formObject }),
-        credentials: "include",
-      }).then((res) => res.json());
+    if (!doesFormHaveErrors(formErrors)) {
+      const res = await saveFormDraft(formObject);
 
       console.log("Draft save response:", res);
       router.push("/");

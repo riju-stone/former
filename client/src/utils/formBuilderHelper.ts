@@ -1,3 +1,5 @@
+"use client";
+
 import { v7 as uuid } from "uuid";
 import { debounce } from "lodash";
 import {
@@ -36,6 +38,11 @@ export const initFormState = (): FormState => {
       formElementErrors: {},
     },
   } as FormState;
+};
+
+// Helper to check if the form has errors
+export const doesFormHaveErrors = (formErrors: FormError) => {
+  return formErrors.formErrorCode.length > 0 || Object.keys(formErrors.formBlockErrors).length > 0 || Object.keys(formErrors.formElementErrors).length > 0
 };
 
 // Helper to find element location quickly

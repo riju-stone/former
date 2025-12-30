@@ -1,7 +1,9 @@
+"use client";
+
 import { create } from "zustand";
 import { v7 as uuid } from "uuid";
 import { immer } from "zustand/middleware/immer";
-import { FormActions, FormElement, FormOption, FormState } from "@/types/formBuilderState";
+import { FormActions, FormElement, FormOption, FormState, FormBuilderData } from "@/types/formBuilderState";
 import { FormTypes } from "@/types/formMetadata";
 import {
   initFormState,
@@ -180,6 +182,17 @@ export const useFormStore = create<FormState & FormActions>()(
           delete state.formBuilderData[formBlockId];
           state.formSteps -= 1;
           state.formErrors = validateForm(state);
+        }),
+
+      loadForm: (data: Record<string, FormBuilderData>, steps: number, id: string, title: string) =>
+        set((state) => {
+          state.formBuilderData = data;
+          state.formSteps = steps;
+          state.formId = id;
+          state.formTitle = title;
+          state.formErrors = validateForm(state);
+          // Ensure formId is correctly set in formErrors if needed, or other dependent states
+          state.formErrors.formId = id;
         }),
     };
   })

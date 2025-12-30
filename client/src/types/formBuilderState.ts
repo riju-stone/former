@@ -58,7 +58,7 @@ export type FormState = {
 };
 
 export type FormBuild = {
-  formId: string;
+  id: string;
   formName: string;
   builderData: Array<FormBuilderData>;
   createdAt: string;
@@ -80,4 +80,5 @@ export type FormActions = {
   resetFormStore: () => void;
   addFormBlock: () => void;
   deleteFormBlock: (formBlockId: string) => void;
+  loadForm: (data: Record<string, FormBuilderData>, steps: number, id: string, title: string) => void;
 };

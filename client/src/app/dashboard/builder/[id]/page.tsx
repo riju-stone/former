@@ -7,14 +7,13 @@ import { useFormStore } from "@/store/formBuilderStore";
 import { FormBuilderData, FormElement, FormState } from "@/types/formBuilderState";
 import { useRouter } from "next/navigation";
 import { Eye, Save, BookCheck, LayoutTemplate } from "lucide-react";
-import { saveFormBuildLocally, saveFormBuild } from "@/lib/formActions";
-import { fetchFormBuild } from "@/db/queries";
+import { saveFormBuildLocally, fetchFormBuilderData, saveFormDraft, publishForm } from "@/utils/formApiHelper";
 
 function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [isLoading, setIsLoading] = useState(true);
   const formStore = useFormStore();
-  const { formId, formTitle, formSteps, formBuilderData, formErrors, updateFormTitle, resetFormStore, addElement, addFormBlock } = formStore;
+  const { formId, formTitle, formSteps, formBuilderData, formErrors, updateFormTitle, resetFormStore, addElement, addFormBlock, loadForm } = formStore;
 
   const router = useRouter();
 
@@ -22,25 +21,31 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
     const loadFormData = async () => {
       try {
         setIsLoading(true);
-        const formData = await fetchFormBuild(id);
+        const formData = await fetchFormBuilderData(id);
 
-        if (Object.keys(formData[0].builderData).length > 0) {
+        console.log("Fetched formData:", formData);
+
+        if (formData && formData.length > 0 && formData[0].builderData && Object.keys(formData[0].builderData).length > 0) {
           // Reset the form store first
           resetFormStore();
 
           // Parse the builder data from JSON string to object
-          const builderData = formData[0].builderData as FormBuilderData;
+          const builderData = formData[0].builderData as unknown as Record<string, FormBuilderData>;
 
-          // Update form title
-          updateFormTitle(formData[0].formName);
-
-          // Add form elements
-          // Iterate through all steps in builderData and add elements
-          Object.entries(builderData).forEach(([stepKey, elements]) => {
-            if (Array.isArray(elements)) {
-              addElement(elements as Array<FormElement>, stepKey);
-            }
+          console.log("Loading form with:", {
+            builderData,
+            steps: Object.keys(builderData).length,
+            id: formData[0].id,
+            title: formData[0].formName
           });
+
+          // Load the form data directly
+          loadForm(
+            builderData,
+            Object.keys(builderData).length,
+            formData[0].id,
+            formData[0].formName
+          );
 
           toast.success("Form build loaded successfully");
         } else {
@@ -56,7 +61,7 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
     };
 
     loadFormData();
-  }, [id, resetFormStore, updateFormTitle, addElement, router]);
+  }, [id, resetFormStore, updateFormTitle, loadForm, router]);
 
   const formObject: FormState = {
     formId: formId,
@@ -78,11 +83,16 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
     );
   };
 
-  const handleFormPublish = () => {
+  const handleFormPublish = async () => {
     if (!checkForFormErrors()) {
-      saveFormBuild(formObject);
-      router.push("/");
-      toast.success("Form published successfully");
+      try {
+        await publishForm(formObject);
+        router.push("/");
+        toast.success("Form published successfully");
+      } catch (error) {
+        console.error("Error publishing form:", error);
+        toast.error("Failed to publish form");
+      }
     } else {
       toast.error("Form has errors. Please fix them first");
     }
@@ -98,20 +108,18 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   };
 
   const handleFormDraft = async () => {
+    console.log("Saving draft with formObject:", formObject);
     if (!checkForFormErrors()) {
-      const res = await fetch("http://localhost:8080/api/form/builder/draft", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ formData: formObject }),
-        credentials: "include",
-      }).then((res) => res.json());
+      try {
+        const res = await saveFormDraft(formObject);
+        console.log("Draft save response:", res);
 
-      console.log("Draft save response:", res);
-
-      router.push("/");
-      toast.success("Form build saved successfully");
+        router.push("/");
+        toast.success("Form build saved successfully");
+      } catch (error) {
+        console.error("Error saving draft:", error);
+        toast.error("Failed to save draft");
+      }
     } else {
       toast.error("Form has errors. Please fix them first");
     }

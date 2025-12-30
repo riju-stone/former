@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchFormBuild } from "@/db/queries";
+import { fetchLiveFormData } from "@/utils/formApiHelper";
 import React, { use, useState, useEffect } from "react";
 import DefaultInputComponent from "@/components/input/default-input";
 import LongInputComponent from "@/components/input/long-input";
@@ -43,7 +43,7 @@ function FormSubmitPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
 
   useEffect(() => {
-    fetchFormBuild(id).then((data) => setFormData(data[0] as FormBuild));
+    fetchLiveFormData(id).then((data) => setFormData(data[0] as FormBuild));
   }, [id]);
 
   console.log(formData);
@@ -56,7 +56,7 @@ function FormSubmitPage({ params }: { params: Promise<{ id: string }> }) {
 
       <div className="h-[calc(100vh_-_56px)] w-full md:w-[640px] flex flex-col justify-start items-center border-l-[1px] border-r-[1px] border-gray-200 bg-white p-6 gap-10 overflow-y-auto">
         {formData.builderData &&
-          formData.builderData.map((formBlock: FormBuilderData) => {
+          Object.values(formData.builderData as unknown as Record<string, FormBuilderData>).map((formBlock: FormBuilderData) => {
             return (
               <div key={`form-block-${formBlock.formBlockTitle}`} className="w-full border-[1px] rounded-md p-5 flex flex-col gap-2">
                 <p className="text-[20px] font-[600] mb-4">{formBlock.formBlockTitle}</p>
