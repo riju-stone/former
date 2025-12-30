@@ -8,4 +8,4 @@ An elegant form builder platform, inspired from Google forms & Typeform
 - Supports multiple form element types - Text, Long Text, Options, Date and so on
 - Supports validation constraints for each form element
 
-[![former-features](/docs/former_screen.jpeg)](/docs/former_features.mp4)
+[![former-features](/docs/former_screen.jpeg)](https://drive.google.com/file/d/1Wr_Sot6051Ci11GFqSBOPyD4c4UNqNbe/view?usp=sharing)
