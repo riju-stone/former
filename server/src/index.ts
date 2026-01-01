@@ -13,7 +13,10 @@ import { logRoutes } from "./middleware/logger.middleware.js";
 
 const nodeEnv = env.NODE_ENV || "dev";
 customLogger.warn(`Running in ${nodeEnv} mode`);
-customLogger.warn("In dev mode, some security features are disabled.");
+
+if (nodeEnv === "dev") {
+  customLogger.warn("In dev mode, some security features are disabled.");
+}
 
 // App
 const app = new Hono();

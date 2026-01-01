@@ -3,13 +3,13 @@
 import { signIn } from "@/lib/authClient";
 import { Button } from "@/components/ui/button";
 import { useCallback } from "react";
-import Link from "next/link";
+import { env } from "@/env";
 
 export default function LoginPage() {
   const handleSignIn = useCallback(async (provider: "google" | "github") => {
     await signIn.social({
       provider,
-      callbackURL: window.location.origin + "/dashboard/",
+      callbackURL: env.NEXT_PUBLIC_APP_URL + "/dashboard",
     });
   }, []);
 
