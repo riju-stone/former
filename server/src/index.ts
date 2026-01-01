@@ -22,7 +22,7 @@ const app = new Hono();
 if (nodeEnv === "prod") {
   app.use(
     csrf({
-      origin: ["http://localhost:3000", "https://formerapp.vercel.app"],
+      origin: ["http://localhost:3000", "https://former-client.vercel.app"],
     })
   );
 }
@@ -34,7 +34,7 @@ if (nodeEnv === "prod") {
   app.use(
     "*",
     cors({
-      origin: ["http://localhost:3000", "https://formerapp.vercel.app"],
+      origin: ["http://localhost:3000", "https://former-client.vercel.app"],
       allowHeaders: ["Content-Type", "Authorization"],
       allowMethods: ["POST", "GET", "OPTIONS", "PATCH", "DELETE"],
       exposeHeaders: ["Content-Length"],

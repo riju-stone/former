@@ -11,7 +11,7 @@ formRoute.get("/form/builder/all/live", controller.handleFetchAllUserLiveForms);
 formRoute.get("/form/builder/all/saved", controller.handleFetchAllUserDraftForms);
 
 // Upload Form
-formRoute.post("/form/builder/upload", controller.handlePublishForm);
+formRoute.post("/form/builder/publish", controller.handlePublishForm);
 
 // Save form builder draft data
 formRoute.post("/form/builder/draft", controller.handleSaveDraftForm);
