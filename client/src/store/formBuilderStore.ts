@@ -68,12 +68,12 @@ export const useFormStore = create<FormState & FormActions>()(
             const formType = FormTypes.find((ft) => ft.tag === type);
             element.constraints = formType
               ? formType.validations.map((val) => ({
-                id: uuid(),
-                type: val.type,
-                name: val.name,
-                defaultValue: val.defaultValue.toString(),
-                customValue: null,
-              }))
+                  id: uuid(),
+                  type: val.type,
+                  name: val.name,
+                  defaultValue: val.defaultValue.toString(),
+                  customValue: null,
+                }))
               : [];
 
             if (type === "option") {
@@ -171,16 +171,29 @@ export const useFormStore = create<FormState & FormActions>()(
 
       deleteFormBlock: (formBlockId: string) =>
         set((state) => {
-          // Make sure formSteps is at least 1
-          if (state.formSteps <= 1) {
+          // If the block doesn't exist, do nothing (prevents double-delete issues)
+          if (!state.formBuilderData[formBlockId]) {
+            return;
+          }
+
+          // If we have only 1 block, deleting it should reset the form store content
+          if (Object.keys(state.formBuilderData).length <= 1) {
             const initState = initFormState();
             state.formBuilderData = initState.formBuilderData;
             state.formSteps = 1;
             state.formErrors = validateForm(state);
             return;
           }
+
           delete state.formBuilderData[formBlockId];
-          state.formSteps -= 1;
+          state.formSteps = Object.keys(state.formBuilderData).length;
+          state.formErrors = validateForm(state);
+        }),
+
+      setFormBlocks: (blocks: Record<string, FormBuilderData>) =>
+        set((state) => {
+          state.formBuilderData = blocks;
+          state.formSteps = Object.keys(blocks).length;
           state.formErrors = validateForm(state);
         }),
 
@@ -194,8 +207,51 @@ export const useFormStore = create<FormState & FormActions>()(
           // Ensure formId is correctly set in formErrors if needed, or other dependent states
           state.formErrors.formId = id;
         }),
+
+      reorderFormBlocks: (blockIds: string[]) =>
+        set((state) => {
+          const newFormBuilderData: Record<string, FormBuilderData> = {};
+          blockIds.forEach((blockId) => {
+            if (state.formBuilderData[blockId]) {
+              newFormBuilderData[blockId] = state.formBuilderData[blockId];
+            }
+          });
+          state.formBuilderData = newFormBuilderData;
+        }),
+
+      reorderFormElements: (formBlockId: string, elementIds: string[]) =>
+        set((state) => {
+          if (!state.formBuilderData[formBlockId]) return;
+
+          const elements = state.formBuilderData[formBlockId].formBlockElements;
+          const reorderedElements: FormElement[] = [];
+
+          elementIds.forEach((elementId) => {
+            const element = elements.find((el) => el.id === elementId);
+            if (element) {
+              reorderedElements.push(element);
+            }
+          });
+
+          state.formBuilderData[formBlockId].formBlockElements = reorderedElements;
+          state.formErrors = validateForm(state);
+        }),
+
+      moveFormElementBetweenBlocks: (elementId: string, fromBlockId: string, toBlockId: string, toIndex: number) =>
+        set((state) => {
+          if (!state.formBuilderData[fromBlockId] || !state.formBuilderData[toBlockId]) return;
+
+          const fromElements = state.formBuilderData[fromBlockId].formBlockElements;
+          const elementIndex = fromElements.findIndex((el) => el.id === elementId);
+
+          if (elementIndex === -1) return;
+
+          const [element] = fromElements.splice(elementIndex, 1);
+          state.formBuilderData[toBlockId].formBlockElements.splice(toIndex, 0, element);
+          state.formErrors = validateForm(state);
+        }),
     };
-  })
+  }),
 );
 
 export type { FormState, FormElement, FormOption };

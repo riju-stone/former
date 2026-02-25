@@ -1,6 +1,6 @@
-import { useFormStore } from '@/store/formBuilderStore';
-import { CopyPlus } from 'lucide-react';
-import React from 'react'
+import { useFormStore } from "@/store/formBuilderStore";
+import { CopyPlus } from "lucide-react";
+import React from "react";
 
 function FormBuilderHeaderComponent() {
   const formStore = useFormStore();
@@ -16,11 +16,12 @@ function FormBuilderHeaderComponent() {
 
   return (
     <div
-      className={`h-[64px] w-full flex justify-between items-center px-4 mb-2
-                    ${formErrors.formErrorCode.length == 0
-          ? "border-b-[1px] border-gray-200 bg-gray-50"
-          : "border-b-[2px] border-red-200 bg-red-50"
-        }
+      className={`h-[64px] w-full min-w-0 flex justify-between items-center px-4 shrink-0
+                    ${
+                      formErrors.formErrorCode.length == 0
+                        ? "border-b-[1px] border-gray-200 bg-gray-50"
+                        : "border-b-[2px] border-red-200 bg-red-50"
+                    }
                         `}
     >
       <input
@@ -48,7 +49,7 @@ function FormBuilderHeaderComponent() {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
-export default FormBuilderHeaderComponent
+export default FormBuilderHeaderComponent;

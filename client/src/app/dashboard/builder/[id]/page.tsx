@@ -26,7 +26,12 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
 
         console.log("Fetched formData:", formData);
 
-        if (formData && formData.length > 0 && formData[0].builderData && Object.keys(formData[0].builderData).length > 0) {
+        if (
+          formData &&
+          formData.length > 0 &&
+          formData[0].builderData &&
+          Object.keys(formData[0].builderData).length > 0
+        ) {
           // Reset the form store first
           resetFormStore();
 
@@ -37,16 +42,11 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
             builderData,
             steps: Object.keys(builderData).length,
             id: formData[0].id,
-            title: formData[0].formName
+            title: formData[0].formName,
           });
 
           // Load the form data directly
-          loadForm(
-            builderData,
-            Object.keys(builderData).length,
-            formData[0].id,
-            formData[0].formName
-          );
+          loadForm(builderData, Object.keys(builderData).length, formData[0].id, formData[0].formName);
 
           toast.success("Form build loaded successfully");
         } else {
@@ -69,12 +69,12 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
   }
 
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-      <div className="h-full w-full flex flex-col justify-center items-center gap-2">
-        <FormBuilderHeaderComponent />
+    <div className="h-full w-full max-w-full flex flex-col gap-2 overflow-hidden">
+      <FormBuilderHeaderComponent />
+      <div className="flex-1 min-h-0 min-w-0">
         <FormBuilderComponent />
-        <FormBuilderFooterComponent />
       </div>
+      <FormBuilderFooterComponent />
     </div>
   );
 }

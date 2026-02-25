@@ -1,7 +1,7 @@
 "use client";
 
 import CustomSidebarComponent from "@/components/custom/custom-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useSession } from "@/lib/authClient";
 import React, { useState, useEffect } from "react";
 
@@ -18,7 +18,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <CustomSidebarComponent data={userData} />
-      <main className="w-full h-screen overflow-hidden">{children}</main>
+      <SidebarInset className="h-screen overflow-hidden">{children}</SidebarInset>
     </SidebarProvider>
   );
 }

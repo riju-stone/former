@@ -1,19 +1,18 @@
 "use client";
 
-import { useFormStore } from '@/store/formBuilderStore';
-import { FormState } from '@/types/formBuilderState';
-import { doesFormHaveErrors } from '@/utils/formBuilderHelper';
-import { publishForm, saveFormBuildLocally, saveFormDraft } from '@/utils/formApiHelper';
-import { ScanEye, Save, Send } from 'lucide-react'
-import React from 'react'
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useFormStore } from "@/store/formBuilderStore";
+import { FormState } from "@/types/formBuilderState";
+import { doesFormHaveErrors } from "@/utils/formBuilderHelper";
+import { publishForm, saveFormBuildLocally, saveFormDraft } from "@/utils/formApiHelper";
+import { ScanEye, Save, Send } from "lucide-react";
+import React from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 function FormBuilderFooterComponent() {
   const formStore = useFormStore();
   const { formId, formTitle, formBuilderData, formErrors, formSteps } = formStore;
   const router = useRouter();
-
 
   const formObject: FormState = {
     formId: formId,
@@ -25,18 +24,20 @@ function FormBuilderFooterComponent() {
 
   const handleFormPublish = async () => {
     if (!doesFormHaveErrors(formErrors)) {
-      const res = await publishForm(formObject);
-      console.log("Publish response:", res);
-      toast.success("Form published successfully");
+      const result = await publishForm(formObject);
+      if (result) {
+        console.log("Publish response:", result.response);
+        toast.success("Form published successfully");
+      }
     } else {
       toast.error("Form has errors. Please fix them first");
     }
   };
 
-  const handleFormPreview = () => {
+  const handleFormPreview = async () => {
     if (!doesFormHaveErrors(formErrors)) {
-      saveFormBuildLocally(formObject);
-      router.push(`/preview/${formId}`);
+      const newFormId = await saveFormBuildLocally(formObject);
+      router.push(`/preview/${newFormId}`);
     } else {
       toast.error("Form has errors. Please fix them first");
     }
@@ -44,9 +45,8 @@ function FormBuilderFooterComponent() {
 
   const handleFormDraft = async () => {
     if (!doesFormHaveErrors(formErrors)) {
-      const res = await saveFormDraft(formObject);
-
-      console.log("Draft save response:", res);
+      const result = await saveFormDraft(formObject);
+      console.log("Draft save response:", result.response);
       router.push("/");
       toast.success("Form build saved successfully");
     } else {
@@ -56,11 +56,12 @@ function FormBuilderFooterComponent() {
 
   return (
     <div
-      className={`bottom-0 h-[64px] w-full flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] mt-2
-                    ${formErrors.formErrorCode.length == 0
-          ? "border-t-[1px] border-gray-200 bg-gray-50"
-          : "border-t-[2px] border-red-200 bg-red-50"
-        }
+      className={`bottom-0 h-[64px] w-full min-w-0 flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] shrink-0
+                    ${
+                      formErrors.formErrorCode.length == 0
+                        ? "border-t-[1px] border-gray-200 bg-gray-50"
+                        : "border-t-[2px] border-red-200 bg-red-50"
+                    }
                         `}
     >
       <div className="w-fit flex justify-center items-center gap-2">
@@ -91,7 +92,7 @@ function FormBuilderFooterComponent() {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
-export default FormBuilderFooterComponent
+export default FormBuilderFooterComponent;

@@ -79,6 +79,10 @@ export type FormActions = {
   updateOption: (elId: string, optId: string, optValue: string, formBlockId: string) => void;
   resetFormStore: () => void;
   addFormBlock: () => void;
+  setFormBlocks: (blocks: Record<string, FormBuilderData>) => void;
   deleteFormBlock: (formBlockId: string) => void;
   loadForm: (data: Record<string, FormBuilderData>, steps: number, id: string, title: string) => void;
+  reorderFormBlocks: (blockIds: string[]) => void;
+  reorderFormElements: (formBlockId: string, elementIds: string[]) => void;
+  moveFormElementBetweenBlocks: (elementId: string, fromBlockId: string, toBlockId: string, toIndex: number) => void;
 };

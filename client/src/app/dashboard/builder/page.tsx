@@ -7,12 +7,12 @@ import FormBuilderFooterComponent from "@/components/form/form-builder-footer";
 
 function FormBuilderPage() {
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-      <div className="h-full w-full flex flex-col justify-center items-center gap-2">
-        <FormBuilderHeaderComponent />
+    <div className="h-full w-full max-w-full flex flex-col gap-2 overflow-hidden">
+      <FormBuilderHeaderComponent />
+      <div className="flex-1 min-h-0 min-w-0">
         <FormBuilderComponent />
-        <FormBuilderFooterComponent />
       </div>
+      <FormBuilderFooterComponent />
     </div>
   );
 }
