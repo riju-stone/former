@@ -3,7 +3,7 @@
 import { FormElement, useFormStore } from "@/store/formBuilderStore";
 import { FormTypes } from "@/types/formMetadata";
 import { v7 as uuid } from "uuid";
-import { Grab, PlusIcon, Trash2 } from "lucide-react";
+import { Grab, GripHorizontal, PlusIcon, Trash2 } from "lucide-react";
 import React from "react";
 import { motion } from "motion/react";
 
@@ -91,7 +91,7 @@ function FormBlockActionComponent({
             whileTap={{ scale: 0.95, cursor: "grabbing" }}
             transition={{ duration: 0.15 }}
           >
-            <Grab size={15} />
+            <GripHorizontal size={15} />
           </motion.button>
         </motion.div>
       </div>

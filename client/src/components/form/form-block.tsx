@@ -26,8 +26,8 @@ const FormBlockComponent = memo(function FormBlockComponent({
     type: "form-block",
     // Accept both blocks (for reorder) and elements (for drop-on-empty-block)
     accept: ["form-block", "form-element"],
-    // Low priority so elements are preferred targets when they overlap
-    collisionPriority: CollisionPriority.Low,
+    // High priority so blocks are preferred targets when they overlap
+    collisionPriority: CollisionPriority.Lowest,
   });
 
   if (!formBuilderData[id]) {
@@ -39,11 +39,11 @@ const FormBlockComponent = memo(function FormBlockComponent({
   return (
     <motion.div
       ref={ref}
-      layoutId={`form-block-${id}`}
+      layout
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.2, layout: { duration: 0.2 } }}
       className={`h-max w-[400px] min-w-[400px] max-w-[400px] flex flex-col justify-start items-center mx-1 relative ${
         formErrors.formBlockErrors[id]
           ? "border-[2px] border-red-200 bg-red-50"
@@ -52,8 +52,8 @@ const FormBlockComponent = memo(function FormBlockComponent({
     >
       <FormBlockActionComponent step={id} title={formBuilderData[id].formBlockTitle} dragRef={handleRef} />
       <div className={`w-full px-3 ${!hasElements ? "min-h-[100px] flex items-center justify-center" : ""}`}>
-        {!hasElements && <p className="text-gray-400 text-sm">Drop elements here</p>}
-        <AnimatePresence>
+        {!hasElements && <p className="text-gray-400 text-sm">Add or Drop Form Elements</p>}
+        <AnimatePresence mode="popLayout">
           {elements.map((element: FormElement, idx: number) => (
             <FormElementComponent key={element.id} id={element.id} element={element} formBlockId={id} index={idx} />
           ))}

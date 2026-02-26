@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { AnimatePresence } from "motion/react";
 import { DragDropProvider } from "@dnd-kit/react";
 import { defaultPreset, KeyboardSensor, PointerSensor } from "@dnd-kit/dom";
@@ -21,89 +21,70 @@ const sensors = [
 ];
 
 function FormBuilderComponent() {
-  const { formBuilderData, reorderFormBlocks, setFormBlocks } = useFormStore();
-
+  const { formBuilderData, setFormBlocks } = useFormStore();
   const blockIds = useMemo(() => Object.keys(formBuilderData), [formBuilderData]);
-
-  // Local items state: only element arrays per block, used for real-time drag updates.
-  // The store is only updated once on drag end.
-  const [items, setItems] = useState<Record<string, FormElement[]>>(() =>
-    Object.fromEntries(blockIds.map((id) => [id, formBuilderData[id].formBlockElements])),
-  );
-
-  const snapshot = useRef<Record<string, FormElement[]>>(structuredClone(items));
+  const snapshot = useRef<Record<string, FormBuilderData>>({});
   const isDraggingRef = useRef(false);
-  // Always reflects the latest items — avoids stale closure in handleDragEnd
-  // because onDragOver updates items via functional setState, not a direct reference.
-  const itemsRef = useRef(items);
-
-  // Sync local items from store whenever formBuilderData changes
-  // (but not during a drag, to avoid interrupting in-progress drag operations)
-  useEffect(() => {
-    if (!isDraggingRef.current) {
-      const synced = Object.fromEntries(blockIds.map((id) => [id, formBuilderData[id].formBlockElements]));
-      setItems(synced);
-      itemsRef.current = synced;
-    }
-  }, [blockIds, formBuilderData]);
 
   const handleDragStart = useCallback<DragDropEventHandlers["onDragStart"]>(() => {
     isDraggingRef.current = true;
-    snapshot.current = structuredClone(itemsRef.current);
-  }, []);
+    snapshot.current = structuredClone(formBuilderData);
+  }, [formBuilderData]);
 
-  const handleDragOver = useCallback<DragDropEventHandlers["onDragOver"]>((event) => {
-    const { source } = event.operation;
+  const handleDragOver = useCallback<DragDropEventHandlers["onDragOver"]>(
+    (event) => {
+      const { source, target } = event.operation;
 
-    // Only move elements across blocks, not blocks themselves
-    if (source && source.type === "form-block") {
-      return;
-    }
+      // Handle block reordering during drag - update store directly
+      if (source && source.type === "form-block" && target && target.type === "form-block") {
+        const currentBlockIds = Object.keys(formBuilderData);
+        const sourceIndex = currentBlockIds.indexOf(source.id as string);
+        const targetIndex = currentBlockIds.indexOf(target.id as string);
 
-    // Use functional setState so each onDragOver operates on the latest items,
-    // matching @dnd-kit's internal position tracking for cross-block moves.
-    setItems((currentItems) => {
-      const newItems = move(currentItems, event);
-      itemsRef.current = newItems;
-      return newItems;
-    });
-  }, []);
+        if (sourceIndex !== -1 && targetIndex !== -1 && sourceIndex !== targetIndex) {
+          const newBlockIds = [...currentBlockIds];
+          const [moved] = newBlockIds.splice(sourceIndex, 1);
+          newBlockIds.splice(targetIndex, 0, moved);
+
+          const newBlocks: Record<string, FormBuilderData> = {};
+          for (const id of newBlockIds) {
+            newBlocks[id] = formBuilderData[id];
+          }
+          setFormBlocks(newBlocks);
+        }
+        return;
+      }
+
+      // Only move elements, not blocks
+      if (source && source.type === "form-block") {
+        return;
+      }
+
+      // Handle element reordering - update store directly
+      const items: Record<string, FormElement[]> = {};
+      Object.keys(formBuilderData).forEach((id) => {
+        items[id] = formBuilderData[id].formBlockElements;
+      });
+
+      const newItems = move(items, event);
+      const newBlocks: Record<string, FormBuilderData> = {};
+      Object.keys(formBuilderData).forEach((id) => {
+        newBlocks[id] = { ...formBuilderData[id], formBlockElements: newItems[id] ?? [] };
+      });
+      setFormBlocks(newBlocks);
+    },
+    [formBuilderData, setFormBlocks],
+  );
 
   const handleDragEnd = useCallback<DragDropEventHandlers["onDragEnd"]>(
     (event) => {
       isDraggingRef.current = false;
 
       if (event.canceled) {
-        setItems(snapshot.current);
-        itemsRef.current = snapshot.current;
-        return;
+        setFormBlocks(snapshot.current);
       }
-
-      const { source, target } = event.operation;
-
-      // Handle block reordering
-      if (source?.type === "form-block" && target?.type === "form-block") {
-        const sourceIndex = blockIds.indexOf(source.id as string);
-        const targetIndex = blockIds.indexOf(target.id as string);
-
-        if (sourceIndex !== -1 && targetIndex !== -1) {
-          const newBlockIds = [...blockIds];
-          const [moved] = newBlockIds.splice(sourceIndex, 1);
-          newBlockIds.splice(targetIndex, 0, moved);
-          reorderFormBlocks(newBlockIds);
-        }
-        return;
-      }
-
-      // Final element positions are already computed by onDragOver — commit to store
-      const finalItems = itemsRef.current;
-      const newBlocks: Record<string, FormBuilderData> = {};
-      for (const id of blockIds) {
-        newBlocks[id] = { ...formBuilderData[id], formBlockElements: finalItems[id] ?? [] };
-      }
-      setFormBlocks(newBlocks);
     },
-    [blockIds, formBuilderData, reorderFormBlocks, setFormBlocks],
+    [setFormBlocks],
   );
 
   return (
@@ -114,11 +95,16 @@ function FormBuilderComponent() {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="h-full w-full overflow-x-auto overflow-y-hidden">
+      <div className="h-full w-full overflow-auto">
         <div className="h-full inline-flex justify-start items-start px-2">
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout">
             {blockIds.map((key, index) => (
-              <FormBlockComponent key={`form-block-${key}`} id={key} index={index} elements={items[key] ?? []} />
+              <FormBlockComponent
+                key={key}
+                id={key}
+                index={index}
+                elements={formBuilderData[key]?.formBlockElements ?? []}
+              />
             ))}
           </AnimatePresence>
         </div>

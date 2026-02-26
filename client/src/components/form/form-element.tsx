@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import React from "react";
+import { motion } from "motion/react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import FormDropdownComponent from "./form-dropdown";
 import DefaultInputComponent from "@/components/input/default-input";
@@ -43,62 +43,28 @@ const FormElementComponent = ({
   const formStore = useFormStore();
   const { updateElementTitle, updateElementSubtitle, deleteElement, formErrors } = formStore;
 
-  const elementRef = useRef<HTMLDivElement>(null);
-  const [dragSize, setDragSize] = useState<{ width: number; height: number } | null>(null);
-
-  // useSortable: enables drag-and-drop with visual feedback, similar to form blocks
-  // `group` ties this element to its parent form block, enabling cross-block dragging
-  // `feedback: "clone"` shows a clone of the element at the original position during drag
   const { ref, handleRef, isDragging } = useSortable({
     id,
     index,
     group: formBlockId,
     type: "form-element",
     accept: "form-element",
-    feedback: "clone",
     data: { formBlockId },
   });
 
-  // Merge the sortable ref with our measurement ref
-  const mergedRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      elementRef.current = node;
-      if (typeof ref === "function") {
-        ref(node as any);
-      } else if (ref) {
-        (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
-      }
-    },
-    [ref],
-  );
-
-  // Lock dimensions when drag starts to prevent squishing across containers
-  useEffect(() => {
-    if (isDragging && elementRef.current) {
-      const { width, height } = elementRef.current.getBoundingClientRect();
-      setDragSize({ width, height });
-    } else {
-      setDragSize(null);
-    }
-  }, [isDragging]);
-
   return (
     <motion.div
-      ref={mergedRef}
-      style={
-        dragSize
-          ? { width: dragSize.width, height: dragSize.height, minWidth: dragSize.width, minHeight: dragSize.height }
-          : undefined
-      }
-      className={`w-full flex flex-col justify-center items-center gap-1 rounded-xl p-4 touch-auto relative mt-4 last:mb-4 ${
+      ref={ref}
+      layout
+      className={`w-full flex flex-col justify-center items-center gap-1 rounded-xl p-4 touch-auto relative mt-4 last:mb-4 transition-colors ${
         formErrors.formElementErrors[id]
           ? "border-[2px] border-red-200 bg-red-50"
           : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"
-      }`}
+      } ${isDragging ? "opacity-50" : "opacity-100"}`}
       initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ opacity: isDragging ? 0.5 : 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.2, delay: 0.1 }}
+      transition={{ duration: 0.2, layout: { duration: 0.2 } }}
     >
       <div className="w-full flex justify-between items-start gap-2">
         <div className="flex-1 flex-col justify-center items-center gap-1">
