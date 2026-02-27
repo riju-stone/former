@@ -26,27 +26,22 @@ function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
 
         console.log("Fetched formData:", formData);
 
-        if (
-          formData &&
-          formData.length > 0 &&
-          formData[0].builderData &&
-          Object.keys(formData[0].builderData).length > 0
-        ) {
+        if (formData && formData.builderData && Object.keys(formData.builderData).length > 0) {
           // Reset the form store first
           resetFormStore();
 
           // Parse the builder data from JSON string to object
-          const builderData = formData[0].builderData as unknown as Record<string, FormBuilderData>;
+          const builderData = formData.builderData as Record<string, FormBuilderData>;
 
           console.log("Loading form with:", {
             builderData,
             steps: Object.keys(builderData).length,
-            id: formData[0].id,
-            title: formData[0].formName,
+            id: formData.id,
+            title: formData.formName,
           });
 
           // Load the form data directly
-          loadForm(builderData, Object.keys(builderData).length, formData[0].id, formData[0].formName);
+          loadForm(builderData, Object.keys(builderData).length, formData.id, formData.formName);
 
           toast.success("Form build loaded successfully");
         } else {

@@ -22,16 +22,16 @@ if (env.NODE_ENV === "dev") {
 const transport =
   targets.length > 0
     ? pino.transport({
-      targets,
-    })
+        targets,
+      })
     : undefined;
 
 const customLogger = pino(
   {
-    level: env.LOG_LEVEL || "info",
+    level: env.NODE_ENV === "dev" ? "debug" : env.LOG_LEVEL || "info",
     timestamp: pino.stdTimeFunctions.isoTime,
   },
-  transport
+  transport,
 );
 
 export default customLogger;

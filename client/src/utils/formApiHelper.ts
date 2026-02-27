@@ -61,18 +61,18 @@ export async function getFormDrafts() {
   return handleResponse<{ data: any[] }>(res).then((r) => r.data);
 }
 
-export async function fetchFormBuilderData(formId: string): Promise<FormBuild[]> {
+export async function fetchFormBuilderData(formId: string): Promise<FormBuild> {
   const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/form/builder/data?formId=${formId}`, {
     credentials: "include",
   });
-  return handleResponse<{ data: FormBuild[] }>(res).then((r) => r.data);
+  return handleResponse<{ data: FormBuild }>(res).then((r) => r.data);
 }
 
-export async function fetchLiveFormData(formId: string): Promise<FormBuild[]> {
+export async function fetchLiveFormData(formId: string): Promise<FormBuild> {
   const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/form/data?formId=${formId}`, {
     credentials: "include",
   });
-  return handleResponse<{ data: FormBuild[] }>(res).then((r) => r.data);
+  return handleResponse<{ data: FormBuild }>(res).then((r) => r.data);
 }
 
 export async function publishForm(formObject: FormState): Promise<{ formId: string; response: any } | null> {

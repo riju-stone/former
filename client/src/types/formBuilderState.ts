@@ -60,7 +60,7 @@ export type FormState = {
 export type FormBuild = {
   id: string;
   formName: string;
-  builderData: Array<FormBuilderData>;
+  builderData: Record<string, FormBuilderData>;
   createdAt: string;
   updatedAt: string;
 };

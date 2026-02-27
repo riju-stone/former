@@ -15,7 +15,8 @@ build/
 
 # env
 .env
-.env.prod
+.env.local
+.env.production
 
 # logs
 logs/

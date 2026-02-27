@@ -13,16 +13,21 @@ export async function handlePublishForm(c: Context) {
     return c.json({ message: "formData is required" }, 400);
   }
 
-  const { formId, formTitle, formBuilderData } = formData;
+  const { formId, formTitle, formBuilderData, formExpiry } = formData;
   if (!formId || !formTitle || !formBuilderData) {
     return c.json({ message: "formId, formTitle, and formBuilderData are required" }, 400);
   }
+
+  // Set default expiry to 1 year from now if not provided
+  const defaultExpiry = new Date();
+  defaultExpiry.setFullYear(defaultExpiry.getFullYear() + 1);
 
   const _formUploadData = {
     id: formId,
     userId: user.id,
     formName: formTitle,
     builderData: formBuilderData,
+    formExpiry: formExpiry ? new Date(formExpiry) : defaultExpiry,
     ...formData,
   };
 
@@ -30,7 +35,9 @@ export async function handlePublishForm(c: Context) {
     await queries.publishForm(_formUploadData);
     return c.json({ message: "Form uploaded successfully" });
   } catch (err) {
-    customLogger.error(`Error uploading form: ${JSON.stringify(err)}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+    customLogger.error({ message: errorMessage, stack: errorStack, formId }, "Error uploading form");
     return c.json({ message: "Error uploading form" }, 500);
   }
 }
@@ -60,7 +67,9 @@ export async function handleSaveDraftForm(c: Context) {
   try {
     await queries.uploadFormBuilderDraft(_formDraftData);
   } catch (err) {
-    console.error("Error saving form draft:", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+    customLogger.error({ message: errorMessage, stack: errorStack, formId }, "Error saving form draft");
     return c.json({ message: "Error saving form draft" }, 500);
   }
 
@@ -76,7 +85,9 @@ export async function handleFetchAllUserLiveForms(c: Context) {
       const liveForms = await queries.fetchAllLiveFormsByUser(user.id);
       return c.json({ data: liveForms });
     } catch (err) {
-      customLogger.error(`Error fetching live forms: ${JSON.stringify(err)}`);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      const errorStack = err instanceof Error ? err.stack : undefined;
+      customLogger.error({ message: errorMessage, stack: errorStack, userId: user.id }, "Error fetching live forms");
       return c.json({ message: "Error fetching live forms" }, 500);
     }
   }
@@ -90,7 +101,9 @@ export async function handleFetchAllUserDraftForms(c: Context) {
       const savedForms = await queries.fetchAllSavedFormsByUser(user.id);
       return c.json({ data: savedForms });
     } catch (err) {
-      customLogger.error(`Error fetching saved forms: ${JSON.stringify(err)}`);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      const errorStack = err instanceof Error ? err.stack : undefined;
+      customLogger.error({ message: errorMessage, stack: errorStack, userId: user.id }, "Error fetching saved forms");
       return c.json({ message: "Error fetching saved forms" }, 500);
     }
   }
@@ -104,9 +117,18 @@ export async function handleFetchDraftForm(c: Context) {
 
   try {
     const formData = await queries.fetchSavedFormById(formId);
-    return c.json({ data: formData });
+
+    // Check if form exists
+    if (!formData || formData.length === 0) {
+      return c.json({ message: "Form not found" }, 404);
+    }
+
+    // Get the first result since we're querying by ID
+    return c.json({ data: formData[0] });
   } catch (err) {
-    customLogger.error(`Error fetching form data: ${JSON.stringify(err)}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+    customLogger.error({ message: errorMessage, stack: errorStack, formId }, "Error fetching draft form data");
     return c.json({ message: "Error fetching form data" }, 500);
   }
 }
@@ -134,7 +156,9 @@ export async function handleFormSubmission(c: Context) {
   try {
     await queries.submitFormResponse(_formSubmissionData);
   } catch (err) {
-    customLogger.error(`Error submitting form response: ${JSON.stringify(err)}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+    customLogger.error({ message: errorMessage, stack: errorStack, formId }, "Error submitting form response");
     return c.json({ message: "Error submitting form response" }, 500);
   }
 
@@ -166,7 +190,9 @@ export async function handleFormSubmissionV2(c: Context) {
     // Return success response
     return c.json({ message: "Form submission received" });
   } catch (err) {
-    customLogger.error(`Error processing form submission: ${JSON.stringify(err)}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+    customLogger.error({ message: errorMessage, stack: errorStack }, "Error processing form submission");
     return c.json({ message: "Error processing form submission" }, 500);
   }
 }
@@ -178,19 +204,62 @@ export async function handleFetchLiveFormData(c: Context) {
     return c.json({ message: "formId query parameter is required" }, 400);
   }
 
+  customLogger.info(`Fetching live form data for formId: ${formId}`);
+
   try {
-    const cachedFormData = await redis.get(formId);
-    if (cachedFormData) {
-      customLogger.debug(`Cache hit for formId: ${formId} = ${cachedFormData}`);
-      return c.json({ data: cachedFormData });
-    } else {
-      const formData = await queries.fetchLiveFormById(formId);
-      await redis.set(formId, formData, { ex: 3600 * 2 }); // Cache for 2 hours
-      customLogger.debug(`Cache miss for formId: ${formId}. Fetched from DB.`);
-      return c.json({ data: formData });
+    // Check cache first
+    let cachedFormData = null;
+    try {
+      customLogger.debug(`Checking cache for formId: ${formId}`);
+      cachedFormData = await redis.get(formId);
+
+      if (cachedFormData) {
+        customLogger.info(`Cache hit for formId: ${formId}`);
+        return c.json({ data: cachedFormData });
+      }
+    } catch (redisErr) {
+      customLogger.warn(
+        `Redis error (continuing without cache): ${redisErr instanceof Error ? redisErr.message : String(redisErr)}`,
+      );
     }
+
+    customLogger.debug(`Cache miss for formId: ${formId}. Querying database...`);
+    const formData = await queries.fetchLiveFormById(formId);
+    customLogger.debug({ count: formData?.length, hasData: !!formData }, `Query result for formId ${formId}`);
+
+    // Check if form exists
+    if (!formData || formData.length === 0) {
+      customLogger.warn(`Form not found for formId: ${formId}`);
+      return c.json({ message: "Form not found" }, 404);
+    }
+
+    // Get the first result since we're querying by ID
+    const form = formData[0];
+    customLogger.debug(`Found form: ${form.id}`);
+
+    // Try to cache the result (non-blocking)
+    try {
+      await redis.set(formId, form, { ex: 3600 * 2 }); // Cache for 2 hours
+      customLogger.debug(`Successfully cached form: ${formId}`);
+    } catch (redisErr) {
+      customLogger.warn(
+        `Failed to cache form (non-critical): ${redisErr instanceof Error ? redisErr.message : String(redisErr)}`,
+      );
+    }
+
+    customLogger.info(`Successfully fetched form: ${formId}`);
+    return c.json({ data: form });
   } catch (err) {
-    customLogger.error(`Error fetching form data: ${JSON.stringify(err)}`);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+    customLogger.error(
+      {
+        message: errorMessage,
+        stack: errorStack,
+        formId,
+      },
+      `Error fetching form data for formId ${formId}`,
+    );
     return c.json({ message: "Error fetching form data" }, 500);
   }
 }

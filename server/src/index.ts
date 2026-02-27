@@ -22,30 +22,27 @@ if (nodeEnv === "dev") {
 const app = new Hono();
 
 // Middleware
+app.use(
+  "*",
+  cors({
+    origin: ["http://localhost:3000", "https://former-client.vercel.app"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS", "PATCH", "DELETE"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  }),
+);
+
 if (nodeEnv === "prod") {
   app.use(
     csrf({
       origin: ["http://localhost:3000", "https://former-client.vercel.app"],
-    })
+    }),
   );
 }
 
 app.use(compress({ encoding: "gzip" }));
-
-// Added Security
-if (nodeEnv === "prod") {
-  app.use(
-    "*",
-    cors({
-      origin: ["http://localhost:3000", "https://former-client.vercel.app"],
-      allowHeaders: ["Content-Type", "Authorization"],
-      allowMethods: ["POST", "GET", "OPTIONS", "PATCH", "DELETE"],
-      exposeHeaders: ["Content-Length"],
-      maxAge: 86400,
-      credentials: true,
-    })
-  );
-}
 
 // Protected Routes Middleware
 app.use("*", logRoutes);
@@ -64,5 +61,5 @@ serve(
   },
   (info) => {
     customLogger.info(`Server is running on http://localhost:${info.port}`);
-  }
+  },
 );
