@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { CollisionPriority } from "@dnd-kit/abstract";
 import type { FormElement } from "@/types/formBuilderState";
+import { cn } from "@/lib/utils";
 
 const FormBlockComponent = memo(function FormBlockComponent({
   id,
@@ -20,7 +21,7 @@ const FormBlockComponent = memo(function FormBlockComponent({
 }) {
   const { formErrors, formBuilderData } = useFormStore();
 
-  const { ref, handleRef, isDragging } = useSortable({
+  const { ref, handleRef } = useSortable({
     id,
     index,
     type: "form-block",
@@ -44,14 +45,15 @@ const FormBlockComponent = memo(function FormBlockComponent({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
       transition={{ duration: 0.2, layout: { duration: 0.2 } }}
-      className={`h-max w-[400px] min-w-[400px] max-w-[400px] flex flex-col justify-start items-center mx-1 relative ${
+      className={cn(
+        "h-max w-[400px] min-w-[400px] max-w-[400px] flex flex-col justify-start items-center mx-1 relative rounded-xl",
         formErrors.formBlockErrors[id]
           ? "border-[2px] border-red-200 bg-red-50"
-          : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"
-      }`}
+          : "border-[1px] border-gray-200 bg-white hover:bg-gray-50g",
+      )}
     >
       <FormBlockActionComponent step={id} title={formBuilderData[id].formBlockTitle} dragRef={handleRef} />
-      <div className={`w-full px-3 ${!hasElements ? "min-h-[100px] flex items-center justify-center" : ""}`}>
+      <div className={cn("w-full px-3", !hasElements && "min-h-[100px] flex items-center justify-center")}>
         {!hasElements && <p className="text-gray-400 text-sm">Add or Drop Form Elements</p>}
         <AnimatePresence mode="popLayout">
           {elements.map((element: FormElement, idx: number) => (

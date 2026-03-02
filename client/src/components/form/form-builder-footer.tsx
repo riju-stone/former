@@ -8,6 +8,7 @@ import { ScanEye, Save, Send } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 function FormBuilderFooterComponent() {
   const formStore = useFormStore();
@@ -56,13 +57,12 @@ function FormBuilderFooterComponent() {
 
   return (
     <div
-      className={`bottom-0 h-[64px] w-full min-w-0 flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] shrink-0
-                    ${
-                      formErrors.formErrorCode.length == 0
-                        ? "border-t-[1px] border-gray-200 bg-gray-50"
-                        : "border-t-[2px] border-red-200 bg-red-50"
-                    }
-                        `}
+      className={cn(
+        "bottom-0 h-[64px] w-full min-w-0 flex justify-between items-center bg-[#F6F8FA] bg-opacity-90 border-[1px] border-gray-200 py-4 px-[24px] shrink-0",
+        formErrors.formErrorCode.length == 0
+          ? "border-t-[1px] border-gray-200 bg-gray-50"
+          : "border-t-[2px] border-red-200 bg-red-50",
+      )}
     >
       <div className="w-fit flex justify-center items-center gap-2">
         <button

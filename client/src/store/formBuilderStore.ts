@@ -50,7 +50,6 @@ export const useFormStore = create<FormState & FormActions>()(
 
       deleteElement: (id: string, formBlockId: string) =>
         set((state) => {
-          // Optimization: Break loop once found
           const path = findElementPath(state.formBuilderData[formBlockId].formBlockElements, id);
           if (path) {
             state.formBuilderData[formBlockId].formBlockElements.splice(path.index, 1);

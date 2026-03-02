@@ -3,9 +3,10 @@
 import { FormElement, useFormStore } from "@/store/formBuilderStore";
 import { FormTypes } from "@/types/formMetadata";
 import { v7 as uuid } from "uuid";
-import { Grab, GripHorizontal, PlusIcon, Trash2 } from "lucide-react";
-import React from "react";
+import { GripHorizontal, PlusIcon, Trash2 } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "motion/react";
+import { debounce } from "lodash";
 
 const getDefaultFormElement = (): FormElement => {
   return {
@@ -34,13 +35,30 @@ function FormBlockActionComponent({
 }) {
   const { addElement, updateFormBlockTitle, deleteFormBlock } = useFormStore();
 
+  // Local state for debounced input
+  const [localTitle, setLocalTitle] = useState(title);
+
+  // Sync local state when prop changes
+  useEffect(() => {
+    setLocalTitle(title);
+  }, [title]);
+
+  // Debounced update function
+  const debouncedUpdateTitle = useMemo(
+    () => debounce((value: string) => updateFormBlockTitle(value, step), 300),
+    [step, updateFormBlockTitle],
+  );
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      debouncedUpdateTitle.cancel();
+    };
+  }, [debouncedUpdateTitle]);
+
   const handleAddFormElement = (step: string) => {
     const el = getDefaultFormElement();
     addElement([el], step);
-  };
-
-  const handleUpdateFormBlockTitle = (title: string) => {
-    updateFormBlockTitle(title, step);
   };
 
   const handleDeleteFormStepBlock = (step: string) => {
@@ -48,15 +66,18 @@ function FormBlockActionComponent({
   };
 
   return (
-    <div className=" w-full z-5 flex justify-between items-center" key={`form-block-actions-${step}`}>
-      <div className="relative flex-1 flex justify-center items-center gap-2 p-2 bg-white/50 backdrop-blur-md">
+    <div className="w-full z-5 flex justify-between items-center" key={`form-block-actions-${step}`}>
+      <div className="relative flex-1 flex justify-center items-center gap-2 p-2 bg-white/50 backdrop-blur-md rounded-xl">
         <input
           id="form-block-title"
           className={`text-[16px] w-[75%] font-[600] bg-transparent border-none outline-none`}
           type="text"
           placeholder="Untitled block"
-          onChange={(e) => handleUpdateFormBlockTitle(e.target.value)}
-          value={title}
+          value={localTitle}
+          onChange={(e) => {
+            setLocalTitle(e.target.value);
+            debouncedUpdateTitle(e.target.value);
+          }}
         />
         <motion.div
           className="flex justify-center items-center gap-2"

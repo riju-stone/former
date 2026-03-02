@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "motion/react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import FormDropdownComponent from "./form-dropdown";
@@ -13,6 +13,8 @@ import { DatePickerComponent } from "@/components/custom/date-picker";
 import { Trash2, GripVertical } from "lucide-react";
 import FileInputComponent from "../input/file-input";
 import FormValidationComponent from "./form-validation";
+import { debounce } from "lodash";
+import { cn } from "@/lib/utils";
 
 const getInputType = (data: FormElement, formBlockId: string) => {
   switch (data.type) {
@@ -43,6 +45,38 @@ const FormElementComponent = ({
   const formStore = useFormStore();
   const { updateElementTitle, updateElementSubtitle, deleteElement, formErrors } = formStore;
 
+  // Local state for debounced inputs
+  const [localTitle, setLocalTitle] = useState(element.main_title);
+  const [localSubtitle, setLocalSubtitle] = useState(element.sub_title);
+
+  // Sync local state when element props change
+  useEffect(() => {
+    setLocalTitle(element.main_title);
+  }, [element.main_title]);
+
+  useEffect(() => {
+    setLocalSubtitle(element.sub_title);
+  }, [element.sub_title]);
+
+  // Debounced update functions
+  const debouncedUpdateTitle = useMemo(
+    () => debounce((value: string) => updateElementTitle(id, value, formBlockId), 300),
+    [id, formBlockId, updateElementTitle],
+  );
+
+  const debouncedUpdateSubtitle = useMemo(
+    () => debounce((value: string) => updateElementSubtitle(id, value, formBlockId), 300),
+    [id, formBlockId, updateElementSubtitle],
+  );
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      debouncedUpdateTitle.cancel();
+      debouncedUpdateSubtitle.cancel();
+    };
+  }, [debouncedUpdateTitle, debouncedUpdateSubtitle]);
+
   const { ref, handleRef, isDragging } = useSortable({
     id,
     index,
@@ -56,11 +90,13 @@ const FormElementComponent = ({
     <motion.div
       ref={ref}
       layout
-      className={`w-full flex flex-col justify-center items-center gap-1 rounded-xl p-4 touch-auto relative mt-4 last:mb-4 transition-colors ${
+      className={cn(
+        "w-full flex flex-col justify-center items-center gap-1 rounded-xl p-4 touch-auto relative mt-4 last:mb-4 transition-colors",
         formErrors.formElementErrors[id]
           ? "border-[2px] border-red-200 bg-red-50"
-          : "border-[1px] border-gray-200 bg-white hover:bg-gray-50"
-      } ${isDragging ? "opacity-50" : "opacity-100"}`}
+          : "border-[1px] border-gray-200 bg-white hover:bg-gray-50",
+        isDragging ? "opacity-50" : "opacity-100",
+      )}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: isDragging ? 0.5 : 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
@@ -71,14 +107,20 @@ const FormElementComponent = ({
           <input
             placeholder="Write a question"
             className="w-full bg-transparent text-[15px] text-gray-950 font-[600] leading-5 border-none outline-none"
-            value={element.main_title}
-            onChange={(e) => updateElementTitle(id, e.target.value, formBlockId)}
+            value={localTitle}
+            onChange={(e) => {
+              setLocalTitle(e.target.value);
+              debouncedUpdateTitle(e.target.value);
+            }}
           />
           <input
             placeholder="Write a help text or caption (optional)."
             className="w-full bg-transparent text-[12px] font-[400] text-gray-950 border-none outline-none overflow-y-hidden resize-none"
-            value={element.sub_title}
-            onChange={(e) => updateElementSubtitle(id, e.target.value, formBlockId)}
+            value={localSubtitle}
+            onChange={(e) => {
+              setLocalSubtitle(e.target.value);
+              debouncedUpdateSubtitle(e.target.value);
+            }}
           />
         </div>
         <div className="flex justify-center items-center gap-2">

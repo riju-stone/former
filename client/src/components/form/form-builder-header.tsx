@@ -1,10 +1,33 @@
 import { useFormStore } from "@/store/formBuilderStore";
 import { CopyPlus } from "lucide-react";
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { debounce } from "lodash";
+import { cn } from "@/lib/utils";
 
 function FormBuilderHeaderComponent() {
   const formStore = useFormStore();
   const { formTitle, formErrors, updateFormTitle, addFormBlock, resetFormStore } = formStore;
+
+  // Local state for debounced input
+  const [localTitle, setLocalTitle] = useState(formTitle);
+
+  // Sync local state when store value changes externally
+  useEffect(() => {
+    setLocalTitle(formTitle);
+  }, [formTitle]);
+
+  // Debounced update function
+  const debouncedUpdateTitle = useMemo(
+    () => debounce((value: string) => updateFormTitle(value), 300),
+    [updateFormTitle],
+  );
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      debouncedUpdateTitle.cancel();
+    };
+  }, [debouncedUpdateTitle]);
 
   const handleAddFormBlock = () => {
     addFormBlock();
@@ -16,21 +39,23 @@ function FormBuilderHeaderComponent() {
 
   return (
     <div
-      className={`h-[64px] w-full min-w-0 flex justify-between items-center px-4 shrink-0
-                    ${
-                      formErrors.formErrorCode.length == 0
-                        ? "border-b-[1px] border-gray-200 bg-gray-50"
-                        : "border-b-[2px] border-red-200 bg-red-50"
-                    }
-                        `}
+      className={cn(
+        "h-[64px] w-full min-w-0 flex justify-between items-center px-4 shrink-0",
+        formErrors.formErrorCode.length == 0
+          ? "border-b-[1px] border-gray-200 bg-gray-50"
+          : "border-b-[2px] border-red-200 bg-red-50",
+      )}
     >
       <input
         id="form-title"
         className={`text-[16px] w-full font-[600] bg-transparent border-none outline-none mr-2`}
         type="text"
         placeholder="Untitled form"
-        value={formTitle}
-        onChange={(e) => updateFormTitle(e.target.value)}
+        value={localTitle}
+        onChange={(e) => {
+          setLocalTitle(e.target.value);
+          debouncedUpdateTitle(e.target.value);
+        }}
       />
       <div className="w-fit flex justify-center items-center gap-2">
         <button
