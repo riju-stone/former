@@ -91,7 +91,7 @@ const FormElementComponent = ({
       ref={ref}
       layout
       className={cn(
-        "w-full flex flex-col justify-center items-center gap-1 rounded-xl p-4 touch-auto relative mt-4 last:mb-4 transition-colors",
+        "w-full min-h-fit flex flex-col justify-center items-center gap-1 rounded-xl p-4 touch-auto relative mt-4 last:mb-4 transition-colors",
         formErrors.formElementErrors[id]
           ? "border-[2px] border-red-200 bg-red-50"
           : "border-[1px] border-gray-200 bg-white hover:bg-gray-50",

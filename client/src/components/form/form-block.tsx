@@ -7,6 +7,7 @@ import FormElementComponent from "./form-element";
 import { AnimatePresence, motion } from "motion/react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { CollisionPriority } from "@dnd-kit/abstract";
+import { closestCenter } from "@dnd-kit/collision";
 import type { FormElement } from "@/types/formBuilderState";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ const FormBlockComponent = memo(function FormBlockComponent({
     accept: ["form-block", "form-element"],
     // High priority so blocks are preferred targets when they overlap
     collisionPriority: CollisionPriority.Lowest,
+    collisionDetector: closestCenter,
   });
 
   if (!formBuilderData[id]) {
