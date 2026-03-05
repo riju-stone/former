@@ -9,8 +9,17 @@ import { Calendar } from "@/components/ui/calendar";
 import { Calendar1 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-export function DatePickerComponent({ disabled }: { disabled: boolean }) {
-  const [date, setDate] = React.useState<Date>();
+export function DatePickerComponent({ disabled, value, onChange }: { disabled: boolean; value?: Date; onChange?: (date?: Date) => void }) {
+  const [date, setDate] = React.useState<Date | undefined>(value);
+
+  React.useEffect(() => {
+    setDate(value);
+  }, [value]);
+
+  const handleSelect = (selected?: Date) => {
+    setDate(selected);
+    onChange?.(selected);
+  };
 
   return (
     <Popover>
@@ -28,7 +37,7 @@ export function DatePickerComponent({ disabled }: { disabled: boolean }) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+        <Calendar mode="single" selected={date} onSelect={handleSelect} initialFocus />
       </PopoverContent>
     </Popover>
   );

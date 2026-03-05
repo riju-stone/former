@@ -84,25 +84,25 @@ export const FormTypes = [
       },
     ],
   },
-  {
-    name: "File upload",
-    tag: "file",
-    validations: [
-      {
-        name: "Maximum File Size (in MB)",
-        tag: "max_file_size",
-        type: "number",
-        defaultValue: 10,
-        placeholder: "Maximum File Size",
-      },
-      {
-        name: "Allowed File Types",
-        tag: "allowed_file_types",
-        type: "array",
-        defaultValue: ["jpg", "jpeg", "png", "pdf"],
-        placeholder: "Allowed File Types",
-        isRequired: true,
-      },
-    ],
-  },
+  // {
+  //   name: "File upload",
+  //   tag: "file",
+  //   validations: [
+  //     {
+  //       name: "Maximum File Size (in MB)",
+  //       tag: "max_file_size",
+  //       type: "number",
+  //       defaultValue: 10,
+  //       placeholder: "Maximum File Size",
+  //     },
+  //     {
+  //       name: "Allowed File Types",
+  //       tag: "allowed_file_types",
+  //       type: "array",
+  //       defaultValue: ["jpg", "jpeg", "png", "pdf"],
+  //       placeholder: "Allowed File Types",
+  //       isRequired: true,
+  //     },
+  //   ],
+  // },
 ];
