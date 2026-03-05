@@ -52,7 +52,18 @@ export async function uploadFormBuilderDraft(formData: FormDraftType) {
 }
 
 export async function publishForm(formData: FormPublishType) {
-  return await db.insert(formPublishedTable).values(formData);
+  return await db
+    .insert(formPublishedTable)
+    .values(formData)
+    .onConflictDoUpdate({
+      target: formPublishedTable.id,
+      set: {
+        formName: formData.formName,
+        builderData: formData.builderData,
+        updatedAt: new Date(),
+        formExpiry: formData.formExpiry,
+      },
+    });
 }
 
 export async function submitFormResponse(responseData: FormSubmissionType) {

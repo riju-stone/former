@@ -1,5 +1,6 @@
-import { pgTable, text, json, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, json, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth.schema.js";
+import type { FormBuilderBlockType, FormSubmissionType } from "../../types/form.types.js";
 
 export const formBuilderTable = pgTable("saved-forms", {
   id: text("id").primaryKey(),
@@ -7,30 +8,30 @@ export const formBuilderTable = pgTable("saved-forms", {
     .notNull()
     .references(() => user.id),
   formName: text("form_title").notNull(),
-  builderData: json("builder_data").notNull(),
+  builderData: json("builder_data").$type<Record<string, FormBuilderBlockType>>().notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const formPublishedTable = pgTable("published-forms", {
-  id: varchar().primaryKey(),
+  id: text("id").primaryKey(),
   userId: text("user_id")
     .notNull()
     .references(() => user.id),
   formName: text("form_title").notNull(),
-  builderData: json("builder_data").notNull(),
+  builderData: json("builder_data").$type<Record<string, FormBuilderBlockType>>().notNull(),
   formExpiry: timestamp("form_expiry", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const formSubmissionsTable = pgTable("form-submissions", {
-  id: varchar().primaryKey(),
+  id: text("id").primaryKey(),
   user_email: text("user_email").notNull(),
   formId: text("form_id")
     .notNull()
     .references(() => formPublishedTable.id),
-  submissionData: json("submission_data").notNull(),
+  submissionData: json("submission_data").$type<FormSubmissionType["submissionData"]>().notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

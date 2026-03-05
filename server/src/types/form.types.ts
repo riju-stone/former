@@ -1,3 +1,5 @@
+export const VALID_ELEMENT_TYPES = ["short", "long", "option", "number", "url", "date"] as const;
+
 export type FormOptionType = {
   id: string;
   value: string;
@@ -5,7 +7,7 @@ export type FormOptionType = {
 
 export type FormElementConstraintType = {
   id: string;
-  type: string;
+  type: (typeof VALID_ELEMENT_TYPES)[number];
   name: string;
   defaultValue: string;
   customValue: string | null;
@@ -13,19 +15,24 @@ export type FormElementConstraintType = {
 
 export type FormElementType = {
   id: string;
-  step: number;
   main_title: string;
   sub_title?: string;
-  type: string;
+  type: (typeof VALID_ELEMENT_TYPES)[number];
   options?: Array<FormOptionType>;
-  constraints?: Array<FormElementConstraintType>;
+  constraints: Array<FormElementConstraintType>;
+};
+
+export type FormBuilderBlockType = {
+  blockId: string;
+  formBlockTitle: string;
+  formBlockElements: Array<FormElementType>;
 };
 
 export type FormDraftType = {
   id: string;
   userId: string;
   formName: string;
-  builderData: Array<FormElementType>;
+  builderData: Record<string, FormBuilderBlockType>;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -34,7 +41,7 @@ export type FormPublishType = {
   id: string;
   userId: string;
   formName: string;
-  builderData: Array<FormElementType>;
+  builderData: Record<string, FormBuilderBlockType>;
   createdAt?: Date;
   updatedAt?: Date;
   formExpiry: Date;
@@ -44,7 +51,7 @@ export type FormSubmissionType = {
   id: string;
   user_email: string;
   formId: string;
-  submissionData: FormData;
+  submissionData: Record<string, unknown>;
   createdAt?: Date;
   updatedAt?: Date;
 };

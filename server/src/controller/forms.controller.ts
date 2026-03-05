@@ -5,6 +5,8 @@ import { User } from "better-auth/*";
 import * as queries from "../db/queries/form.queries.js";
 import redis from "../utils/cache.js";
 
+import { isValidBuilderData } from "../utils/validation.js";
+
 export async function handlePublishForm(c: Context) {
   const user = c.get("user" as never) as User;
   const { formData } = await c.req.json();
@@ -16,6 +18,25 @@ export async function handlePublishForm(c: Context) {
   const { formId, formTitle, formBuilderData, formExpiry } = formData;
   if (!formId || !formTitle || !formBuilderData) {
     return c.json({ message: "formId, formTitle, and formBuilderData are required" }, 400);
+  }
+
+  if (!isValidBuilderData(formBuilderData)) {
+    return c.json({ message: "formBuilderData has an invalid structure" }, 400);
+  }
+
+  // Check if form id exists in the redis cache and invalidate it to prevent stale data after publish
+  try {
+    const cachedForm = await redis.get(formId);
+    if (cachedForm) {
+      customLogger.info(`Invalidating cache for formId: ${formId} due to new publish`);
+      await redis.del(formId);
+    }
+  } catch (redisErr) {
+    customLogger.warn(
+      `Redis error while invalidating cache (continuing with publish): ${
+        redisErr instanceof Error ? redisErr.message : String(redisErr)
+      }`,
+    );
   }
 
   // Set default expiry to 1 year from now if not provided
@@ -53,6 +74,10 @@ export async function handleSaveDraftForm(c: Context) {
   const { formId, formTitle, formBuilderData } = formData;
   if (!formId || !formTitle || !formBuilderData) {
     return c.json({ message: "formId, formTitle, and formBuilderData are required" }, 400);
+  }
+
+  if (!isValidBuilderData(formBuilderData)) {
+    return c.json({ message: "formBuilderData has an invalid structure" }, 400);
   }
 
   const _formDraftData = {
@@ -210,7 +235,7 @@ export async function handleFetchLiveFormData(c: Context) {
     // Check cache first
     let cachedFormData = null;
     try {
-      customLogger.debug(`Checking cache for formId: ${formId}`);
+      customLogger.info(`Checking cache for formId: ${formId}`);
       cachedFormData = await redis.get(formId);
 
       if (cachedFormData) {
@@ -223,9 +248,9 @@ export async function handleFetchLiveFormData(c: Context) {
       );
     }
 
-    customLogger.debug(`Cache miss for formId: ${formId}. Querying database...`);
+    customLogger.info(`Cache miss for formId: ${formId}. Querying database...`);
     const formData = await queries.fetchLiveFormById(formId);
-    customLogger.debug({ count: formData?.length, hasData: !!formData }, `Query result for formId ${formId}`);
+    customLogger.info({ count: formData?.length, hasData: !!formData }, `Query result for formId ${formId}`);
 
     // Check if form exists
     if (!formData || formData.length === 0) {
@@ -235,12 +260,12 @@ export async function handleFetchLiveFormData(c: Context) {
 
     // Get the first result since we're querying by ID
     const form = formData[0];
-    customLogger.debug(`Found form: ${form.id}`);
+    customLogger.info(`Found form: ${form.id}`);
 
     // Try to cache the result (non-blocking)
     try {
       await redis.set(formId, form, { ex: 3600 * 2 }); // Cache for 2 hours
-      customLogger.debug(`Successfully cached form: ${formId}`);
+      customLogger.info(`Successfully cached form: ${formId}`);
     } catch (redisErr) {
       customLogger.warn(
         `Failed to cache form (non-critical): ${redisErr instanceof Error ? redisErr.message : String(redisErr)}`,
